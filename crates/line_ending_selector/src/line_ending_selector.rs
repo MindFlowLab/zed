@@ -10,6 +10,7 @@ use std::sync::Arc;
 use ui::{ListItem, ListItemSpacing, prelude::*};
 use util::ResultExt;
 use workspace::ModalView;
+use zed_i18n::t;
 
 actions!(
     line_ending_selector,
@@ -120,7 +121,7 @@ impl PickerDelegate for LineEndingSelectorDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select a line ending…".into()
+        t!("line_ending_selector.placeholder").into()
     }
 
     fn match_count(&self) -> usize {

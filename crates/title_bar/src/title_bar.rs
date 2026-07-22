@@ -51,6 +51,7 @@ use ui::{
 };
 use update_version::UpdateVersion;
 use util::ResultExt;
+use zed_i18n::t;
 use workspace::{
     AccessibleMode, MultiWorkspace, ToggleWorktreeSecurity, Workspace,
     notifications::{NotifyResultExt, NotifyTaskExt as _},
@@ -374,7 +375,7 @@ impl Render for TitleBar {
                 )
                 .when(is_signing_in, |this| {
                     this.child(
-                        Label::new("Signing in…")
+                        Label::new(t!("title_bar.status.signing_in"))
                             .size(LabelSize::Small)
                             .color(Color::Muted)
                             .with_animation(
@@ -601,33 +602,50 @@ impl TitleBar {
         let (nickname, tooltip_title, icon) = match options {
             RemoteConnectionOptions::Ssh(options) => (
                 options.nickname.map(|nick| nick.into()),
-                "Remote Project",
+                t!("title_bar.remote.remote_project"),
                 IconName::Server,
             ),
-            RemoteConnectionOptions::Wsl(_) => (None, "Remote Project", IconName::Linux),
-            RemoteConnectionOptions::Docker(_dev_container_connection) => {
-                (None, "Dev Container", IconName::Box)
-            }
+            RemoteConnectionOptions::Wsl(_) => (
+                None,
+                t!("title_bar.remote.remote_project"),
+                IconName::Linux,
+            ),
+            RemoteConnectionOptions::Docker(_dev_container_connection) => (
+                None,
+                t!("title_bar.remote.dev_container"),
+                IconName::Box,
+            ),
             #[cfg(any(test, feature = "test-support"))]
-            RemoteConnectionOptions::Mock(_) => (None, "Mock Remote Project", IconName::Server),
+            RemoteConnectionOptions::Mock(_) => (
+                None,
+                "Mock Remote Project".to_string(),
+                IconName::Server,
+            ),
         };
 
         let nickname = nickname.unwrap_or_else(|| host.clone());
 
         let (indicator_color, meta) = match self.project.read(cx).remote_connection_state(cx)? {
-            remote::ConnectionState::Connecting => (Color::Info, format!("Connecting to: {host}")),
-            remote::ConnectionState::Connected => (Color::Success, format!("Connected to: {host}")),
+            remote::ConnectionState::Connecting => (
+                Color::Info,
+                t!("title_bar.remote.connecting_to", host = host),
+            ),
+            remote::ConnectionState::Connected => (
+                Color::Success,
+                t!("title_bar.remote.connected_to", host = host),
+            ),
             remote::ConnectionState::HeartbeatMissed => (
                 Color::Warning,
-                format!("Connection attempt to {host} missed. Retrying..."),
+                t!("title_bar.remote.heartbeat_missed", host = host),
             ),
             remote::ConnectionState::Reconnecting => (
                 Color::Warning,
-                format!("Lost connection to {host}. Reconnecting..."),
+                t!("title_bar.remote.reconnecting", host = host),
             ),
-            remote::ConnectionState::Disconnected => {
-                (Color::Error, format!("Disconnected from {host}"))
-            }
+            remote::ConnectionState::Disconnected => (
+                Color::Error,
+                t!("title_bar.remote.disconnected_from", host = host),
+            ),
         };
 
         let icon_color = match self.project.read(cx).remote_connection_state(cx)? {
@@ -639,6 +657,11 @@ impl TitleBar {
         };
 
         let meta = SharedString::from(meta);
+        // tooltip_title 经 i18n 后为 String;转为 SharedString 以便在 tooltip
+        // 闭包(Fn)中廉价克隆,避免 move 错误
+        // tooltip_title becomes a String after i18n; SharedString allows cheap
+        // clones inside the (Fn) tooltip closure instead of moves.
+        let tooltip_title = SharedString::from(tooltip_title);
 
         Some(
             PopoverMenu::new("remote-project-menu")
@@ -674,7 +697,7 @@ impl TitleBar {
                         ),
                     move |_window, cx| {
                         Tooltip::with_meta(
-                            tooltip_title,
+                            tooltip_title.clone(),
                             Some(&OpenRemote::default()),
                             meta.clone(),
                             cx,
@@ -693,7 +716,7 @@ impl TitleBar {
             return None;
         }
 
-        let button = Button::new("restricted_mode_trigger", "Restricted Mode")
+        let button = Button::new("restricted_mode_trigger", t!("title_bar.restricted_mode.label"))
             .style(ButtonStyle::Tinted(TintColor::Warning))
             .label_size(LabelSize::Small)
             .color(Color::Warning)
@@ -704,9 +727,9 @@ impl TitleBar {
             )
             .tooltip(|_, cx| {
                 Tooltip::with_meta(
-                    "You're in Restricted Mode",
+                    t!("title_bar.restricted_mode.tooltip"),
                     Some(&ToggleWorktreeSecurity),
-                    "Mark this project as trusted and unlock all features",
+                    t!("title_bar.restricted_mode.meta"),
                     cx,
                 )
             })
@@ -735,7 +758,7 @@ impl TitleBar {
 
         if self.project.read(cx).is_disconnected(cx) {
             return Some(
-                Button::new("disconnected", "Disconnected")
+                Button::new("disconnected", t!("title_bar.connection.disconnected"))
                     .disabled(true)
                     .color(Color::Disabled)
                     .label_size(LabelSize::Small)
@@ -757,12 +780,17 @@ impl TitleBar {
                 .label_size(LabelSize::Small)
                 .tab_index(0isize)
                 .tooltip(move |_, cx| {
-                    let tooltip_title = format!(
-                        "{} is sharing this project. Click to follow.",
-                        host_user.username
+                    let tooltip_title = t!(
+                        "title_bar.project.sharing_tooltip",
+                        username = host_user.username
                     );
 
-                    Tooltip::with_meta(tooltip_title, None, "Click to Follow", cx)
+                    Tooltip::with_meta(
+                        tooltip_title,
+                        None,
+                        t!("title_bar.project.click_to_follow"),
+                        cx,
+                    )
                 })
                 .on_click({
                     let host_peer_id = host.peer_id;
@@ -791,7 +819,7 @@ impl TitleBar {
         let display_name = if let Some(ref name) = name {
             util::truncate_and_trailoff(name, MAX_PROJECT_NAME_LENGTH)
         } else {
-            "Open Recent Project".to_string()
+            t!("title_bar.project.open_recent_project")
         };
 
         let is_sidebar_open = self
@@ -852,7 +880,11 @@ impl TitleBar {
                     .selected_style(ButtonStyle::Tinted(TintColor::Accent))
                     .when(!is_project_selected, |s| s.color(Color::Muted)),
                 move |_window, cx| {
-                    Tooltip::for_action("Recent Projects", &zed_actions::OpenRecent::default(), cx)
+                    Tooltip::for_action(
+                        t!("title_bar.project.recent_projects"),
+                        &zed_actions::OpenRecent::default(),
+                        cx,
+                    )
                 },
             )
             .anchor(gpui::Anchor::TopLeft)
@@ -904,7 +936,11 @@ impl TitleBar {
                     .selected_style(ButtonStyle::Tinted(TintColor::Accent))
                     .when(!is_project_selected, |s| s.color(Color::Muted)),
                 move |_window, cx| {
-                    Tooltip::for_action("Recent Projects", &zed_actions::OpenRecent::default(), cx)
+                    Tooltip::for_action(
+                        t!("title_bar.project.recent_projects"),
+                        &zed_actions::OpenRecent::default(),
+                        cx,
+                    )
                 },
             )
             .anchor(gpui::Anchor::TopLeft)
@@ -972,9 +1008,9 @@ impl TitleBar {
 
         let display_label: SharedString = if let Some(ref name) = creation_in_progress {
             if is_switch {
-                format!("Loading {}…", name).into()
+                t!("title_bar.worktree.loading", name = name).into()
             } else {
-                format!("Creating {}…", name).into()
+                t!("title_bar.worktree.creating", name = name).into()
             }
         } else {
             worktree_label.clone()
@@ -1006,9 +1042,12 @@ impl TitleBar {
                         ),
                     move |_window, cx| {
                         Tooltip::with_meta(
-                            "Worktree",
+                            t!("title_bar.worktree.tooltip"),
                             Some(&zed_actions::git::Worktree),
-                            format!("Currently In Use: {}", worktree_label),
+                            t!(
+                                "title_bar.worktree.currently_in_use",
+                                worktree = worktree_label
+                            ),
                             cx,
                         )
                     },
@@ -1026,7 +1065,7 @@ impl TitleBar {
                 };
 
                 let trigger = if is_detached_head {
-                    Button::new("project_branch_trigger", "Create Branch")
+                    Button::new("project_branch_trigger", t!("title_bar.branch.create_branch"))
                         .selected_style(ButtonStyle::Tinted(TintColor::Accent))
                         .label_size(LabelSize::Small)
                         .tab_index(0isize)
@@ -1061,12 +1100,15 @@ impl TitleBar {
                     })
                     .trigger_with_tooltip(trigger, move |_window, cx| {
                         let meta = if is_detached_head {
-                            format!("Detached HEAD: {}", branch_tooltip_label)
+                            t!("title_bar.branch.detached_head", branch = branch_tooltip_label)
                         } else {
-                            format!("Currently Checked Out: {}", branch_tooltip_label)
+                            t!(
+                                "title_bar.branch.currently_checked_out",
+                                branch = branch_tooltip_label
+                            )
                         };
                         Tooltip::with_meta(
-                            "Branch & Stash",
+                            t!("title_bar.branch.tooltip"),
                             Some(&zed_actions::git::Branch),
                             meta,
                             cx,
@@ -1164,19 +1206,21 @@ impl TitleBar {
                 div()
                     .id("disconnected")
                     .child(Icon::new(IconName::Disconnected).size(IconSize::Small))
-                    .tooltip(Tooltip::text("Disconnected"))
+                    .tooltip(Tooltip::text(t!("title_bar.connection.disconnected")))
                     .into_any_element(),
             ),
             client::Status::UpgradeRequired => {
                 let auto_updater = auto_update::AutoUpdater::get(cx);
                 let label = match auto_updater.map(|auto_update| auto_update.read(cx).status()) {
-                    Some(AutoUpdateStatus::Updated { .. }) => "Please restart Zed to Collaborate",
+                    Some(AutoUpdateStatus::Updated { .. }) => {
+                        t!("title_bar.connection.restart_to_collaborate")
+                    }
                     Some(AutoUpdateStatus::Installing { .. })
                     | Some(AutoUpdateStatus::Downloading { .. })
-                    | Some(AutoUpdateStatus::Checking) => "Updating...",
+                    | Some(AutoUpdateStatus::Checking) => t!("title_bar.connection.updating"),
                     Some(AutoUpdateStatus::Idle)
                     | Some(AutoUpdateStatus::Errored { .. })
-                    | None => "Please update Zed to Collaborate",
+                    | None => t!("title_bar.connection.update_to_collaborate"),
                 };
 
                 Some(
@@ -1201,7 +1245,7 @@ impl TitleBar {
     pub fn render_sign_in_button(&mut self, _: &mut Context<Self>) -> Button {
         let client = self.client.clone();
         let workspace = self.workspace.clone();
-        Button::new("sign_in", "Sign In")
+        Button::new("sign_in", t!("title_bar.sign_in"))
             .label_size(LabelSize::Small)
             .tab_index(0isize)
             .on_click(move |_, window, cx| {
@@ -1262,7 +1306,7 @@ impl TitleBar {
             });
 
             ButtonLike::new("user-menu")
-                .aria_label("User menu")
+                .aria_label(t!("title_bar.user_menu.aria_label"))
                 .tab_index(0isize)
                 .child(
                     h_flex()
@@ -1274,7 +1318,7 @@ impl TitleBar {
                 )
         } else {
             ButtonLike::new("user-menu")
-                .aria_label("User menu")
+                .aria_label(t!("title_bar.user_menu.aria_label"))
                 .tab_index(0isize)
                 .child(Icon::new(IconName::ChevronDown).size(IconSize::Small))
         };
@@ -1320,7 +1364,10 @@ impl TitleBar {
                                     .w_full()
                                     .gap_1()
                                     .justify_between()
-                                    .child(Label::new("Restart to update Zed").color(Color::Accent))
+                                    .child(
+                                        Label::new(t!("title_bar.user_menu.restart_to_update"))
+                                            .color(Color::Accent),
+                                    )
                                     .child(
                                         Icon::new(IconName::Download)
                                             .size(IconSize::Small)
@@ -1335,7 +1382,7 @@ impl TitleBar {
                         .separator()
                     })
                     .map(|this| {
-                        let mut this = this.header("Organization");
+                        let mut this = this.header(t!("title_bar.user_menu.organization_header"));
 
                         for (organization, plan) in &organizations {
                             let organization = organization.clone();
@@ -1388,25 +1435,32 @@ impl TitleBar {
 
                         this.separator()
                     })
-                    .action("Settings", zed_actions::OpenSettings.boxed_clone())
-                    .action("Keymap", Box::new(zed_actions::OpenKeymap))
                     .action(
-                        "Themes…",
+                        t!("title_bar.user_menu.settings"),
+                        zed_actions::OpenSettings.boxed_clone(),
+                    )
+                    .action(
+                        t!("title_bar.user_menu.keymap"),
+                        Box::new(zed_actions::OpenKeymap),
+                    )
+                    .action(
+                        t!("title_bar.user_menu.themes"),
                         zed_actions::theme_selector::Toggle::default().boxed_clone(),
                     )
                     .action(
-                        "Icon Themes…",
+                        t!("title_bar.user_menu.icon_themes"),
                         zed_actions::icon_theme_selector::Toggle::default().boxed_clone(),
                     )
                     .action(
-                        "Extensions",
+                        t!("title_bar.user_menu.extensions"),
                         zed_actions::Extensions::default().boxed_clone(),
                     )
                     .when(ai_enabled, |menu| {
-                        menu.separator()
-                            .submenu("Panel Layout", move |menu, _window, _cx| {
+                        menu.separator().submenu(
+                            t!("title_bar.user_menu.panel_layout"),
+                            move |menu, _window, _cx| {
                                 menu.toggleable_entry(
-                                    "Classic",
+                                    t!("title_bar.user_menu.layout_classic"),
                                     is_editor,
                                     IconPosition::Start,
                                     Some(UseClassicLayout.boxed_clone()),
@@ -1415,7 +1469,7 @@ impl TitleBar {
                                     },
                                 )
                                 .toggleable_entry(
-                                    "Agentic",
+                                    t!("title_bar.user_menu.layout_agentic"),
                                     is_agent,
                                     IconPosition::Start,
                                     Some(UseAgenticLayout.boxed_clone()),
@@ -1425,16 +1479,21 @@ impl TitleBar {
                                 )
                                 .when(is_custom, |menu| {
                                     menu.item(
-                                        ContextMenuEntry::new("Custom")
-                                            .toggleable(IconPosition::Start, true)
-                                            .disabled(true),
+                                        ContextMenuEntry::new(t!(
+                                            "title_bar.user_menu.layout_custom"
+                                        ))
+                                        .toggleable(IconPosition::Start, true)
+                                        .disabled(true),
                                     )
                                 })
-                            })
+                            },
+                        )
                     })
                     .when(is_signed_in, |this| {
-                        this.separator()
-                            .action("Sign Out", client::SignOut.boxed_clone())
+                        this.separator().action(
+                            t!("title_bar.user_menu.sign_out"),
+                            client::SignOut.boxed_clone(),
+                        )
                     })
                 })
                 .into()

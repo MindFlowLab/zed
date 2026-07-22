@@ -32,6 +32,7 @@ use workspace::{
     searchable::{Direction, SearchEvent, SearchToken, SearchableItem, SearchableItemHandle},
     ui::{Button, Clickable, ContextMenu, Label, LabelCommon, PopoverMenu, h_flex},
 };
+use zed_i18n::t;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 enum View {
@@ -400,8 +401,9 @@ impl LogStore {
             state.insert(DebugAdapterState::new(
                 id.session_id,
                 adapter_name,
-                session_label
-                    .unwrap_or_else(|| format!("Session {} (child)", id.session_id.0).into()),
+                session_label.unwrap_or_else(|| {
+                    t!("debugger_tools.dap_log.child_session_label", id = id.session_id.0).into()
+                }),
                 has_adapter_logs,
             ));
 
@@ -524,18 +526,21 @@ impl Render for DapLogToolbarItemView {
                 "debug_client_menu_header",
                 current_client
                     .map(|sub_item| {
-                        Cow::Owned(format!(
-                            "{} - {} - {}",
-                            sub_item.adapter_name,
-                            sub_item.session_label,
-                            match sub_item.selected_entry {
-                                View::AdapterLogs => ADAPTER_LOGS,
-                                View::RpcMessages => RPC_MESSAGES,
-                                View::InitializationSequence => INITIALIZATION_SEQUENCE,
+                        let view_label = match sub_item.selected_entry {
+                            View::AdapterLogs => t!("debugger_tools.dap_log.adapter_logs"),
+                            View::RpcMessages => t!("debugger_tools.dap_log.rpc_messages"),
+                            View::InitializationSequence => {
+                                t!("debugger_tools.dap_log.initialization_sequence")
                             }
-                        ))
+                        };
+                        t!(
+                            "debugger_tools.dap_log.menu_header",
+                            adapter = sub_item.adapter_name,
+                            session = sub_item.session_label,
+                            view = view_label
+                        )
                     })
-                    .unwrap_or_else(|| "No adapter selected".into()),
+                    .unwrap_or_else(|| t!("debugger_tools.dap_log.no_adapter_selected")),
             ))
             .menu(move |window, cx| {
                 let log_view = log_view.clone();
@@ -563,7 +568,7 @@ impl Render for DapLogToolbarItemView {
                                     div()
                                         .w_full()
                                         .pl_4()
-                                        .child(Label::new(ADAPTER_LOGS))
+                                        .child(Label::new(t!("debugger_tools.dap_log.adapter_logs")))
                                         .into_any_element()
                                 },
                                 window.handler_for(&log_view, {
@@ -585,7 +590,7 @@ impl Render for DapLogToolbarItemView {
                                     div()
                                         .w_full()
                                         .pl_4()
-                                        .child(Label::new(RPC_MESSAGES))
+                                        .child(Label::new(t!("debugger_tools.dap_log.rpc_messages")))
                                         .into_any_element()
                                 },
                                 window.handler_for(&log_view, {
@@ -604,7 +609,9 @@ impl Render for DapLogToolbarItemView {
                                     div()
                                         .w_full()
                                         .pl_4()
-                                        .child(Label::new(INITIALIZATION_SEQUENCE))
+                                        .child(Label::new(
+                                            t!("debugger_tools.dap_log.initialization_sequence"),
+                                        ))
                                         .into_any_element()
                                 },
                                 window.handler_for(&log_view, {
@@ -633,19 +640,20 @@ impl Render for DapLogToolbarItemView {
             .child(
                 div()
                     .child(
-                        Button::new("clear_log_button", "Clear").on_click(cx.listener(
-                            |this, _, window, cx| {
-                                if let Some(log_view) = this.log_view.as_ref() {
-                                    log_view.update(cx, |log_view, cx| {
-                                        log_view.editor.update(cx, |editor, cx| {
-                                            editor.set_read_only(false);
-                                            editor.clear(window, cx);
-                                            editor.set_read_only(true);
-                                        });
-                                    })
-                                }
-                            },
-                        )),
+                        Button::new("clear_log_button", t!("debugger_tools.dap_log.clear"))
+                            .on_click(cx.listener(
+                                |this, _, window, cx| {
+                                    if let Some(log_view) = this.log_view.as_ref() {
+                                        log_view.update(cx, |log_view, cx| {
+                                            log_view.editor.update(cx, |editor, cx| {
+                                                editor.set_read_only(false);
+                                                editor.clear(window, cx);
+                                                editor.set_read_only(true);
+                                            });
+                                        })
+                                    }
+                                },
+                            )),
                     )
                     .ml_2(),
             )
@@ -936,10 +944,6 @@ struct DapMenuItem {
     selected_entry: View,
 }
 
-const ADAPTER_LOGS: &str = "Adapter Logs";
-const RPC_MESSAGES: &str = "RPC Messages";
-const INITIALIZATION_SEQUENCE: &str = "Initialization Sequence";
-
 impl Render for DapLogView {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         self.editor.update(cx, |editor, cx| {
@@ -993,7 +997,7 @@ impl Item for DapLogView {
     }
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        "DAP Logs".into()
+        t!("debugger_tools.dap_log.tab_title").into()
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {

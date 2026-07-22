@@ -1,4 +1,5 @@
 use gpui::{AnyElement, AnyView, ClickEvent, prelude::*};
+use zed_i18n::t;
 
 use crate::{ButtonLike, CircularProgress, CommonAnimationExt, Tooltip, prelude::*};
 
@@ -100,39 +101,39 @@ impl UpdateButton {
     }
 
     pub fn checking() -> Self {
-        Self::new(IconName::LoadCircle, "Checking for Zed Updates…")
+        Self::new(IconName::LoadCircle, t!("ui.update_button.checking"))
             .icon_animate(true)
             .disabled(true)
     }
 
     pub fn downloading(progress: Option<f32>) -> Self {
-        Self::new(IconName::Download, "Downloading Zed Update…")
+        Self::new(IconName::Download, t!("ui.update_button.downloading"))
             .progress(progress)
             .disabled(true)
     }
 
     pub fn installing(version: impl Into<SharedString>) -> Self {
-        Self::new(IconName::LoadCircle, "Installing Zed Update…")
+        Self::new(IconName::LoadCircle, t!("ui.update_button.installing"))
             .icon_animate(true)
             .tooltip(version)
             .disabled(true)
     }
 
     pub fn updated(version: impl Into<SharedString>) -> Self {
-        Self::new(IconName::Download, "Restart to Update")
+        Self::new(IconName::Download, t!("ui.update_button.restart_to_update"))
             .tooltip(version)
             .with_dismiss()
     }
 
     pub fn errored(error: impl Into<SharedString>) -> Self {
-        Self::new(IconName::Warning, "Failed to Update")
+        Self::new(IconName::Warning, t!("ui.update_button.failed_to_update"))
             .icon_color(Color::Warning)
             .tooltip(error)
             .with_dismiss()
     }
 
     pub fn version_tooltip_message(version: impl std::fmt::Display) -> String {
-        format!("Update to Version: {version}")
+        t!("ui.update_button.update_to_version", version = version)
     }
 
     pub fn downloading_tooltip_message(
@@ -141,9 +142,10 @@ impl UpdateButton {
     ) -> String {
         let message = Self::version_tooltip_message(version);
         match progress {
-            Some(progress) => format!(
-                "{message} ({:.0}% downloaded)",
-                progress.clamp(0.0, 1.0) * 100.0
+            Some(progress) => t!(
+                "ui.update_button.percent_downloaded",
+                message = message,
+                percent = format!("{:.0}", progress.clamp(0.0, 1.0) * 100.0)
             ),
             None => message,
         }
@@ -210,7 +212,7 @@ impl RenderOnce for UpdateButton {
                         IconButton::new(dismiss_button_id, IconName::Close)
                             .icon_size(IconSize::Indicator)
                             .when_some(self.on_dismiss, |this, handler| this.on_click(handler))
-                            .tooltip(Tooltip::text("Dismiss")),
+                            .tooltip(Tooltip::text(t!("ui.update_button.dismiss"))),
                     ),
                 )
             })

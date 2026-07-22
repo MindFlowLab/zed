@@ -10,6 +10,7 @@ use util::paths::PathMatcher;
 use workspace::notifications::NotificationId;
 use workspace::{Toast, Workspace};
 pub use zed_actions::search::ToggleIncludeIgnored;
+use zed_i18n::t;
 
 pub use search_status_button::SEARCH_ICON;
 
@@ -87,9 +88,10 @@ pub enum SearchOption {
     Backwards,
 }
 
-const REPLACE_PLACEHOLDER: &str = "Replace in project…";
-const INCLUDE_PLACEHOLDER: &str = "Include: e.g. src/**/*.rs";
-const EXCLUDE_PLACEHOLDER: &str = "Exclude: e.g. vendor/*, *.lock";
+// 项目搜索占位符文本经 t!() 在调用点解析(返回 String),
+// 故不再以 &'static str 常量定义,对应 key 见 locale 文件 search.placeholder.*。
+// Project search placeholders are resolved via t!() at the call sites
+// (returning String); see the `search.placeholder.*` keys in the locale files.
 
 pub enum SearchSource<'a, 'b> {
     Buffer,
@@ -109,6 +111,23 @@ impl SearchOption {
             SearchOption::Regex => "Use Regular Expressions",
             SearchOption::OneMatchPerLine => "One Match Per Line",
             SearchOption::Backwards => "Search Backwards",
+        }
+    }
+
+    /// 用户可见的本地化标签文本,用于 tooltip 等显示场景。
+    /// Localized label text for display (tooltips etc.).
+    /// 注意:`label()` 返回 &'static str,用于元素 id 等需要静态字符串的位置,
+    /// 保持英文原值不变;显示文本一律走本方法。
+    /// NOTE: `label()` still returns `&'static str` for positions that require
+    /// a static string (e.g. element ids) and intentionally stays in English.
+    pub fn label_text(&self) -> String {
+        match self {
+            SearchOption::WholeWord => t!("search.option.whole_word"),
+            SearchOption::CaseSensitive => t!("search.option.case_sensitive"),
+            SearchOption::IncludeIgnored => t!("search.option.include_ignored"),
+            SearchOption::Regex => t!("search.option.regex"),
+            SearchOption::OneMatchPerLine => t!("search.option.one_match_per_line"),
+            SearchOption::Backwards => t!("search.option.backwards"),
         }
     }
 
@@ -140,6 +159,9 @@ impl SearchOption {
     ) -> impl IntoElement {
         let action = self.to_toggle_action();
         let label = self.label();
+        // tooltip 显示本地化文本;label(英文)仅用于元素 id
+        // tooltip shows the localized text; the English label is only used as element id
+        let tooltip_label = self.label_text();
 
         IconButton::new(
             (label, matches!(search_source, SearchSource::Buffer) as u32),
@@ -164,7 +186,9 @@ impl SearchOption {
         })
         .shape(IconButtonShape::Square)
         .toggle_state(active.contains(self.as_options()))
-        .tooltip(move |_window, cx| Tooltip::for_action_in(label, action, &focus_handle, cx))
+        .tooltip(move |_window, cx| {
+            Tooltip::for_action_in(tooltip_label.clone(), action, &focus_handle, cx)
+        })
     }
 }
 
@@ -239,7 +263,7 @@ pub(crate) fn show_no_more_matches(window: &mut Window, cx: &mut App) {
         };
         workspace.update(cx, |workspace, cx| {
             workspace.show_toast(
-                Toast::new(notification_id.clone(), "No more matches").autohide(),
+                Toast::new(notification_id.clone(), t!("search.toast.no_more_matches")).autohide(),
                 cx,
             );
         })

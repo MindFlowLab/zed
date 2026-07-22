@@ -67,6 +67,7 @@ use settings::{LanguageModelSelection, Settings as _, SettingsStore, SidebarSide
 use std::any::TypeId;
 use std::path::{Path, PathBuf};
 use workspace::{OpenOptions, Workspace};
+use zed_i18n::t;
 
 use crate::agent_configuration::ManageProfilesModal;
 pub use crate::agent_connection_store::{ActiveAcpConnection, AgentConnectionStore};
@@ -464,7 +465,7 @@ impl Agent {
 
     pub fn label(&self) -> SharedString {
         match self {
-            Self::NativeAgent => "Zed Agent".into(),
+            Self::NativeAgent => t!("agent_ui.agent_ui.zed_agent_label").into(),
             Self::Custom { id, .. } => id.0.clone(),
             #[cfg(any(test, feature = "test-support"))]
             Self::Stub => "Stub Agent".into(),
@@ -734,7 +735,7 @@ fn rerun_rules_to_skills_migration(
             cx.update(|_window, cx| {
                 show_rules_to_skills_migration_toast(
                     &workspace,
-                    "Rules-to-skills migration rerun. Please double-check AGENTS.md and Skills for missing or duplicated prompts.",
+                    t!("agent_ui.agent_ui.rules_migration_rerun_toast"),
                     cx,
                 );
             })?;
@@ -745,7 +746,7 @@ fn rerun_rules_to_skills_migration(
 
 fn show_rules_to_skills_migration_toast(
     workspace: &gpui::WeakEntity<Workspace>,
-    message: &'static str,
+    message: String,
     cx: &mut App,
 ) {
     if let Some(workspace) = workspace.upgrade() {

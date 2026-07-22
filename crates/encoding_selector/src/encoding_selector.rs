@@ -14,6 +14,7 @@ use std::sync::Arc;
 use ui::{HighlightedLabel, ListItem, ListItemSpacing, Toggleable, v_flex};
 use util::ResultExt;
 use workspace::{ModalView, Toast, Workspace, notifications::NotificationId};
+use zed_i18n::t;
 
 actions!(
     encoding_selector,
@@ -60,7 +61,7 @@ impl EncodingSelector {
             workspace.show_toast(
                 Toast::new(
                     NotificationId::unique::<EncodingSelector>(),
-                    "Save file to change encoding",
+                    t!("encoding_selector.save_to_change"),
                 ),
                 cx,
             );
@@ -70,7 +71,7 @@ impl EncodingSelector {
             workspace.show_toast(
                 Toast::new(
                     NotificationId::unique::<EncodingSelector>(),
-                    "Cannot change encoding during collaboration",
+                    t!("encoding_selector.cannot_change_collaboration"),
                 ),
                 cx,
             );
@@ -80,7 +81,7 @@ impl EncodingSelector {
             workspace.show_toast(
                 Toast::new(
                     NotificationId::unique::<EncodingSelector>(),
-                    "Cannot change encoding of remote server file",
+                    t!("encoding_selector.cannot_change_remote"),
                 ),
                 cx,
             );
@@ -149,7 +150,7 @@ impl EncodingSelectorDelegate {
         let current_encoding = self.buffer.read(cx).encoding();
 
         if candidate_encoding.name() == current_encoding.name() {
-            format!("{} (current)", candidate_encoding.name())
+            t!("encoding_selector.current", name = candidate_encoding.name())
         } else {
             candidate_encoding.name().to_string()
         }
@@ -225,7 +226,7 @@ impl PickerDelegate for EncodingSelectorDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Reopen with encoding...".into()
+        t!("encoding_selector.placeholder").into()
     }
 
     fn match_count(&self) -> usize {

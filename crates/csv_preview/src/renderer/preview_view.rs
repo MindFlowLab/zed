@@ -1,6 +1,7 @@
 use std::time::Instant;
 
 use ui::{SpinnerLabel, div, prelude::*};
+use zed_i18n::t;
 
 use crate::CsvPreviewView;
 
@@ -38,10 +39,12 @@ impl Render for CsvPreviewView {
                                 h_flex()
                                     .gap_2()
                                     .child(SpinnerLabel::new())
-                                    .child("Loading…"),
+                                    .child(t!("csv_preview.empty_state.loading")),
                             )
                         })
-                        .when(!is_parsing, |div| div.child("No CSV content to display"))
+                        .when(!is_parsing, |div| {
+                            div.child(t!("csv_preview.empty_state.no_content"))
+                        })
                         .into_any_element()
                 } else {
                     self.create_table(&self.column_widths.widths, cx)

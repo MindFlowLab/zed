@@ -20,6 +20,7 @@ use std::{
 use ui::{Color, Icon, IconName, Label, LabelCommon as _};
 use util::paths::PathStyle;
 use util::rel_path::RelPath;
+use zed_i18n::t;
 use workspace::{
     Item, ItemHandle as _, ItemNavHistory, ToolbarItemLocation, Workspace,
     item::{ItemEvent, SaveOptions, TabContentParams},
@@ -209,12 +210,12 @@ impl MultiDiffView {
     }
 
     fn title(&self) -> SharedString {
-        let suffix = if self.file_count == 1 {
-            "1 file".to_string()
+        if self.file_count == 1 {
+            t!("git_ui.multi_diff_view.diff_title_singular")
         } else {
-            format!("{} files", self.file_count)
-        };
-        format!("Diff ({suffix})").into()
+            t!("git_ui.multi_diff_view.diff_title_plural", count = self.file_count)
+        }
+        .into()
     }
 }
 

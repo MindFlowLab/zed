@@ -36,6 +36,7 @@ use workspace::{
     notifications::NotifyTaskExt,
     searchable::SearchableItemHandle,
 };
+use zed_i18n::t;
 
 pub struct SoloDiffView {
     repository: Entity<Repository>,
@@ -630,9 +631,15 @@ impl Render for SoloDiffStyleToolbar {
             GitPanelSettings::get_global(cx).status_style != StatusStyle::LabelColor;
 
         let (expand_icon, expand_tooltip) = if showing_full_file {
-            (IconName::ChevronDownUp, "Show Changes Only")
+            (
+                IconName::ChevronDownUp,
+                t!("git_ui.solo_diff_view.show_changes_only"),
+            )
         } else {
-            (IconName::ChevronUpDown, "Show Full File")
+            (
+                IconName::ChevronUpDown,
+                t!("git_ui.solo_diff_view.show_full_file"),
+            )
         };
 
         h_flex()

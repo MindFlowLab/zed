@@ -1,9 +1,10 @@
-use gpui::{App, Context, WeakEntity, Window};
+use gpui::{App, Context, PromptButton, WeakEntity, Window};
 use notifications::status_toast::StatusToast;
 use std::sync::Arc;
 use ui::{Color, Icon, IconName, IconSize, SharedString};
 use util::ResultExt;
 use workspace::{self, Workspace};
+use zed_i18n::t;
 
 pub fn clone_and_open(
     repo_url: SharedString,
@@ -18,7 +19,7 @@ pub fn clone_and_open(
         files: false,
         directories: true,
         multiple: false,
-        prompt: Some("Select as Repository Destination".into()),
+        prompt: Some(t!("git_ui.clone.select_destination").into()),
     });
 
     window
@@ -71,9 +72,12 @@ pub fn clone_and_open(
                 cx.update(|window, cx| {
                     window.prompt(
                         gpui::PromptLevel::Info,
-                        &format!("Git Clone: {}", repo_name),
+                        &t!("git_ui.clone.git_clone_title", repo_name = repo_name),
                         None,
-                        &["Add repo to project", "Open repo in new project"],
+                        &[
+                            PromptButton::new(t!("git_ui.clone.add_repo_to_project")),
+                            PromptButton::new(t!("git_ui.clone.open_repo_in_new_project")),
+                        ],
                         cx,
                     )
                 })

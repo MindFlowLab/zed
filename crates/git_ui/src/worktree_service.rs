@@ -30,6 +30,7 @@ use util::ResultExt as _;
 use crate::askpass_modal::AskPassModal;
 use crate::git_panel::{open_output, show_error_toast};
 use crate::worktree_names;
+use zed_i18n::t;
 
 /// A remote-tracking branch reference parsed into its remote and branch parts,
 /// e.g. `origin/main` -> remote `origin`, branch `main`.
@@ -252,14 +253,17 @@ impl Render for WorktreeFetchFailedToast {
                     .size(IconSize::Small)
                     .color(Color::Error),
             )
-            .child(Label::new(format!(
-                "git fetch failed for {}",
-                self.remote_branch_name
+            .child(Label::new(t!(
+                "git_ui.worktree_service.git_fetch_failed_for",
+                branch = self.remote_branch_name
             )))
             .child(
                 Button::new(
                     "use-local-worktree-base",
-                    format!("Use local {}", self.remote_branch_name),
+                    t!(
+                        "git_ui.worktree_service.use_local_branch",
+                        branch = self.remote_branch_name
+                    ),
                 )
                 .color(Color::Muted)
                 .on_click(cx.listener(move |_, _event, window, cx| {
@@ -285,7 +289,10 @@ impl Render for WorktreeFetchFailedToast {
                 })),
             )
             .child(
-                Button::new("view-worktree-fetch-log", "Show Error Logs")
+                Button::new(
+                    "view-worktree-fetch-log",
+                    t!("git_ui.worktree_service.show_error_logs"),
+                )
                     .color(Color::Muted)
                     .on_click(cx.listener(move |_, _event, window, cx| {
                         cx.emit(DismissEvent);
@@ -1261,8 +1268,7 @@ async fn open_worktree_workspace(
                     workspace.show_toast(
                         workspace::Toast::new(
                             toast_id,
-                            "Some project folders are not git repositories. \
-                             They were included as-is without creating a worktree.",
+                            t!("git_ui.worktree_service.non_git_folders_toast"),
                         ),
                         cx,
                     );

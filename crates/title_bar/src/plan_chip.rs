@@ -1,5 +1,6 @@
 use cloud_api_types::Plan;
 use ui::{Chip, prelude::*};
+use zed_i18n::t;
 
 /// A [`Chip`] that displays a [`Plan`].
 #[derive(IntoElement)]
@@ -30,15 +31,15 @@ impl RenderOnce for PlanChip {
             .blend(cx.theme().colors().text_accent.opacity(0.2));
 
         let (plan_name, label_color, bg_color) = match self.plan {
-            Plan::ZedFree => ("Free", Color::Default, free_chip_bg),
-            Plan::ZedProTrial => ("Pro Trial", Color::Accent, pro_chip_bg),
-            Plan::ZedPro => ("Pro", Color::Accent, pro_chip_bg),
-            Plan::ZedBusiness => ("Business", Color::Accent, pro_chip_bg),
-            Plan::ZedVip => ("VIP", Color::Accent, pro_chip_bg),
-            Plan::ZedStudent => ("Student", Color::Accent, pro_chip_bg),
+            Plan::ZedFree => (t!("title_bar.plan.free"), Color::Default, free_chip_bg),
+            Plan::ZedProTrial => (t!("title_bar.plan.pro_trial"), Color::Accent, pro_chip_bg),
+            Plan::ZedPro => (t!("title_bar.plan.pro"), Color::Accent, pro_chip_bg),
+            Plan::ZedBusiness => (t!("title_bar.plan.business"), Color::Accent, pro_chip_bg),
+            Plan::ZedVip => (t!("title_bar.plan.vip"), Color::Accent, pro_chip_bg),
+            Plan::ZedStudent => (t!("title_bar.plan.student"), Color::Accent, pro_chip_bg),
         };
 
-        Chip::new(plan_name.to_string())
+        Chip::new(plan_name)
             .bg_color(bg_color)
             .label_color(label_color)
     }

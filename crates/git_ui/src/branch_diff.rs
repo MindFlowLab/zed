@@ -38,6 +38,7 @@ use workspace::{
     searchable::SearchableItemHandle,
 };
 use zed_actions::agent::ReviewBranchDiff;
+use zed_i18n::t;
 
 /// The workspace item for a branch (merge-base) diff: "Changes since {branch}".
 /// It wraps a single [`DiffMultibuffer`] over [`DiffBase::Merge`] and delegates
@@ -296,7 +297,7 @@ impl BranchDiff {
             DiffMultibuffer::new(
                 branch_diff,
                 Capability::ReadWrite,
-                "No changes",
+                t!("git_ui.common.no_changes"),
                 move |editor, cx| {
                     editor.set_diff_hunk_delegate(Some(Arc::new(RestoreOnlyDiffHunkDelegate)), cx);
                     editor.rhs_editor().update(cx, move |rhs_editor, _cx| {
@@ -451,8 +452,14 @@ impl Item for BranchDiff {
 
     fn tab_content_text(&self, _detail: usize, cx: &App) -> SharedString {
         match self.diff_base(cx) {
-            DiffBase::Merge { base_ref } => format!("Changes since {}", base_ref).into(),
-            DiffBase::Head | DiffBase::Index | DiffBase::Staged => "Changes".into(),
+            DiffBase::Merge { base_ref } => t!(
+                "git_ui.branch_diff.changes_since",
+                base_ref = base_ref
+            )
+            .into(),
+            DiffBase::Head | DiffBase::Index | DiffBase::Staged => {
+                t!("git_ui.branch_diff.changes").into()
+            }
         }
     }
 
@@ -801,13 +808,13 @@ impl Render for BranchDiffToolbar {
                                 .size(IconSize::XSmall)
                                 .color(Color::Muted),
                         ),
-                        Tooltip::text("Select Base Branch"),
+                        Tooltip::text(t!("git_ui.branch_diff.select_base_branch")),
                     ),
             )
             .when(show_review_button, |this| {
                 let focus_handle = focus_handle.clone();
                 this.child(Divider::vertical()).child(
-                    Button::new("review-diff", "Review Diff")
+                    Button::new("review-diff", t!("git_ui.branch_diff.review_diff"))
                         .start_icon(
                             Icon::new(IconName::ZedAssistant)
                                 .size(IconSize::Small)
@@ -815,9 +822,9 @@ impl Render for BranchDiffToolbar {
                         )
                         .tooltip(move |_, cx| {
                             Tooltip::with_meta_in(
-                                "Review Diff",
+                                t!("git_ui.branch_diff.review_diff"),
                                 Some(&ReviewDiff),
-                                "Send this diff for your last agent to review.",
+                                t!("git_ui.branch_diff.review_diff_hint"),
                                 &focus_handle,
                                 cx,
                             )

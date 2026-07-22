@@ -7,6 +7,7 @@ use livekit_client::ConnectionQuality;
 use ui::prelude::*;
 use workspace::{ModalView, Workspace};
 use zed_actions::ShowCallStats;
+use zed_i18n::t;
 
 pub fn init(cx: &mut App) {
     cx.observe_new(|workspace: &mut Workspace, _, _cx| {
@@ -164,7 +165,7 @@ impl Render for CallStatsModal {
             .child(
                 h_flex()
                     .justify_between()
-                    .child(Label::new("Call Diagnostics").size(LabelSize::Large))
+                    .child(Label::new(t!("collab_ui.call_stats.title")).size(LabelSize::Large))
                     .child(
                         Label::new(quality_text)
                             .size(LabelSize::Large)
@@ -176,42 +177,51 @@ impl Render for CallStatsModal {
                     h_flex()
                         .justify_center()
                         .py_4()
-                        .child(Label::new("Not in a call").color(Color::Muted)),
+                        .child(Label::new(t!("collab_ui.call_stats.not_in_call")).color(Color::Muted)),
                 )
             })
             .when(is_connected, |this| {
+                let network_label = t!("collab_ui.call_stats.network");
+                let latency_title = t!("collab_ui.call_stats.latency");
+                let latency_description = t!("collab_ui.call_stats.latency_description");
+                let jitter_title = t!("collab_ui.call_stats.jitter");
+                let jitter_description = t!("collab_ui.call_stats.jitter_description");
+                let packet_loss_title = t!("collab_ui.call_stats.packet_loss");
+                let packet_loss_description = t!("collab_ui.call_stats.packet_loss_description");
+                let input_lag_title = t!("collab_ui.call_stats.input_lag");
+                let input_lag_description = t!("collab_ui.call_stats.input_lag_description");
                 this.child(
                     v_flex()
                         .gap_1()
                         .child(
                             h_flex()
                                 .gap_2()
-                                .child(Label::new("Network").weight(FontWeight::SEMIBOLD)),
+                                .child(Label::new(network_label).weight(FontWeight::SEMIBOLD)),
                         )
                         .child(self.render_metric_row(
-                            "Latency",
-                            "Time for data to travel to the server",
+                            &latency_title,
+                            &latency_description,
                             stats.latency_ms,
                             |v| format!("{:.0}ms", v),
                             |v| metric_rating("Latency", v),
                         ))
                         .child(self.render_metric_row(
-                            "Jitter",
-                            "Variance or fluctuation in latency",
+                            &jitter_title,
+                            &jitter_description,
                             stats.jitter_ms,
                             |v| format!("{:.0}ms", v),
                             |v| metric_rating("Jitter", v),
                         ))
                         .child(self.render_metric_row(
-                            "Packet loss",
-                            "Amount of data lost during transfer",
+                            &packet_loss_title,
+                            &packet_loss_description,
                             stats.packet_loss_pct,
                             |v| format!("{:.1}%", v),
                             |v| packet_loss_rating(v),
                         ))
                         .child(self.render_metric_row(
-                            "Input lag",
-                            "Delay from audio capture to WebRTC",
+                            &input_lag_title,
+                            &input_lag_description,
                             stats.input_lag.map(|d| d.as_secs_f64() * 1000.0),
                             |v| format!("{:.1}ms", v),
                             |v| input_lag_rating(v),

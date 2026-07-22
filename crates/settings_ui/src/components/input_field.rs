@@ -9,6 +9,7 @@ use gpui::{
 use settings::Settings as _;
 use theme_settings::ThemeSettings;
 use ui::{Tooltip, prelude::*, rems};
+use zed_i18n::t;
 
 #[derive(IntoElement)]
 pub struct SettingsInputField {
@@ -295,8 +296,10 @@ impl RenderOnce for SettingsInputField {
                                 IconButton::new("clear-button", IconName::Close)
                                     .icon_size(IconSize::Small)
                                     .icon_color(Color::Muted)
-                                    .aria_label("Clear")
-                                    .tooltip(Tooltip::text("Clear"))
+                                    .aria_label(t!("settings_ui.components.input_field.clear"))
+                                    .tooltip(Tooltip::text(t!(
+                                        "settings_ui.components.input_field.clear"
+                                    )))
                                     .on_click(move |_, window, cx| {
                                         let Some(editor) = weak_editor_for_clear.upgrade() else {
                                             return;
@@ -315,8 +318,10 @@ impl RenderOnce for SettingsInputField {
                                 IconButton::new("confirm-button", IconName::Check)
                                     .icon_size(IconSize::Small)
                                     .icon_color(Color::Success)
-                                    .aria_label("Confirm")
-                                    .tooltip(Tooltip::text("Enter to Confirm"))
+                                    .aria_label(t!("settings_ui.components.input_field.confirm"))
+                                    .tooltip(Tooltip::text(t!(
+                                        "settings_ui.components.input_field.enter_to_confirm"
+                                    )))
                                     .on_click(move |_, window, cx| {
                                         let Some(confirm) = confirm_for_button.as_ref() else {
                                             return;

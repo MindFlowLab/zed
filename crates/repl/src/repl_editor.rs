@@ -9,6 +9,7 @@ use gpui::{App, Entity, WeakEntity, Window, prelude::*};
 use language::{BufferSnapshot, Language, LanguageName, Point};
 use project::{ProjectItem as _, WorktreeId};
 use workspace::{Workspace, notifications::NotificationId};
+use zed_i18n::t;
 
 use crate::kernels::PythonEnvKernelSpecification;
 use crate::repl_store::ReplStore;
@@ -99,7 +100,7 @@ pub fn install_ipykernel_and_assign(
             workspace.show_toast(
                 workspace::Toast::new(
                     notification_id.clone(),
-                    format!("Installing ipykernel in {}...", env_name),
+                    t!("repl.repl_editor.installing_ipykernel", name = env_name),
                 ),
                 cx,
             );
@@ -150,7 +151,7 @@ pub fn install_ipykernel_and_assign(
                             workspace.show_toast(
                                 workspace::Toast::new(
                                     notification_id.clone(),
-                                    format!("ipykernel installed in {}", env_name),
+                                    t!("repl.repl_editor.ipykernel_installed", name = env_name),
                                 )
                                 .autohide(),
                                 cx,
@@ -183,9 +184,10 @@ pub fn install_ipykernel_and_assign(
                             workspace.show_toast(
                                 workspace::Toast::new(
                                     notification_id.clone(),
-                                    format!(
-                                        "Failed to install ipykernel in {}: {}",
-                                        env_name, error
+                                    t!(
+                                        "repl.repl_editor.failed_to_install_ipykernel",
+                                        name = env_name,
+                                        error = error
                                     ),
                                 ),
                                 cx,

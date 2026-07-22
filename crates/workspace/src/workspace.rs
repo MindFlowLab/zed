@@ -63,7 +63,8 @@ use gpui::{
     Action, AnyEntity, AnyView, AnyWeakView, App, AsyncApp, AsyncWindowContext, Axis, Bounds,
     Context, CursorStyle, Decorations, DragMoveEvent, Entity, EntityId, EventEmitter, FocusHandle,
     Focusable, Global, HitboxBehavior, Hsla, KeyContext, Keystroke, ManagedView, MouseButton,
-    PathPromptOptions, Point, PromptLevel, Render, ResizeEdge, Size, Stateful, Subscription,
+    PathPromptOptions, Point, PromptButton, PromptLevel, Render, ResizeEdge, Size, Stateful,
+    Subscription,
     SystemWindowTabController, Task, TaskExt, Tiling, WeakEntity, WindowBounds, WindowHandle,
     WindowId, WindowOptions, actions, canvas, point, relative, size, transparent_black,
 };
@@ -160,6 +161,7 @@ pub use workspace_settings::{
     observe_accessible_mode,
 };
 use zed_actions::{Spawn, feedback::FileBugReport, theme::ToggleMode};
+use zed_i18n::t;
 
 use crate::{dock::PanelSizeState, item::ItemBufferKind, notifications::NotificationId};
 use crate::{
@@ -3329,9 +3331,12 @@ impl Workspace {
                     let answer = cx.update(|window, cx| {
                         window.prompt(
                             PromptLevel::Warning,
-                            "Do you want to leave the current call?",
+                            &t!("workspace.workspace.leave_call_message"),
                             None,
-                            &["Close window and hang up", "Cancel"],
+                            &[
+                                PromptButton::new(t!("workspace.workspace.close_window_hang_up")),
+                                PromptButton::cancel(t!("workspace.workspace.cancel")),
+                            ],
                             cx,
                         )
                     })?;
@@ -3577,9 +3582,13 @@ impl Workspace {
                         );
                         window.prompt(
                             PromptLevel::Warning,
-                            "Do you want to save all changes in the following files?",
+                            &t!("workspace.workspace.save_all_changes_message"),
                             Some(&detail),
-                            &["Save all", "Discard all", "Cancel"],
+                            &[
+                                PromptButton::new(t!("workspace.pane.save_all")),
+                                PromptButton::new(t!("workspace.pane.discard_all")),
+                                PromptButton::cancel(t!("workspace.pane.cancel")),
+                            ],
                             cx,
                         )
                     })?;
@@ -9885,9 +9894,12 @@ async fn join_channel_internal(
                 .update(cx, |_, window, cx| {
                     window.prompt(
                         PromptLevel::Warning,
-                        "Do you want to switch channels?",
-                        Some("Leaving this call will unshare your current project."),
-                        &["Yes, Join Channel", "Cancel"],
+                        &t!("workspace.workspace.switch_channels_message"),
+                        Some(&t!("workspace.workspace.switch_channels_detail")),
+                        &[
+                            PromptButton::new(t!("workspace.workspace.yes_join_channel")),
+                            PromptButton::cancel(t!("workspace.workspace.cancel")),
+                        ],
                         cx,
                     )
                 })?
@@ -10052,32 +10064,31 @@ pub fn join_channel(
                 active_window
                     .update(cx, |_, window, cx| {
                         let detail: SharedString = match err.error_code() {
-                            ErrorCode::SignedOut => "Please sign in to continue.".into(),
-                            ErrorCode::UpgradeRequired => concat!(
-                                "Your are running an unsupported version of Zed. ",
-                                "Please update to continue."
-                            )
-                            .into(),
-                            ErrorCode::NoSuchChannel => concat!(
-                                "No matching channel was found. ",
-                                "Please check the link and try again."
-                            )
-                            .into(),
-                            ErrorCode::Forbidden => concat!(
-                                "This channel is private, and you do not have access. ",
-                                "Please ask someone to add you and try again."
-                            )
-                            .into(),
-                            ErrorCode::Disconnected => {
-                                "Please check your internet connection and try again.".into()
+                            ErrorCode::SignedOut => {
+                                t!("workspace.workspace.join_channel_signed_out").into()
                             }
-                            _ => format!("{}\n\nPlease try again.", err).into(),
+                            ErrorCode::UpgradeRequired => {
+                                t!("workspace.workspace.join_channel_upgrade_required").into()
+                            }
+                            ErrorCode::NoSuchChannel => {
+                                t!("workspace.workspace.join_channel_no_such_channel").into()
+                            }
+                            ErrorCode::Forbidden => {
+                                t!("workspace.workspace.join_channel_forbidden").into()
+                            }
+                            ErrorCode::Disconnected => {
+                                t!("workspace.workspace.join_channel_disconnected").into()
+                            }
+                            _ => {
+                                t!("workspace.workspace.join_channel_error_retry", error = err)
+                                    .into()
+                            }
                         };
                         window.prompt(
                             PromptLevel::Critical,
-                            "Failed to join channel",
+                            &t!("workspace.workspace.join_channel_failed"),
                             Some(&detail),
-                            &["OK"],
+                            &[PromptButton::ok(t!("workspace.workspace.ok"))],
                             cx,
                         )
                     })?
@@ -11069,9 +11080,12 @@ pub fn reload(cx: &mut App) {
             .update(cx, |_, window, cx| {
                 window.prompt(
                     PromptLevel::Info,
-                    "Are you sure you want to restart?",
+                    &t!("workspace.workspace.restart_confirm_message"),
                     None,
-                    &["Restart", "Cancel"],
+                    &[
+                        PromptButton::new(t!("workspace.workspace.restart")),
+                        PromptButton::cancel(t!("workspace.workspace.cancel")),
+                    ],
                     cx,
                 )
             })

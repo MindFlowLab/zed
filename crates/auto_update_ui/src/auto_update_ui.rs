@@ -26,6 +26,7 @@ use workspace::{
     workspace_error::{ErrorAction, ErrorSeverity, WorkspaceError},
 };
 use zed_actions::ShowUpdateNotification;
+use zed_i18n::t;
 
 actions!(
     auto_update,
@@ -73,7 +74,7 @@ fn notify_release_notes_failed_to_show(
 
     impl WorkspaceError for ReleaseNotesError {
         fn primary_message(&self) -> SharedString {
-            "Couldn't load release notes".into()
+            t!("auto_update_ui.release_notes.load_failed").into()
         }
         fn severity(&self) -> ErrorSeverity {
             ErrorSeverity::Error
@@ -81,7 +82,9 @@ fn notify_release_notes_failed_to_show(
         fn primary_action(&self) -> ErrorAction {
             self.url
                 .clone()
-                .map(|url| ErrorAction::link("View in Browser", url))
+                .map(|url| {
+                    ErrorAction::link(t!("auto_update_ui.release_notes.view_in_browser"), url)
+                })
                 .unwrap_or_else(ErrorAction::dismiss)
         }
     }
@@ -223,21 +226,25 @@ fn announcement_for_version(version: &Version, cx: &App) -> Option<AnnouncementC
             rules_to_skills_migration::migration_result().is_some_and(|result| !result.is_empty());
 
         let mut bullet_items: Vec<SharedString> = Vec::with_capacity(3);
+        bullet_items.push(
+            t!(
+                "auto_update_ui.announcement.skills_bullet_location",
+                dir = GLOBAL_SKILLS_DIR_DISPLAY
+            )
+            .into(),
+        );
         bullet_items
-            .push(format!("Skills live in {GLOBAL_SKILLS_DIR_DISPLAY}/<name>/SKILL.md").into());
-        bullet_items.push("Type / to manually invoke a skill".into());
+            .push(t!("auto_update_ui.announcement.skills_bullet_invoke").into());
         if migrated_anything {
-            bullet_items.push(
-                "The Rules Library is making way for skills: your default rules are now in a global AGENTS.md, and your other rules have been converted to skills".into(),
-            );
+            bullet_items.push(t!("auto_update_ui.announcement.skills_bullet_migration").into());
         }
 
         Some(AnnouncementContent {
-            heading: "Introducing Skills Support".into(),
-            description: "Extend the agent with focused instructions and domain knowledge.".into(),
+            heading: t!("auto_update_ui.announcement.skills_heading").into(),
+            description: t!("auto_update_ui.announcement.skills_description").into(),
             bullet_items,
-            primary_action_label: "Try Now".into(),
-            secondary_action_label: "Read Documentation".into(),
+            primary_action_label: t!("auto_update_ui.announcement.try_now").into(),
+            secondary_action_label: t!("auto_update_ui.announcement.read_documentation").into(),
             primary_action_url: None,
             primary_action_callback: Some(Arc::new(move |window, cx| {
                 window.dispatch_action(Box::new(zed_actions::assistant::FocusAgent), cx);
@@ -350,17 +357,24 @@ fn show_update_notification(cx: &mut App) {
             move |cx| {
                 let workspace_handle = cx.entity().downgrade();
                 cx.new(|cx| {
-                    MessageNotification::new(format!("Updated to {app_name} {}", version), cx)
-                        .primary_message("View Release Notes")
-                        .primary_on_click(move |window, cx| {
-                            if let Some(workspace) = workspace_handle.upgrade() {
-                                workspace.update(cx, |workspace, cx| {
-                                    crate::view_release_notes_locally(workspace, window, cx);
-                                })
-                            }
-                            cx.emit(DismissEvent);
-                        })
-                        .show_suppress_button(false)
+                    MessageNotification::new(
+                        t!(
+                            "auto_update_ui.notification.updated_to",
+                            app = app_name,
+                            version = version
+                        ),
+                        cx,
+                    )
+                    .primary_message(t!("auto_update_ui.notification.view_release_notes"))
+                    .primary_on_click(move |window, cx| {
+                        if let Some(workspace) = workspace_handle.upgrade() {
+                            workspace.update(cx, |workspace, cx| {
+                                crate::view_release_notes_locally(workspace, window, cx);
+                            })
+                        }
+                        cx.emit(DismissEvent);
+                    })
+                    .show_suppress_button(false)
                 })
             },
         );

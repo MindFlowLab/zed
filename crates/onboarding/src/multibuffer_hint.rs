@@ -7,6 +7,7 @@ use gpui::{App, EntityId, EventEmitter, Subscription};
 use ui::{IconButtonShape, Tooltip, prelude::*};
 use workspace::item::{ItemBufferKind, ItemEvent, ItemHandle};
 use workspace::{ToolbarItemEvent, ToolbarItemLocation, ToolbarItemView};
+use zed_i18n::t;
 
 pub struct MultibufferHint {
     shown_on: HashSet<EntityId>,
@@ -154,12 +155,10 @@ impl Render for MultibufferHint {
                                     .size(IconSize::XSmall)
                                     .color(Color::Muted),
                             )
-                            .child(Label::new(
-                                "Edit and save files directly in the results multibuffer!",
-                            )),
+                            .child(Label::new(t!("onboarding.multibuffer_hint.hint"))),
                     )
                     .child(
-                        Button::new("open_docs", "Learn More")
+                        Button::new("open_docs", t!("onboarding.multibuffer_hint.learn_more"))
                             .end_icon(
                                 Icon::new(IconName::ArrowUpRight)
                                     .size(IconSize::Small)
@@ -180,7 +179,7 @@ impl Render for MultibufferHint {
                             ToolbarItemLocation::Hidden,
                         ))
                     }))
-                    .tooltip(Tooltip::text("Dismiss Hint")),
+                    .tooltip(Tooltip::text(t!("onboarding.multibuffer_hint.dismiss_tooltip"))),
             )
             .into_any_element()
     }

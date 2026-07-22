@@ -13,6 +13,7 @@ use ui::{ListItem, ListItemSpacing, prelude::*, v_flex};
 use util::ResultExt;
 use workspace::{ModalView, ui::HighlightedLabel};
 use zed_actions::{ExtensionCategoryFilter, Extensions};
+use zed_i18n::t;
 
 pub(crate) struct IconThemeSelector {
     picker: Entity<Picker<IconThemeSelectorDelegate>>,
@@ -167,7 +168,7 @@ impl PickerDelegate for IconThemeSelectorDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select Icon Theme...".into()
+        t!("theme_selector.icon_theme_placeholder").into()
     }
 
     fn match_count(&self) -> usize {
@@ -334,7 +335,7 @@ impl PickerDelegate for IconThemeSelectorDelegate {
                 .border_t_1()
                 .border_color(cx.theme().colors().border_variant)
                 .child(
-                    Button::new("docs", "View Icon Theme Docs")
+                    Button::new("docs", t!("theme_selector.view_icon_theme_docs"))
                         .end_icon(
                             Icon::new(IconName::ArrowUpRight)
                                 .size(IconSize::Small)
@@ -345,7 +346,11 @@ impl PickerDelegate for IconThemeSelectorDelegate {
                         }),
                 )
                 .child(
-                    Button::new("more-icon-themes", "Install Icon Themes").on_click(
+                    Button::new(
+                        "more-icon-themes",
+                        t!("theme_selector.install_icon_themes"),
+                    )
+                    .on_click(
                         move |_event, window, cx| {
                             window.dispatch_action(
                                 Box::new(Extensions {

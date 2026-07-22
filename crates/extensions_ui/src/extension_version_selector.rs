@@ -13,6 +13,7 @@ use settings::update_settings_file;
 use ui::{HighlightedLabel, ListItem, ListItemSpacing, prelude::*};
 use util::ResultExt;
 use workspace::ModalView;
+use zed_i18n::t;
 
 pub struct ExtensionVersionSelector {
     picker: Entity<Picker<ExtensionVersionSelectorDelegate>>,
@@ -97,7 +98,7 @@ impl PickerDelegate for ExtensionVersionSelectorDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select extension version...".into()
+        t!("extensions_ui.version_selector.placeholder").into()
     }
 
     fn match_count(&self) -> usize {
@@ -238,7 +239,7 @@ impl PickerDelegate for ExtensionVersionSelectorDelegate {
                     h_flex()
                         .gap_2()
                         .when(!is_version_compatible, |this| {
-                            this.child(Label::new("Incompatible").color(Color::Muted))
+                            this.child(Label::new(t!("extensions_ui.version_selector.incompatible")).color(Color::Muted))
                         })
                         .child(
                             Label::new(

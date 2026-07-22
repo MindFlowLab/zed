@@ -17,6 +17,7 @@ use ui::{
     DropdownStyle, IconPosition, PopoverMenu, ToggleState, prelude::*,
 };
 use util::ResultExt as _;
+use zed_i18n::t;
 
 use crate::SettingsWindow;
 use crate::components::SettingsInputField;
@@ -85,7 +86,10 @@ pub(crate) fn render_add_llm_provider_popover(
 
     PopoverMenu::new("add-llm-provider-popover")
         .trigger(
-            Button::new("add-llm-provider", "Add Provider")
+            Button::new(
+                "add-llm-provider",
+                t!("settings_ui.llm_providers_page.add_provider"),
+            )
                 .style(ButtonStyle::Outlined)
                 .track_focus(&focus_handle)
                 .label_size(LabelSize::Small)
@@ -103,7 +107,7 @@ pub(crate) fn render_add_llm_provider_popover(
         .menu(move |window, cx| {
             let settings_window = settings_window.clone();
             Some(ContextMenu::build(window, cx, move |menu, _window, _cx| {
-                menu.header("Compatible APIs")
+                menu.header(t!("settings_ui.llm_providers_page.compatible_apis"))
                     .entry("OpenAI", None, {
                         let settings_window = settings_window.clone();
                         move |window, cx| {
@@ -223,19 +227,20 @@ fn render_api_key_providers_item(
 
     if has_key {
         let configured_label = if is_from_env_var {
-            "API Key Set in Environment Variable"
+            t!("settings_ui.llm_providers_page.api_key_from_env_var")
         } else {
-            "API Key Configured"
+            t!("settings_ui.llm_providers_page.api_key_configured")
         };
         let button_id = format!("reset-api-key-{}", provider_id.0);
 
         let card = ConfiguredApiCard::new(button_id, configured_label)
-            .button_label("Reset Key")
+            .button_label(t!("settings_ui.llm_providers_page.reset_key"))
             .button_tab_index(0)
             .disabled(is_from_env_var)
             .when(is_from_env_var, |this| {
-                this.tooltip_label(format!(
-                    "To reset your API key, unset the {env_var_name} environment variable."
+                this.tooltip_label(t!(
+                    "settings_ui.llm_providers_page.reset_key_tooltip",
+                    env_var = env_var_name
                 ))
             })
             .on_click({
@@ -250,7 +255,10 @@ fn render_api_key_providers_item(
     }
 
     let input_id = format!("{}-api-key-input", provider_id.0);
-    let aria_label = format!("{provider_name} API Key");
+    let aria_label = t!(
+        "settings_ui.llm_providers_page.api_key_aria",
+        provider = provider_name
+    );
 
     v_flex()
         .gap_2()
@@ -267,7 +275,7 @@ fn render_api_key_providers_item(
                         .min_w_0()
                         .max_w_1_2()
                         .gap_0p5()
-                        .child(Label::new("API Key"))
+                        .child(Label::new(t!("settings_ui.llm_providers_page.api_key")))
                         .child(
                             h_flex()
                                 .w_full()
@@ -275,13 +283,16 @@ fn render_api_key_providers_item(
                                 .flex_wrap()
                                 .gap_0p5()
                                 .child(
-                                    Label::new("Visit the")
+                                    Label::new(t!("settings_ui.llm_providers_page.visit_the"))
                                         .size(LabelSize::Small)
                                         .color(Color::Muted),
                                 )
                                 .child(
                                     ButtonLink::new(
-                                        format!("{provider_name} dashboard"),
+                                        t!(
+                                            "settings_ui.llm_providers_page.dashboard_link",
+                                            provider = provider_name
+                                        ),
                                         api_key_url,
                                     )
                                     .no_icon(true)
@@ -289,14 +300,17 @@ fn render_api_key_providers_item(
                                     .label_color(Color::Muted),
                                 )
                                 .child(
-                                    Label::new("to generate an API key.")
-                                        .size(LabelSize::Small)
-                                        .color(Color::Muted),
+                                    Label::new(t!(
+                                        "settings_ui.llm_providers_page.to_generate_api_key"
+                                    ))
+                                    .size(LabelSize::Small)
+                                    .color(Color::Muted),
                                 ),
                         )
                         .child(
-                            Label::new(format!(
-                                "Or set the {env_var_name} env var and restart Zed for it to take effect."
+                            Label::new(t!(
+                                "settings_ui.llm_providers_page.env_var_hint",
+                                env_var = env_var_name
                             ))
                             .size(LabelSize::XSmall)
                             .color(Color::Muted),
@@ -375,13 +389,18 @@ fn render_subpage_item(
                 .min_w_0()
                 .max_w_1_2()
                 .gap_0p5()
-                .child(Label::new("Configure Provider"))
+                .child(Label::new(t!(
+                    "settings_ui.llm_providers_page.configure_provider"
+                )))
                 .when_some(description, |this, description| {
                     this.child(render_inline_description(provider_name, description))
                 }),
         )
         .child(
-            Button::new(format!("configure-{}", provider_id.0), "Configure")
+            Button::new(
+                format!("configure-{}", provider_id.0),
+                t!("settings_ui.llm_providers_page.configure"),
+            )
                 .style(ButtonStyle::OutlinedGhost)
                 .size(ButtonSize::Medium)
                 .end_icon(
@@ -405,13 +424,19 @@ fn render_inline_description(
         InlineDescription::ApiKeyUrl(url) => h_flex()
             .gap_0p5()
             .child(
-                Label::new("To find an API key, visit the")
+                Label::new(t!("settings_ui.llm_providers_page.to_find_api_key"))
                     .size(LabelSize::Small)
                     .color(Color::Muted),
             )
             .child(
-                ButtonLink::new(format!("{provider_name} dashboard."), url)
-                    .label_size(LabelSize::Small),
+                ButtonLink::new(
+                    t!(
+                        "settings_ui.llm_providers_page.dashboard_link_with_period",
+                        provider = provider_name
+                    ),
+                    url,
+                )
+                .label_size(LabelSize::Small),
             )
             .into_any_element(),
         InlineDescription::Text(text) => Label::new(text)
@@ -436,7 +461,7 @@ fn open_provider_configuration(
 
     settings_window.push_dynamic_sub_page(
         title,
-        "Agent Configuration",
+        t!("settings_ui.llm_providers_page.agent_configuration"),
         Some("llm_providers"),
         true,
         render_provider_config_sub_page,
@@ -573,15 +598,27 @@ impl ModelInput {
 
         Self {
             name: new_input(
-                "e.g. gpt-5, claude-opus-4, gemini-2.5-pro",
+                &t!("settings_ui.llm_providers_page.model_name_placeholder"),
                 None,
                 false,
                 window,
                 cx,
             ),
             max_completion_tokens: new_input("200000", Some("200000"), false, window, cx),
-            max_output_tokens: new_input("Max Output Tokens", Some("32000"), false, window, cx),
-            max_tokens: new_input("Max Tokens", Some("200000"), false, window, cx),
+            max_output_tokens: new_input(
+                &t!("settings_ui.llm_providers_page.max_output_tokens_title"),
+                Some("32000"),
+                false,
+                window,
+                cx,
+            ),
+            max_tokens: new_input(
+                &t!("settings_ui.llm_providers_page.max_tokens_title"),
+                Some("200000"),
+                false,
+                window,
+                cx,
+            ),
             reasoning_effort: OpenAiReasoningEffort::Medium,
             supports_tools: tools.into(),
             supports_images: images.into(),
@@ -623,8 +660,11 @@ fn open_llm_provider_form(
 ) {
     settings_window.llm_provider_form = Some(LlmProviderForm::new(kind, window, cx));
     settings_window.push_dynamic_sub_page(
-        format!("Add {}-Compatible Provider", kind.label()),
-        "Agent Configuration",
+        t!(
+            "settings_ui.llm_providers_page.add_compatible_provider",
+            provider = kind.label()
+        ),
+        t!("settings_ui.llm_providers_page.agent_configuration"),
         Some("llm_providers"),
         true,
         render_llm_provider_form_page,
@@ -656,28 +696,28 @@ fn render_llm_provider_form_page(
                 .overflow_y_scroll()
                 .child(Label::new(match form.kind {
                     CompatibleProviderKind::OpenAi => {
-                        "This provider will use an OpenAI-compatible API."
+                        t!("settings_ui.llm_providers_page.openai_compatible_note")
                     }
                     CompatibleProviderKind::Anthropic => {
-                        "This provider will use an Anthropic Messages-compatible API."
+                        t!("settings_ui.llm_providers_page.anthropic_compatible_note")
                     }
                 }))
                 .child(Divider::horizontal().flex_shrink_0())
                 .child(render_form_field(
-                    "Provider Name",
-                    "A unique name used to identify this provider.",
+                    t!("settings_ui.llm_providers_page.provider_name_title"),
+                    t!("settings_ui.llm_providers_page.provider_name_description"),
                     &form.provider_name,
                     cx,
                 ))
                 .child(render_form_field(
-                    "API URL",
-                    "The base URL for the compatible API.",
+                    t!("settings_ui.llm_providers_page.api_url_title"),
+                    t!("settings_ui.llm_providers_page.api_url_description"),
                     &form.api_url,
                     cx,
                 ))
                 .child(render_form_field(
-                    "API Key",
-                    "Stored in the system keychain, not in settings.json.",
+                    t!("settings_ui.llm_providers_page.api_key_title"),
+                    t!("settings_ui.llm_providers_page.api_key_description"),
                     &form.api_key,
                     cx,
                 ))
@@ -699,8 +739,8 @@ fn render_llm_provider_form_page(
 }
 
 fn render_form_field(
-    title: &'static str,
-    description: &'static str,
+    title: impl Into<SharedString>,
+    description: impl Into<SharedString>,
     editor: &Entity<Editor>,
     cx: &mut Context<SettingsWindow>,
 ) -> AnyElement {
@@ -754,9 +794,12 @@ fn render_models_section(
         .child(
             h_flex()
                 .justify_between()
-                .child(Label::new("Models"))
+                .child(Label::new(t!("settings_ui.llm_providers_page.models")))
                 .child(
-                    Button::new("add-model", "Add Model")
+                    Button::new(
+                        "add-model",
+                        t!("settings_ui.llm_providers_page.add_model"),
+                    )
                         .start_icon(
                             Icon::new(IconName::Plus)
                                 .size(IconSize::XSmall)
@@ -794,35 +837,38 @@ fn render_model(
         .border_color(cx.theme().colors().border.opacity(0.6))
         .bg(cx.theme().colors().element_active.opacity(0.15))
         .child(render_form_field(
-            "Model Name",
-            "The model's name in the provider's API.",
+            t!("settings_ui.llm_providers_page.model_name_title"),
+            t!("settings_ui.llm_providers_page.model_name_description"),
             &model.name,
             cx,
         ))
         .when(matches!(kind, CompatibleProviderKind::OpenAi), |this| {
             this.child(render_form_field(
-                "Max Completion Tokens",
-                "Maximum completion tokens for OpenAI-compatible requests.",
+                t!("settings_ui.llm_providers_page.max_completion_tokens_title"),
+                t!("settings_ui.llm_providers_page.max_completion_tokens_description"),
                 &model.max_completion_tokens,
                 cx,
             ))
         })
         .child(render_form_field(
-            "Max Output Tokens",
-            "The maximum number of tokens the model can output.",
+            t!("settings_ui.llm_providers_page.max_output_tokens_title"),
+            t!("settings_ui.llm_providers_page.max_output_tokens_description"),
             &model.max_output_tokens,
             cx,
         ))
         .child(render_form_field(
-            "Max Tokens",
-            "The model context window size.",
+            t!("settings_ui.llm_providers_page.max_tokens_title"),
+            t!("settings_ui.llm_providers_page.max_tokens_description"),
             &model.max_tokens,
             cx,
         ))
         .child(render_model_capabilities(kind, model, index, window, cx))
         .when(model_count > 1, |this| {
             this.child(
-                Button::new(("remove-model", index), "Remove Model")
+                Button::new(
+                    ("remove-model", index),
+                    t!("settings_ui.llm_providers_page.remove_model"),
+                )
                     .start_icon(
                         Icon::new(IconName::Trash)
                             .size(IconSize::XSmall)
@@ -856,7 +902,7 @@ fn render_model_capabilities(
         .child(render_capability_checkbox(
             "supports-tools",
             index,
-            "Supports tools",
+            t!("settings_ui.llm_providers_page.supports_tools"),
             model.supports_tools,
             |model, state| model.supports_tools = state,
             cx,
@@ -864,7 +910,7 @@ fn render_model_capabilities(
         .child(render_capability_checkbox(
             "supports-images",
             index,
-            "Supports images",
+            t!("settings_ui.llm_providers_page.supports_images"),
             model.supports_images,
             |model, state| model.supports_images = state,
             cx,
@@ -873,7 +919,7 @@ fn render_model_capabilities(
             this.child(render_capability_checkbox(
                 "supports-parallel-tool-calls",
                 index,
-                "Supports parallel_tool_calls",
+                t!("settings_ui.llm_providers_page.supports_parallel_tool_calls"),
                 model.supports_parallel_tool_calls,
                 |model, state| model.supports_parallel_tool_calls = state,
                 cx,
@@ -881,7 +927,7 @@ fn render_model_capabilities(
             .child(render_capability_checkbox(
                 "supports-prompt-cache-key",
                 index,
-                "Supports prompt_cache_key",
+                t!("settings_ui.llm_providers_page.supports_prompt_cache_key"),
                 model.supports_prompt_cache_key,
                 |model, state| model.supports_prompt_cache_key = state,
                 cx,
@@ -889,7 +935,7 @@ fn render_model_capabilities(
             .child(render_capability_checkbox(
                 "supports-chat-completions",
                 index,
-                "Supports /chat/completions",
+                t!("settings_ui.llm_providers_page.supports_chat_completions"),
                 model.supports_chat_completions,
                 |model, state| model.supports_chat_completions = state,
                 cx,
@@ -898,7 +944,7 @@ fn render_model_capabilities(
                 this.child(render_capability_checkbox(
                     "max-tokens-parameter",
                     index,
-                    "Uses max_tokens for output limit",
+                    t!("settings_ui.llm_providers_page.uses_max_tokens_parameter"),
                     model.max_tokens_parameter,
                     |model, state| model.max_tokens_parameter = state,
                     cx,
@@ -907,7 +953,7 @@ fn render_model_capabilities(
             .child(render_capability_checkbox(
                 "supports-thinking",
                 index,
-                "Supports thinking",
+                t!("settings_ui.llm_providers_page.supports_thinking"),
                 model.supports_thinking,
                 |model, state| model.supports_thinking = state,
                 cx,
@@ -923,7 +969,7 @@ fn render_model_capabilities(
                     this.child(render_capability_checkbox(
                         "interleaved-reasoning",
                         index,
-                        "Preserves thinking in chat history",
+                        t!("settings_ui.llm_providers_page.preserves_thinking"),
                         model.interleaved_reasoning,
                         |model, state| model.interleaved_reasoning = state,
                         cx,
@@ -936,7 +982,7 @@ fn render_model_capabilities(
 fn render_capability_checkbox(
     id: &'static str,
     index: usize,
-    label: &'static str,
+    label: impl Into<SharedString>,
     state: ToggleState,
     update: fn(&mut ModelInput, ToggleState),
     cx: &mut Context<SettingsWindow>,
@@ -986,7 +1032,7 @@ fn render_reasoning_effort_selector(
 
     v_flex()
         .gap_1()
-        .child(Label::new("Default reasoning effort").size(LabelSize::Small))
+        .child(Label::new(t!("settings_ui.llm_providers_page.default_reasoning_effort")).size(LabelSize::Small))
         .child(
             DropdownMenu::new(
                 ElementId::Name(format!("reasoning-effort-selector-{index}").into()),
@@ -996,7 +1042,7 @@ fn render_reasoning_effort_selector(
             .style(DropdownStyle::Outlined)
             .trigger_size(ButtonSize::Compact)
             .full_width(true)
-            .aria_label("Default reasoning effort"),
+            .aria_label(t!("settings_ui.llm_providers_page.default_reasoning_effort")),
         )
 }
 
@@ -1018,7 +1064,11 @@ fn render_form_actions(cx: &mut Context<SettingsWindow>) -> impl IntoElement {
         .gap_1()
         .justify_end()
         .child(
-            Button::new("llm-provider-form-cancel", "Cancel").on_click(cx.listener(
+            Button::new(
+                "llm-provider-form-cancel",
+                t!("settings_ui.llm_providers_page.cancel"),
+            )
+            .on_click(cx.listener(
                 |this, _, window, cx| {
                     this.llm_provider_form = None;
                     this.pop_sub_page(window, cx);
@@ -1026,7 +1076,10 @@ fn render_form_actions(cx: &mut Context<SettingsWindow>) -> impl IntoElement {
             )),
         )
         .child(
-            Button::new("llm-provider-form-save", "Save Provider")
+            Button::new(
+                "llm-provider-form-save",
+                t!("settings_ui.llm_providers_page.save_provider"),
+            )
                 .style(ButtonStyle::Filled)
                 .on_click(cx.listener(|this, _, window, cx| {
                     save_llm_provider_form(this, window, cx);
@@ -1192,7 +1245,7 @@ fn validate_llm_provider_form(
 ) -> Result<(String, String, String, ParsedModels), SharedString> {
     let provider_name = values.provider_name.clone();
     if provider_name.is_empty() {
-        return Err("Provider Name cannot be empty".into());
+        return Err(t!("settings_ui.llm_providers_page.error_provider_name_empty").into());
     }
 
     if LanguageModelRegistry::read_global(cx)
@@ -1203,17 +1256,17 @@ fn validate_llm_provider_form(
                 || provider.name().0.as_ref() == provider_name.as_str()
         })
     {
-        return Err("Provider Name is already taken by another provider".into());
+        return Err(t!("settings_ui.llm_providers_page.error_provider_name_taken").into());
     }
 
     let api_url = values.api_url.clone();
     if api_url.is_empty() {
-        return Err("API URL cannot be empty".into());
+        return Err(t!("settings_ui.llm_providers_page.error_api_url_empty").into());
     }
 
     let api_key = values.api_key.clone();
     if api_key.is_empty() {
-        return Err("API Key cannot be empty".into());
+        return Err(t!("settings_ui.llm_providers_page.error_api_key_empty").into());
     }
 
     let models = match values.kind {
@@ -1243,7 +1296,7 @@ fn validate_llm_provider_form(
             .all(|model| model_names.insert(model.name.clone())),
     };
     if !model_names_are_unique {
-        return Err("Model Names must be unique".into());
+        return Err(t!("settings_ui.llm_providers_page.error_model_names_unique").into());
     }
 
     Ok((provider_name, api_url, api_key, models))
@@ -1251,7 +1304,7 @@ fn validate_llm_provider_form(
 
 fn parse_model_name(model: &ModelValues) -> Result<String, SharedString> {
     if model.name.is_empty() {
-        return Err("Model Name cannot be empty".into());
+        return Err(t!("settings_ui.llm_providers_page.error_model_name_empty").into());
     }
     Ok(model.name.clone())
 }
@@ -1264,13 +1317,16 @@ fn parse_open_ai_model(
         display_name: None,
         max_completion_tokens: Some(parse_u64_field(
             &model.max_completion_tokens,
-            "Max Completion Tokens",
+            &t!("settings_ui.llm_providers_page.max_completion_tokens_title"),
         )?),
         max_output_tokens: Some(parse_u64_field(
             &model.max_output_tokens,
-            "Max Output Tokens",
+            &t!("settings_ui.llm_providers_page.max_output_tokens_title"),
         )?),
-        max_tokens: parse_u64_field(&model.max_tokens, "Max Tokens")?,
+        max_tokens: parse_u64_field(
+            &model.max_tokens,
+            &t!("settings_ui.llm_providers_page.max_tokens_title"),
+        )?,
         reasoning_effort: model.supports_thinking.then_some(model.reasoning_effort),
         capabilities: OpenAiCompatibleModelCapabilities {
             tools: model.supports_tools,
@@ -1292,11 +1348,14 @@ fn parse_anthropic_model(
     Ok(AnthropicCompatibleAvailableModel {
         name: parse_model_name(model)?,
         display_name: None,
-        max_tokens: parse_u64_field(&model.max_tokens, "Max Tokens")?,
+        max_tokens: parse_u64_field(
+            &model.max_tokens,
+            &t!("settings_ui.llm_providers_page.max_tokens_title"),
+        )?,
         tool_override: None,
         max_output_tokens: Some(parse_u64_field(
             &model.max_output_tokens,
-            "Max Output Tokens",
+            &t!("settings_ui.llm_providers_page.max_output_tokens_title"),
         )?),
         default_temperature: None,
         extra_beta_headers: Vec::new(),
@@ -1310,7 +1369,7 @@ fn parse_anthropic_model(
 }
 
 fn parse_u64_field(value: &str, name: &str) -> Result<u64, SharedString> {
-    value
-        .parse::<u64>()
-        .map_err(|_| format!("{name} must be a number").into())
+    value.parse::<u64>().map_err(|_| {
+        t!("settings_ui.llm_providers_page.error_field_must_be_number", name = name).into()
+    })
 }

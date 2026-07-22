@@ -2,6 +2,7 @@ use gpui::{Action, ClickEvent, FocusHandle, prelude::*};
 use language_model::DisabledReason;
 use ui::{Chip, ElevationIndex, KeyBinding, ListItem, ListItemSpacing, Tooltip, prelude::*};
 use zed_actions::agent::ToggleModelSelector;
+use zed_i18n::t;
 
 use crate::CycleFavoriteModels;
 
@@ -164,14 +165,16 @@ impl RenderOnce for ModelSelectorListItem {
                             .when(is_disabled, |this| this.color(Color::Disabled))
                             .truncate(),
                     )
-                    .when(self.is_latest, |parent| parent.child(Chip::new("Latest")))
+                    .when(self.is_latest, |parent| {
+                        parent.child(Chip::new(t!("agent_ui.model_selector.latest")))
+                    })
                     .when_some(self.cost_info, |this, cost_info| {
                         let tooltip_text = if cost_info.ends_with('×') {
-                            format!("Cost Multiplier: {}", cost_info)
+                            t!("agent_ui.model_selector.cost_multiplier", cost = cost_info)
                         } else if cost_info.contains('$') {
-                            format!("Cost per Million Tokens: {}", cost_info)
+                            t!("agent_ui.model_selector.cost_per_million_tokens", cost = cost_info)
                         } else {
-                            format!("Cost: {}", cost_info)
+                            t!("agent_ui.model_selector.cost", cost = cost_info)
                         };
 
                         this.child(Chip::new(cost_info).tooltip(Tooltip::text(tooltip_text)))
@@ -192,9 +195,17 @@ impl RenderOnce for ModelSelectorListItem {
                 this.end_slot_on_hover(div().pr_1p5().when_some(self.on_toggle_favorite, {
                     |this, handle_click| {
                         let (icon, color, tooltip) = if is_favorite {
-                            (IconName::StarFilled, Color::Accent, "Unfavorite Model")
+                            (
+                                IconName::StarFilled,
+                                Color::Accent,
+                                t!("agent_ui.model_selector.unfavorite_model"),
+                            )
                         } else {
-                            (IconName::Star, Color::Default, "Favorite Model")
+                            (
+                                IconName::Star,
+                                Color::Default,
+                                t!("agent_ui.model_selector.favorite_model"),
+                            )
                         };
                         this.child(
                             IconButton::new(("toggle-favorite", self.index), icon)
@@ -238,7 +249,7 @@ impl RenderOnce for ModelSelectorFooter {
             .border_t_1()
             .border_color(cx.theme().colors().border_variant)
             .child(
-                Button::new("configure", "Configure")
+                Button::new("configure", t!("agent_ui.model_selector.configure"))
                     .full_width()
                     .style(ButtonStyle::Outlined)
                     .key_binding(
@@ -278,7 +289,7 @@ impl RenderOnce for ModelSelectorTooltip {
                 h_flex()
                     .gap_2()
                     .justify_between()
-                    .child(Label::new("Change Model"))
+                    .child(Label::new(t!("agent_ui.model_selector.change_model")))
                     .child(KeyBinding::for_action(&ToggleModelSelector, cx)),
             )
             .when(self.show_cycle_row, |this| {
@@ -289,7 +300,7 @@ impl RenderOnce for ModelSelectorTooltip {
                         .border_t_1()
                         .border_color(cx.theme().colors().border_variant)
                         .justify_between()
-                        .child(Label::new("Cycle Favorite Models"))
+                        .child(Label::new(t!("agent_ui.model_selector.cycle_favorite_models")))
                         .child(KeyBinding::for_action(&CycleFavoriteModels, cx)),
                 )
             })

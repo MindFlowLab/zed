@@ -6,6 +6,7 @@ use ui::{
     v_flex,
 };
 use workspace::ModalView;
+use zed_i18n::t;
 
 use super::{OpenListener, RawOpenRequest};
 
@@ -69,7 +70,7 @@ impl OpenUrlModal {
                 cx.emit(DismissEvent);
             }
             Err(e) => {
-                self.last_error = Some(format!("Invalid URL: {}", e).into());
+                self.last_error = Some(t!("zed.open_url.invalid_url", error = e).into());
                 cx.notify();
             }
         }
@@ -106,7 +107,7 @@ impl Render for OpenUrlModal {
                     })
                     .when(self.last_error.is_none(), |this| {
                         this.child(
-                            Label::new("Paste a URL to open.")
+                            Label::new(t!("zed.open_url.hint"))
                                 .color(Color::Muted)
                                 .size(LabelSize::Small),
                         )

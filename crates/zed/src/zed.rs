@@ -41,9 +41,9 @@ use git_ui::unstaged_diff::UnstagedDiffToolbar;
 use gpui::{
     Action, App, AppContext as _, AsyncWindowContext, ClipboardItem, Context, DismissEvent,
     Element, Entity, FocusHandle, Focusable, Image, ImageFormat, KeyBinding, ParentElement,
-    PathPromptOptions, PromptLevel, ReadGlobal, SharedString, Size, Task, TaskExt, TitlebarOptions,
-    UpdateGlobal, WeakEntity, Window, WindowBounds, WindowHandle, WindowKind, WindowOptions,
-    actions, image_cache, img, point, px, retain_all,
+    PathPromptOptions, PromptButton, PromptLevel, ReadGlobal, SharedString, Size, Task, TaskExt,
+    TitlebarOptions, UpdateGlobal, WeakEntity, Window, WindowBounds, WindowHandle, WindowKind,
+    WindowOptions, actions, image_cache, img, point, px, retain_all,
 };
 use image_viewer::ImageInfo;
 use language::Capability;
@@ -70,7 +70,7 @@ use search::project_search::ProjectSearchBar;
 use settings::{
     BaseKeymap, DEFAULT_KEYMAP_PATH, DefaultOpenBehavior, InvalidSettingsError, KeybindSource,
     KeymapFile, KeymapFileLoadResult, MigrationStatus, SPECIFIC_OVERRIDES_KEYMAP_PATH, Settings,
-    SettingsFile, SettingsStore, VIM_KEYMAP_PATH, initial_local_debug_tasks_content,
+    SettingsFile, SettingsStore, UiLanguage, VIM_KEYMAP_PATH, initial_local_debug_tasks_content,
     initial_project_settings_content, initial_tasks_content, update_settings_file,
 };
 use sidebar::Sidebar;
@@ -107,6 +107,7 @@ use zed_actions::{
     About, GetMerch, OpenAccountSettings, OpenBrowser, OpenDocs, OpenProjectTasks,
     OpenServerSettings, OpenSettingsFile, OpenStatusPage, OpenZedUrl, Quit,
 };
+use zed_i18n::t;
 
 const DOCS_URL: &str = "https://zed.dev/docs/";
 const STATUS_URL: &str = "https://status.zed.dev";
@@ -662,19 +663,14 @@ pub fn initialize_workspace(app_state: Arc<AppState>, cx: &mut App) {
 #[allow(unused)]
 fn initialize_file_watcher(window: &mut Window, cx: &mut Context<Workspace>) {
     if let Err(e) = fs::fs_watcher::global(|_| {}) {
-        let message = format!(
-            db::indoc! {r#"
-            inotify_init returned {}
-
-            This may be due to system-wide limits on inotify instances. For troubleshooting see: https://zed.dev/docs/linux
-            "#},
-            e
-        );
+        let message = t!("zed.startup.inotify_message", error = e.to_string());
         let prompt = window.prompt(
             PromptLevel::Critical,
-            "Could not start inotify",
+            &t!("zed.startup.inotify_title"),
             Some(&message),
-            &["Troubleshoot and Quit"],
+            &[PromptButton::new(t!(
+                "zed.startup.troubleshoot_and_quit"
+            ))],
             cx,
         );
         cx.spawn(async move |_, cx| {
@@ -693,19 +689,14 @@ fn initialize_file_watcher(window: &mut Window, cx: &mut Context<Workspace>) {
 #[allow(unused)]
 fn initialize_file_watcher(window: &mut Window, cx: &mut Context<Workspace>) {
     if let Err(e) = fs::fs_watcher::global(|_| {}) {
-        let message = format!(
-            db::indoc! {r#"
-            ReadDirectoryChangesW initialization failed: {}
-
-            This may occur on network filesystems and WSL paths. For troubleshooting see: https://zed.dev/docs/windows
-            "#},
-            e
-        );
+        let message = t!("zed.startup.rdcw_message", error = e.to_string());
         let prompt = window.prompt(
             PromptLevel::Critical,
-            "Could not start ReadDirectoryChangesW",
+            &t!("zed.startup.rdcw_title"),
             Some(&message),
-            &["Troubleshoot and Quit"],
+            &[PromptButton::new(t!(
+                "zed.startup.troubleshoot_and_quit"
+            ))],
             cx,
         );
         cx.spawn(async move |_, cx| {
@@ -739,23 +730,20 @@ fn show_software_emulation_warning_if_needed(
                 "https://zed.dev/docs/linux#zed-fails-to-open-windows",
             )
         };
-        let message = format!(
-            db::indoc! {r#"
-            Zed uses {} for rendering and requires a compatible GPU.
-
-            Currently you are using a software emulated GPU ({}) which
-            will result in awful performance.
-
-            For troubleshooting see: {}
-            Set ZED_ALLOW_EMULATED_GPU=1 env var to permanently override.
-            "#},
-            graphics_api, specs.device_name, docs_url
+        let message = t!(
+            "zed.startup.gpu_message",
+            graphics_api = graphics_api,
+            device_name = specs.device_name,
+            docs_url = docs_url
         );
         let prompt = window.prompt(
             PromptLevel::Critical,
-            "Unsupported GPU",
+            &t!("zed.startup.gpu_title"),
             Some(&message),
-            &["Skip", "Troubleshoot and Quit"],
+            &[
+                PromptButton::new(t!("zed.startup.gpu_skip")),
+                PromptButton::new(t!("zed.startup.troubleshoot_and_quit")),
+            ],
             cx,
         );
         cx.spawn(async move |_, cx| {
@@ -1009,9 +997,10 @@ fn register_actions(
                 }
                 Err(e) => {
                     workspace.show_error(
-                        format!(
-                            "Opening this URL in a browser failed because the URL is invalid: {}\n\nError was: {e}",
-                            action.url
+                        t!(
+                            "zed.browser.invalid_url",
+                            url = action.url,
+                            error = e
                         ),
                         cx,
                     );
@@ -1208,9 +1197,9 @@ fn register_actions(
                     workspace.show_toast(
                         Toast::new(
                             NotificationId::unique::<RegisterZedScheme>(),
-                            format!(
-                                "zed:// links will now open in {}.",
-                                ReleaseChannel::global(cx).display_name()
+                            t!(
+                                "zed.toast.zed_scheme_registered",
+                                app_name = ReleaseChannel::global(cx).display_name()
                             ),
                         ),
                         cx,
@@ -1219,7 +1208,7 @@ fn register_actions(
                 Ok(())
             })
             .detach_and_prompt_err(
-                "Error registering zed:// scheme",
+                &t!("zed.toast.register_zed_scheme_error"),
                 window,
                 cx,
                 |_, _, _| None,
@@ -1567,14 +1556,14 @@ fn open_about_window(cx: &mut App) {
                             .child(Headline::new(self.message.clone()))
                             .when_some(self.commit.clone(), |this, commit| {
                                 this.child(
-                                    Label::new("Commit")
+                                    Label::new(t!("zed.about.commit_label"))
                                         .color(Color::Muted)
                                         .size(LabelSize::XSmall),
                                 )
                                 .child(Label::new(commit).size(LabelSize::Small))
                             })
                             .child(
-                                Label::new("Version")
+                                Label::new(t!("zed.about.version_label"))
                                     .color(Color::Muted)
                                     .size(LabelSize::XSmall),
                             )
@@ -1592,7 +1581,7 @@ fn open_about_window(cx: &mut App) {
                                         window.remove_window();
                                     }))
                                     .child(
-                                        Button::new("ok", "OK")
+                                        Button::new("ok", t!("zed.common.ok"))
                                             .full_width()
                                             .style(ButtonStyle::OutlinedGhost)
                                             .toggle_state(ok_is_focused)
@@ -1612,7 +1601,7 @@ fn open_about_window(cx: &mut App) {
                                         },
                                     ))
                                     .child(
-                                        Button::new("copy", "Copy")
+                                        Button::new("copy", t!("zed.about.copy_button"))
                                             .full_width()
                                             .style(ButtonStyle::Tinted(TintColor::Accent))
                                             .toggle_state(copy_is_focused)
@@ -1659,7 +1648,7 @@ fn open_about_window(cx: &mut App) {
     cx.open_window(
         WindowOptions {
             titlebar: Some(TitlebarOptions {
-                title: Some("About Zed".into()),
+                title: Some(t!("zed.about.window_title").into()),
                 appears_transparent: true,
                 traffic_light_position: Some(point(px(12.), px(12.))),
             }),
@@ -1717,9 +1706,12 @@ fn quit(_: &Quit, cx: &mut App) {
                 .update(cx, |_, window, cx| {
                     window.prompt(
                         PromptLevel::Info,
-                        "Are you sure you want to quit?",
+                        &t!("zed.quit.message"),
                         None,
-                        &["Quit", "Cancel"],
+                        &[
+                            PromptButton::new(t!("zed.quit.quit")),
+                            PromptButton::cancel(t!("zed.common.cancel")),
+                        ],
                         cx,
                     )
                 })
@@ -1866,10 +1858,10 @@ fn open_log_file(workspace: &mut Workspace, window: &mut Window, cx: &mut Contex
                             |cx| {
                                 cx.new(|cx| {
                                     MessageNotification::new(
-                                        format!(
-                                            "Unable to access/open log file at path \
-                                                    {}: {e:#}",
-                                            paths::log_file().display()
+                                        t!(
+                                            "zed.notification.log_file_open_failed",
+                                            path = paths::log_file().display().to_string(),
+                                            error = format!("{e:#}")
                                         ),
                                         cx,
                                     )
@@ -1896,16 +1888,18 @@ fn open_log_file(workspace: &mut Workspace, window: &mut Window, cx: &mut Contex
                 buffer.set_text(log, cx);
             });
 
-            let buffer = cx.new(|cx| MultiBuffer::singleton(buffer, cx).with_title("Log".into()));
+            let buffer = cx.new(|cx| {
+                MultiBuffer::singleton(buffer, cx).with_title(t!("zed.open_log.title").into())
+            });
 
             let editor = cx
                 .new_window_entity(|window, cx| {
                     let mut editor = Editor::for_multibuffer(buffer, Some(project), window, cx);
                     editor.set_read_only(true);
-                    editor.set_breadcrumb_header(format!(
-                        "Last {} lines in {}",
-                        MAX_LINES,
-                        paths::log_file().display()
+                    editor.set_breadcrumb_header(t!(
+                        "zed.open_log.breadcrumb_header",
+                        count = MAX_LINES,
+                        path = paths::log_file().display().to_string()
                     ));
                     let last_multi_buffer_offset = editor.buffer().read(cx).len(cx);
                     editor.change_selections(Default::default(), window, cx, |s| {
@@ -1949,16 +1943,19 @@ fn notify_settings_errors(result: settings::SettingsParseResult, is_user: bool, 
             } else {
                 show_app_notification(id, cx, move |cx| {
                     cx.new(|cx| {
-                        MessageNotification::new(format!("Invalid user settings file\n{error}"), cx)
-                            .primary_message("Open Settings File")
-                            .primary_icon(IconName::Settings)
-                            .primary_on_click(|window, cx| {
-                                window.dispatch_action(
-                                    zed_actions::OpenSettingsFile.boxed_clone(),
-                                    cx,
-                                );
-                                cx.emit(DismissEvent);
-                            })
+                        MessageNotification::new(
+                            t!("zed.notification.invalid_user_settings", error = format!("{error}")),
+                            cx,
+                        )
+                        .primary_message(t!("zed.notification.open_settings_file"))
+                        .primary_icon(IconName::Settings)
+                        .primary_on_click(|window, cx| {
+                            window.dispatch_action(
+                                zed_actions::OpenSettingsFile.boxed_clone(),
+                                cx,
+                            );
+                            cx.emit(DismissEvent);
+                        })
                     })
                 });
                 true
@@ -1980,13 +1977,10 @@ fn notify_settings_errors(result: settings::SettingsParseResult, is_user: bool, 
                 show_app_notification(id, cx, move |cx| {
                     cx.new(|cx| {
                         MessageNotification::new(
-                            format!(
-                                "Failed to migrate settings\n\
-                                {err}"
-                            ),
+                            t!("zed.notification.migrate_settings_failed", error = format!("{err}")),
                             cx,
                         )
-                        .primary_message("Open Settings File")
+                        .primary_message(t!("zed.notification.open_settings_file"))
                         .primary_icon(IconName::Settings)
                         .primary_on_click(|window, cx| {
                             window.dispatch_action(zed_actions::OpenSettingsFile.boxed_clone(), cx);
@@ -2052,7 +2046,11 @@ pub fn watch_user_agents_md(fs: Arc<dyn fs::Fs>, cx: &mut App) {
         UserAgentsMdState::Error(message) => {
             let path = paths::agents_file().display().to_string();
             log::error!("Failed to load user AGENTS.md from {path}: {message}");
-            let body = format!("Failed to load {path}\n{message}");
+            let body = t!(
+                "zed.notification.agents_md_load_failed",
+                path = path,
+                message = message
+            );
             let notification_id = notification_id.clone();
             show_app_notification(notification_id, cx, move |cx| {
                 let body = body.clone();
@@ -2081,6 +2079,31 @@ pub fn watch_settings_files(fs: Arc<dyn fs::Fs>, cx: &mut App) {
             }
         });
     });
+}
+
+/// 应用设置中的界面语言,并监听后续变更。
+/// Applies the configured UI language and observes subsequent changes.
+///
+/// 切换时立即 `set_locale` 并全局重绘所有窗口,运行时渲染的 UI 马上切换;
+/// 应用菜单等启动期构建的静态结构需重启后完全生效,设置项描述中已注明。
+/// On switch, immediately calls `set_locale` and schedules a full redraw of
+/// all windows so runtime-rendered UI picks up the new language at once.
+/// Structures built at startup (the app menus) only update after a restart;
+/// the settings item's description tells users about this.
+pub fn handle_ui_language_changes(cx: &mut App) {
+    let mut old_ui_language = *UiLanguage::get_global(cx);
+    zed_i18n::set_locale(old_ui_language.locale_str());
+
+    cx.observe_global::<SettingsStore>(move |cx| {
+        let new_ui_language = *UiLanguage::get_global(cx);
+        if new_ui_language == old_ui_language {
+            return;
+        }
+        old_ui_language = new_ui_language;
+        zed_i18n::set_locale(new_ui_language.locale_str());
+        cx.refresh_windows();
+    })
+    .detach();
 }
 
 pub fn handle_keymap_file_changes(
@@ -2207,11 +2230,11 @@ fn show_keymap_file_json_error(
     cx: &mut App,
 ) {
     let message: SharedString =
-        format!("JSON parse error in keymap file. Bindings not reloaded.\n\n{error}").into();
+        t!("zed.notification.keymap_json_error", error = format!("{error}")).into();
     show_app_notification(notification_id, cx, move |cx| {
         cx.new(|cx| {
             MessageNotification::new(message.clone(), cx)
-                .primary_message("Open Keymap File")
+                .primary_message(t!("zed.notification.open_keymap_file"))
                 .primary_icon(IconName::Settings)
                 .primary_on_click(|window, cx| {
                     window.dispatch_action(zed_actions::OpenKeymapFile.boxed_clone(), cx);
@@ -2229,7 +2252,7 @@ fn show_keymap_file_load_error(
     show_markdown_app_notification(
         notification_id,
         error_message,
-        "Open Keymap File".into(),
+        t!("zed.notification.open_keymap_file").into(),
         |window, cx| {
             window.dispatch_action(zed_actions::OpenKeymapFile.boxed_clone(), cx);
             cx.emit(DismissEvent);
@@ -2285,7 +2308,7 @@ fn reload_keymaps(cx: &mut App, mut user_key_bindings: Vec<KeyBinding>) {
     // On Windows, this is set in the `update_jump_list` method of the `HistoryManager`.
     #[cfg(not(target_os = "windows"))]
     cx.set_dock_menu(vec![gpui::MenuItem::action(
-        "New Window",
+        t!("zed.dock_menu.new_window"),
         workspace::NewWindow,
     )]);
     // todo: nicer api here?
@@ -2563,7 +2586,7 @@ fn open_local_file(
         struct NoOpenFolders;
 
         workspace.show_notification(NotificationId::unique::<NoOpenFolders>(), cx, |cx| {
-            cx.new(|cx| MessageNotification::new("This project has no folders open.", cx))
+            cx.new(|cx| MessageNotification::new(t!("zed.notification.no_open_folders"), cx))
         });
         None
     }

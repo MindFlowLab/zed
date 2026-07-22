@@ -60,6 +60,7 @@ use workspace::{
     },
 };
 use zed_actions::{agent::AddSelectionToThread, assistant::InlineAssist};
+use zed_i18n::t;
 
 struct ImeState {
     marked_text: String,
@@ -528,39 +529,45 @@ impl TerminalView {
         let context_menu = ContextMenu::build(window, cx, |menu, _, _| {
             menu.context(self.focus_handle.clone())
                 .when(self.shows_workspace_actions(), |menu| {
-                    menu.action("New Terminal", Box::new(NewTerminal::default()))
+                    menu.action(t!("terminal_view.context_menu.new_terminal"), Box::new(NewTerminal::default()))
                         .action(
-                            "New Center Terminal",
+                            t!("terminal_view.context_menu.new_center_terminal"),
                             Box::new(NewCenterTerminal::default()),
                         )
                         .separator()
                 })
-                .action("Copy", Box::new(Copy))
+                .action(t!("terminal_view.context_menu.copy"), Box::new(Copy))
                 .when(
                     !matches!(self.mode, TerminalMode::Embedded { .. }),
                     |menu| {
-                        menu.action("Paste", Box::new(Paste))
-                            .action("Paste Text", Box::new(PasteText))
+                        menu.action(t!("terminal_view.context_menu.paste"), Box::new(Paste))
+                            .action(t!("terminal_view.context_menu.paste_text"), Box::new(PasteText))
                     },
                 )
-                .action("Select All", Box::new(SelectAll))
+                .action(t!("terminal_view.context_menu.select_all"), Box::new(SelectAll))
                 .when(
                     !matches!(self.mode, TerminalMode::Embedded { .. }),
-                    |menu| menu.action("Clear", Box::new(Clear)),
+                    |menu| menu.action(t!("terminal_view.context_menu.clear"), Box::new(Clear)),
                 )
                 .when(
                     assistant_enabled && !matches!(self.mode, TerminalMode::Embedded { .. }),
                     |menu| {
                         menu.separator()
-                            .action("Inline Assist", Box::new(InlineAssist::default()))
+                            .action(
+                                t!("terminal_view.context_menu.inline_assist"),
+                                Box::new(InlineAssist::default()),
+                            )
                             .when(has_selection && self.shows_workspace_actions(), |menu| {
-                                menu.action("Add to Agent Thread", Box::new(AddSelectionToThread))
+                                menu.action(
+                                    t!("terminal_view.context_menu.add_to_agent_thread"),
+                                    Box::new(AddSelectionToThread),
+                                )
                             })
                     },
                 )
                 .when(self.shows_workspace_actions(), |menu| {
                     menu.separator().action(
-                        "Close Terminal Tab",
+                        t!("terminal_view.context_menu.close_terminal_tab"),
                         Box::new(CloseActiveItem {
                             save_intent: None,
                             close_pinned: true,
@@ -1091,7 +1098,9 @@ impl TerminalView {
                 .size(ButtonSize::Compact)
                 .icon_color(Color::Default)
                 .shape(ui::IconButtonShape::Square)
-                .tooltip(move |_window, cx| Tooltip::for_action("Rerun task", &RerunTask, cx))
+                .tooltip(move |_window, cx| {
+                    Tooltip::for_action(t!("terminal_view.rerun_task"), &RerunTask, cx)
+                })
                 .on_click(move |_, window, cx| {
                     window.dispatch_action(Box::new(terminal_rerun_override(&task_id)), cx);
                 }),
@@ -1446,7 +1455,7 @@ impl Item for TerminalView {
                     .child(Label::new(title.clone()))
                     .child(h_flex().flex_grow_1().child(Divider::horizontal()))
                     .child(
-                        Label::new(format!("Process ID (PID): {}", pid))
+                        Label::new(t!("terminal_view.tab.process_id", pid = pid))
                             .color(Color::Muted)
                             .size(LabelSize::Small),
                     )
@@ -1725,7 +1734,7 @@ impl Item for TerminalView {
     ) -> Vec<(SharedString, Box<dyn gpui::Action>)> {
         let terminal = self.terminal.read(cx);
         if terminal.task().is_none() {
-            vec![("Rename".into(), Box::new(RenameTerminal))]
+            vec![(t!("terminal_view.tab.rename").into(), Box::new(RenameTerminal))]
         } else {
             Vec::new()
         }

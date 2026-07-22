@@ -20,9 +20,9 @@ use futures::{StreamExt, stream::FuturesUnordered};
 use gpui::{
     Action, Anchor, AnyElement, App, AsyncWindowContext, ClickEvent, ClipboardItem, Context, Div,
     DragMoveEvent, Entity, EntityId, EventEmitter, ExternalPaths, FocusHandle, FocusOutEvent,
-    Focusable, KeyContext, MouseButton, NavigationDirection, Pixels, Point, PromptLevel, Render,
-    ScrollHandle, Subscription, Task, TaskExt, WeakEntity, WeakFocusHandle, Window, actions,
-    anchored, deferred, prelude::*,
+    Focusable, KeyContext, MouseButton, NavigationDirection, Pixels, Point, PromptButton,
+    PromptLevel, Render, ScrollHandle, Subscription, Task, TaskExt, WeakEntity, WeakFocusHandle,
+    Window, actions, anchored, deferred, prelude::*,
 };
 use itertools::Itertools;
 use language::{Capability, DiagnosticSeverity};
@@ -53,6 +53,7 @@ use util::{
     ResultExt, debug_panic, markdown::MarkdownInlineCode, maybe, paths::PathStyle,
     serde::default_true, truncate_and_remove_front,
 };
+use zed_i18n::t;
 
 /// A selected entry in e.g. project panel.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -1997,9 +1998,13 @@ impl Pane {
                     let detail = Self::file_names_for_prompt(&mut dirty_items.iter(), cx);
                     window.prompt(
                         PromptLevel::Warning,
-                        "Do you want to save changes to the following files?",
+                        &t!("workspace.pane.save_changes_multiple"),
                         Some(&detail),
-                        &["Save all", "Discard all", "Cancel"],
+                        &[
+                            PromptButton::new(t!("workspace.pane.save_all")),
+                            PromptButton::new(t!("workspace.pane.discard_all")),
+                            PromptButton::cancel(t!("workspace.pane.cancel")),
+                        ],
                         cx,
                     )
                 })?;
@@ -2039,9 +2044,14 @@ impl Pane {
                                 );
                                 window.prompt(
                                     PromptLevel::Warning,
-                                    &format!("Unable to save file: {}", &err),
+                                    &t!("workspace.pane.unable_to_save_file", error = err),
                                     Some(&detail),
-                                    &["Close Without Saving", "Cancel"],
+                                    &[
+                                        PromptButton::new(t!(
+                                            "workspace.pane.close_without_saving"
+                                        )),
+                                        PromptButton::cancel(t!("workspace.pane.cancel")),
+                                    ],
                                     cx,
                                 )
                             })?;
@@ -2240,9 +2250,9 @@ impl Pane {
         save_intent: SaveIntent,
         cx: &mut AsyncWindowContext,
     ) -> Result<bool> {
-        const CONFLICT_MESSAGE: &str = "This file has changed on disk since you started editing it. Do you want to overwrite it?";
+        let conflict_message = t!("workspace.pane.conflict_message");
 
-        const DELETED_MESSAGE: &str = "This file has been deleted on disk since you started editing it. Do you want to recreate it?";
+        let deleted_message = t!("workspace.pane.deleted_message");
 
         let path_style = project.read_with(cx, |project, cx| project.path_style(cx));
         if save_intent == SaveIntent::Skip {
@@ -2309,9 +2319,13 @@ impl Pane {
                     pane.activate_item(item_ix, true, true, window, cx);
                     window.prompt(
                         PromptLevel::Warning,
-                        DELETED_MESSAGE,
+                        &deleted_message,
                         None,
-                        &["Save", "Close", "Cancel"],
+                        &[
+                            PromptButton::new(t!("workspace.pane.save")),
+                            PromptButton::new(t!("workspace.pane.close")),
+                            PromptButton::cancel(t!("workspace.pane.cancel")),
+                        ],
                         cx,
                     )
                 })?;
@@ -2344,9 +2358,13 @@ impl Pane {
                     pane.activate_item(item_ix, true, true, window, cx);
                     window.prompt(
                         PromptLevel::Warning,
-                        CONFLICT_MESSAGE,
+                        &conflict_message,
                         None,
-                        &["Overwrite", "Discard Edits", "Cancel"],
+                        &[
+                            PromptButton::new(t!("workspace.pane.overwrite")),
+                            PromptButton::new(t!("workspace.pane.discard_edits")),
+                            PromptButton::cancel(t!("workspace.pane.cancel")),
+                        ],
                         cx,
                     )
                 })?;
@@ -2389,7 +2407,11 @@ impl Pane {
                                 PromptLevel::Warning,
                                 &prompt,
                                 None,
-                                &["Save", "Don't Save", "Cancel"],
+                                &[
+                                    PromptButton::new(t!("workspace.pane.save")),
+                                    PromptButton::new(t!("workspace.pane.dont_save")),
+                                    PromptButton::cancel(t!("workspace.pane.cancel")),
+                                ],
                                 cx,
                             ))
                         } else {
@@ -2875,13 +2897,18 @@ impl Pane {
                 .tooltip(move |_, cx| {
                     if toggleable {
                         Tooltip::with_meta(
-                            "Unlock File",
+                            t!("workspace.pane.unlock_file"),
                             None,
-                            "This will make this file editable",
+                            t!("workspace.pane.unlock_file_meta"),
                             cx,
                         )
                     } else {
-                        Tooltip::with_meta("Locked File", None, "This file is read-only", cx)
+                        Tooltip::with_meta(
+                            t!("workspace.pane.locked_file"),
+                            None,
+                            t!("workspace.pane.locked_file_meta"),
+                            cx,
+                        )
                     }
                 })
                 .on_click(cx.listener(move |pane, _, window, cx| {
@@ -3058,7 +3085,12 @@ impl Pane {
                             } else {
                                 this.tooltip(move |_, cx| {
                                     let text = text.clone();
-                                    Tooltip::with_meta(text, None, "Read-Only File", cx)
+                                    Tooltip::with_meta(
+                                        text,
+                                        None,
+                                        t!("workspace.pane.read_only_file"),
+                                        cx,
+                                    )
                                 })
                             }
                         }
@@ -3417,7 +3449,7 @@ impl Pane {
                 let focus_handle = focus_handle.clone();
                 move |window, cx| {
                     Tooltip::for_action_in(
-                        "Go Back",
+                        t!("workspace.pane.go_back"),
                         &GoBack,
                         &window.focused(cx).unwrap_or_else(|| focus_handle.clone()),
                         cx,
@@ -3440,7 +3472,7 @@ impl Pane {
                 let focus_handle = focus_handle.clone();
                 move |window, cx| {
                     Tooltip::for_action_in(
-                        "Go Forward",
+                        t!("workspace.pane.go_forward"),
                         &GoForward,
                         &window.focused(cx).unwrap_or_else(|| focus_handle.clone()),
                         cx,
@@ -4900,12 +4932,12 @@ fn dirty_message_for(buffer_path: Option<ProjectPath>, path_style: PathStyle) ->
     match path {
         Some(path) => {
             let path = truncate_and_remove_front(&path, 80);
-            format!(
-                "{} contains unsaved edits. Do you want to save it?",
-                MarkdownInlineCode(path.as_str())
+            t!(
+                "workspace.pane.dirty_message_with_path",
+                path = MarkdownInlineCode(path.as_str())
             )
         }
-        None => "This buffer contains unsaved edits. Do you want to save it?".to_string(),
+        None => t!("workspace.pane.dirty_message_no_path"),
     }
 }
 

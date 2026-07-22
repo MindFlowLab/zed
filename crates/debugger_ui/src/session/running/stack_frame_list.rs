@@ -22,6 +22,7 @@ use project::debugger::session::{Session, SessionEvent, StackFrame, ThreadStatus
 use project::{ProjectItem, ProjectPath};
 use ui::{Tooltip, WithScrollbar, prelude::*};
 use workspace::{Workspace, WorkspaceId};
+use zed_i18n::t;
 
 use super::RunningState;
 
@@ -658,7 +659,9 @@ impl StackFrameList {
                                     }
                                 }))
                                 .tooltip(move |window, cx| {
-                                    Tooltip::text("Restart Stack Frame")(window, cx)
+                                    Tooltip::text(t!("debugger_ui.stack_frames.restart_frame"))(
+                                        window, cx,
+                                    )
                                 }),
                             ),
                     )
@@ -722,15 +725,22 @@ impl StackFrameList {
                     .text_ui_sm(cx)
                     .truncate()
                     .text_color(cx.theme().colors().text_muted)
-                    .child(format!(
-                        "Show {} more{}",
-                        stack_frames.len(),
-                        first_stack_frame
+                    .child(
+                        match first_stack_frame
                             .source
                             .as_ref()
                             .and_then(|source| source.origin.as_ref())
-                            .map_or(String::new(), |origin| format!(": {}", origin))
-                    )),
+                        {
+                            Some(origin) => t!(
+                                "debugger_ui.stack_frames.show_more_with_origin",
+                                count = stack_frames.len(),
+                                origin = origin
+                            ),
+                            None => {
+                                t!("debugger_ui.stack_frames.show_more", count = stack_frames.len())
+                            }
+                        },
+                    ),
             )
             .into_any()
     }
@@ -906,8 +916,8 @@ impl StackFrameList {
 
     pub(crate) fn render_control_strip(&self) -> AnyElement {
         let tooltip_title = match self.list_filter {
-            StackFrameFilter::All => "Show stack frames from your project",
-            StackFrameFilter::OnlyUserFrames => "Show all stack frames",
+            StackFrameFilter::All => t!("debugger_ui.stack_frames.show_user_frames"),
+            StackFrameFilter::OnlyUserFrames => t!("debugger_ui.stack_frames.show_all_frames"),
         };
 
         h_flex()
@@ -917,7 +927,7 @@ impl StackFrameList {
                     IconName::Filter,
                 )
                 .tooltip(move |_window, cx| {
-                    Tooltip::for_action(tooltip_title, &ToggleUserFrames, cx)
+                    Tooltip::for_action(tooltip_title.clone(), &ToggleUserFrames, cx)
                 })
                 .toggle_state(self.list_filter == StackFrameFilter::OnlyUserFrames)
                 .icon_size(IconSize::Small)

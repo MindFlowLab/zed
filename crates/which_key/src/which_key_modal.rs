@@ -13,6 +13,7 @@ use ui::{
     text_for_keystrokes,
 };
 use workspace::{ModalView, Workspace};
+use zed_i18n::t;
 
 use crate::FILTERED_KEYSTROKES;
 
@@ -297,7 +298,10 @@ fn group_bindings(
             // This is a group - create a single entry with just the first keystroke
             let first_keystroke = vec![first_key];
             let count = group_bindings.len();
-            result.push((first_keystroke, format!("+{} keybinds", count).into()));
+            result.push((
+                first_keystroke,
+                t!("which_key.keybinds_count", count = count).into(),
+            ));
         } else {
             // Not a group or empty keystrokes - add all bindings as-is
             result.append(&mut group_bindings);

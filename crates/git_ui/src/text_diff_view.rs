@@ -30,6 +30,7 @@ use workspace::{
     item::{ItemEvent, SaveOptions, TabContentParams},
     searchable::SearchableItemHandle,
 };
+use zed_i18n::t;
 
 pub struct TextDiffView {
     diff_editor: Entity<SplittableEditor>,
@@ -226,8 +227,18 @@ impl TextDiffView {
 
         Self {
             diff_editor,
-            title: format!("Clipboard ↔ {selection_location_title}").into(),
-            path: Some(format!("Clipboard ↔ {selection_location_path}").into()),
+            title: t!(
+                "git_ui.text_diff_view.clipboard_title",
+                location = selection_location_title
+            )
+            .into(),
+            path: Some(
+                t!(
+                    "git_ui.text_diff_view.clipboard_title",
+                    location = selection_location_path
+                )
+                .into(),
+            ),
             buffer_changes_tx,
             _recalculate_diff_task: cx.spawn(async move |_, cx| {
                 while buffer_changes_rx.recv().await.is_ok() {

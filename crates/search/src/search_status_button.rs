@@ -3,6 +3,7 @@ use gpui::{App, FocusHandle};
 use settings::Settings as _;
 use ui::{ButtonCommon, Clickable, Context, Render, Tooltip, Window, prelude::*};
 use workspace::{HideStatusItem, ItemHandle, StatusItemView};
+use zed_i18n::t;
 
 pub const SEARCH_ICON: IconName = IconName::MagnifyingGlass;
 
@@ -27,22 +28,23 @@ impl Render for SearchButton {
         }
 
         let focus_handle = self.pane_item_focus_handle.clone();
+        let tooltip_text = t!("search.status_button.project_search");
         button.child(
             IconButton::new("project-search-indicator", SEARCH_ICON)
                 .icon_size(IconSize::Small)
                 .tab_index(0isize)
-                .aria_label("Project Search")
+                .aria_label(t!("search.status_button.project_search"))
                 .tooltip(move |_window, cx| {
                     if let Some(focus_handle) = &focus_handle {
                         Tooltip::for_action_in(
-                            "Project Search",
+                            tooltip_text.clone(),
                             &workspace::DeploySearch::default(),
                             focus_handle,
                             cx,
                         )
                     } else {
                         Tooltip::for_action(
-                            "Project Search",
+                            tooltip_text.clone(),
                             &workspace::DeploySearch::default(),
                             cx,
                         )

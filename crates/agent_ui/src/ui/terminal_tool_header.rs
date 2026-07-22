@@ -3,6 +3,7 @@ use std::time::Duration;
 use gpui::{AnyElement, ClickEvent, CursorStyle, Window};
 use ui::{CommonAnimationExt, Disclosure, Divider, DividerColor, Tooltip, prelude::*};
 use util::time::duration_alt_display;
+use zed_i18n::t;
 
 const ELAPSED_DISPLAY_THRESHOLD: Duration = Duration::from_secs(10);
 
@@ -185,10 +186,9 @@ impl RenderOnce for TerminalToolHeader {
                             .icon_color(Color::Error)
                             .tooltip(move |_window, cx| {
                                 Tooltip::with_meta(
-                                    "Stop This Command",
+                                    t!("agent_ui.terminal_tool_header.stop_this_command"),
                                     None,
-                                    "Also possible by placing your cursor inside the terminal \
-                                     and using regular terminal bindings.",
+                                    t!("agent_ui.terminal_tool_header.stop_this_command_meta"),
                                     cx,
                                 )
                             })
@@ -213,7 +213,10 @@ impl RenderOnce for TerminalToolHeader {
                         .icon_size(IconSize::Small)
                         .icon_color(Color::Error)
                         .when_some(exit_code, |this, code| {
-                            this.tooltip(Tooltip::text(format!("Exited with code {code}")))
+                            this.tooltip(Tooltip::text(t!(
+                                "agent_ui.terminal_tool_header.exited_with_code",
+                                code = code
+                            )))
                         }),
                 )
             })
@@ -230,7 +233,7 @@ impl RenderOnce for TerminalToolHeader {
                             Tooltip::with_meta(
                                 title.clone(),
                                 None,
-                                format!("{detail} Click to learn more about sandboxing."),
+                                t!("agent_ui.terminal_tool_header.sandbox_learn_more", detail = detail),
                                 cx,
                             )
                         })

@@ -139,6 +139,7 @@ use project::{ProjectPath, WorktreeId};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::{collections::VecDeque, sync::Arc};
 use ui::App;
+use zed_i18n::t;
 use workspace::{
     Workspace,
     notifications::{NotificationId, simple_message_notification::MessageNotification},
@@ -308,13 +309,11 @@ enum UndoMessage {
 }
 
 impl UndoMessage {
-    fn error_title(&self) -> &'static str {
+    fn error_title(&self) -> String {
         match self {
-            UndoMessage::Changed(_) => {
-                "this is a bug in the manage_undo_and_redo task please report"
-            }
-            UndoMessage::Undo => "Undo failed",
-            UndoMessage::Redo => "Redo failed",
+            UndoMessage::Changed(_) => t!("project_panel.undo.bug_report"),
+            UndoMessage::Undo => t!("project_panel.undo.undo_failed"),
+            UndoMessage::Redo => t!("project_panel.undo.redo_failed"),
         }
     }
 }

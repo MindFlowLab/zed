@@ -19,6 +19,7 @@ use workspace::{
 };
 
 use zed_actions::OpenRemote;
+use zed_i18n::t;
 
 use crate::{highlights_for_path, icon_for_remote_connection, open_remote_project};
 
@@ -140,7 +141,7 @@ impl PickerDelegate for SidebarRecentProjectsDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search projects…".into()
+        t!("recent_projects.search_projects_placeholder").into()
     }
 
     fn match_count(&self) -> usize {
@@ -268,7 +269,7 @@ impl PickerDelegate for SidebarRecentProjectsDelegate {
                             .await
                     })
                     .detach_and_prompt_err(
-                        "Failed to open project",
+                        &t!("recent_projects.failed_to_open_project"),
                         window,
                         cx,
                         |_, _, _| None,
@@ -283,9 +284,9 @@ impl PickerDelegate for SidebarRecentProjectsDelegate {
 
     fn no_matches_text(&self, _window: &mut Window, _cx: &mut App) -> Option<SharedString> {
         let text = if self.workspaces.is_empty() {
-            "Recently opened projects will show up here"
+            t!("recent_projects.empty_hint")
         } else {
-            "No matches"
+            t!("recent_projects.no_matches")
         };
         Some(text.into())
     }
@@ -366,13 +367,11 @@ impl PickerDelegate for SidebarRecentProjectsDelegate {
                         })
                         .child(highlighted_match.render(window, cx)),
                 )
-                .tooltip(move |_, cx| {
-                    Tooltip::with_meta(
-                        "Open Project in This Window",
-                        None,
-                        tooltip_path.clone(),
-                        cx,
-                    )
+                .tooltip({
+                    let title = t!("recent_projects.open_project_this_window");
+                    move |_, cx| {
+                        Tooltip::with_meta(title.clone(), None, tooltip_path.clone(), cx)
+                    }
                 })
                 .into_any_element(),
         )
@@ -399,7 +398,7 @@ impl PickerDelegate for SidebarRecentProjectsDelegate {
                                 .w_full()
                                 .gap_1()
                                 .justify_between()
-                                .child(Label::new("Open Local Folders"))
+                                .child(Label::new(t!("recent_projects.open_local_folders")))
                                 .child(KeyBinding::for_action_in(&open_action, &focus_handle, cx)),
                         )
                         .on_click(cx.listener(move |_, _, window, cx| {
@@ -414,7 +413,7 @@ impl PickerDelegate for SidebarRecentProjectsDelegate {
                                 .w_full()
                                 .gap_1()
                                 .justify_between()
-                                .child(Label::new("Open Remote Folder"))
+                                .child(Label::new(t!("recent_projects.open_remote_folder")))
                                 .child(KeyBinding::for_action(
                                     &OpenRemote {
                                         from_existing_connection: false,

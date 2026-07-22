@@ -11,6 +11,7 @@ use ui::{
     prelude::*,
 };
 use workspace::{ModalView, Workspace, pane};
+use zed_i18n::t;
 
 use crate::branch_picker::{
     self, BranchList, CycleBranchFilter, DeleteBranch, ForceDeleteBranch, ShowAllBranches,
@@ -29,8 +30,8 @@ pub enum GitPickerTab {
 impl Display for GitPickerTab {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let label = match self {
-            GitPickerTab::Branches => "Branches",
-            GitPickerTab::Stashes => "Stashes",
+            GitPickerTab::Branches => t!("git_ui.git_picker.branches"),
+            GitPickerTab::Stashes => t!("git_ui.git_picker.stashes"),
         };
         write!(f, "{}", label)
     }
@@ -209,7 +210,7 @@ impl GitPicker {
                     )
                     .tooltip(move |_, cx| {
                         Tooltip::for_action_in(
-                            "Toggle Branch Picker",
+                            t!("git_ui.git_picker.toggle_branch_picker"),
                             &ActivateBranchesTab,
                             &branches_focus_handle,
                             cx,
@@ -226,7 +227,7 @@ impl GitPicker {
                     )
                     .tooltip(move |_, cx| {
                         Tooltip::for_action_in(
-                            "Toggle Stash Picker",
+                            t!("git_ui.git_picker.toggle_stash_picker"),
                             &ActivateStashTab,
                             &stash_focus_handle,
                             cx,

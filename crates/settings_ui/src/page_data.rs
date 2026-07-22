@@ -8,6 +8,7 @@ use std::sync::{Arc, OnceLock};
 use strum::{EnumMessage, IntoDiscriminant as _, VariantArray};
 use theme::SystemAppearance;
 use ui::IntoElement;
+use zed_i18n::t;
 
 use crate::{
     ActionLink, DynamicItem, PROJECT, SettingField, SettingItem, SettingsFieldMetadata,
@@ -91,7 +92,7 @@ fn developer_page(cx: &App) -> SettingsPage {
     if cx.feature_flag_overrides_enabled() {
         items.push(SettingsPageItem::SectionHeader("Feature Flags"));
         items.push(SettingsPageItem::SubPageLink(SubPageLink {
-            title: "Feature Flags".into(),
+            title: t!("settings_ui.page_data.feature_flags_title").into(),
             r#type: Default::default(),
             description: None,
             search_aliases: &[],
@@ -139,6 +140,25 @@ fn general_page(cx: &App) -> SettingsPage {
     fn general_settings_section(_cx: &App) -> Vec<SettingsPageItem> {
         vec![
             SettingsPageItem::SectionHeader("General Settings"),
+            SettingsPageItem::SettingItem(SettingItem {
+                title: "Language",
+                description: "The display language of the interface. Most of the UI updates immediately; app menus apply after a restart.",
+                field: Box::new(SettingField {
+                    organization_override: None,
+                    json_path: Some("ui_language"),
+                    pick: |settings_content| settings_content.ui_language.as_ref(),
+                    write: |settings_content, value, _| {
+                        settings_content.ui_language = value;
+                    },
+                }),
+                // 下拉项为各语言原生名称(简体中文 / English),不做 titlecase
+                // Options are native language names; skip titlecasing them.
+                metadata: Some(Box::new(SettingsFieldMetadata {
+                    should_do_titlecase: Some(false),
+                    ..Default::default()
+                })),
+                files: USER,
+            }),
             SettingsPageItem::SettingItem(SettingItem {
                 title: "Accessible Mode",
                 description: "Optimize Zed's interface for assistive technology such as screen readers. When enabled, otherwise-collapsed controls stay expanded and keyboard-reachable.",
@@ -1497,9 +1517,9 @@ fn keymap_page() -> SettingsPage {
         [
             SettingsPageItem::SectionHeader("Keybindings"),
             SettingsPageItem::ActionLink(ActionLink {
-                title: "Edit Keybindings".into(),
-                description: Some("Customize keybindings in the keymap editor.".into()),
-                button_text: "Open Keymap".into(),
+                title: t!("settings_ui.page_data.edit_keybindings_title").into(),
+                description: Some(t!("settings_ui.page_data.edit_keybindings_description").into()),
+                button_text: t!("settings_ui.page_data.edit_keybindings_button").into(),
                 on_click: Arc::new(|settings_window, window, cx| {
                     let Some(original_window) = settings_window.original_window else {
                         return;
@@ -7985,9 +8005,9 @@ fn collaboration_page() -> SettingsPage {
     fn audio_settings() -> [SettingsPageItem; 3] {
         [
             SettingsPageItem::ActionLink(ActionLink {
-                title: "Test Audio".into(),
-                description: Some("Test your microphone and speaker setup".into()),
-                button_text: "Test Audio".into(),
+                title: t!("settings_ui.page_data.test_audio_title").into(),
+                description: Some(t!("settings_ui.page_data.test_audio_description").into()),
+                button_text: t!("settings_ui.page_data.test_audio_button").into(),
                 on_click: Arc::new(|_settings_window, window, cx| {
                     open_audio_test_window(window, cx);
                 }),
@@ -8083,10 +8103,10 @@ fn ai_page(cx: &App) -> SettingsPage {
                 files: USER,
             }),
             SettingsPageItem::SubPageLink(SubPageLink {
-                title: "LLM Providers".into(),
+                title: t!("settings_ui.page_data.llm_providers_title").into(),
                 r#type: Default::default(),
                 json_path: Some("llm_providers"),
-                description: Some("Configure natively-included model providers.".into()),
+                description: Some(t!("settings_ui.page_data.llm_providers_description").into()),
                 search_aliases: &[
                     "ai",
                     "amazon",
@@ -8118,11 +8138,11 @@ fn ai_page(cx: &App) -> SettingsPage {
                 render: render_llm_providers_page,
             }),
             SettingsPageItem::SubPageLink(SubPageLink {
-                title: "External Agents".into(),
+                title: t!("settings_ui.page_data.external_agents_title").into(),
                 r#type: Default::default(),
                 json_path: Some("agent_servers"),
                 description: Some(
-                    "View, add, and remove agents connected through the Agent Client Protocol."
+                    t!("settings_ui.page_data.external_agents_description")
                         .into(),
                 ),
                 search_aliases: &[
@@ -8146,11 +8166,11 @@ fn ai_page(cx: &App) -> SettingsPage {
                 render: render_external_agents_page,
             }),
             SettingsPageItem::SubPageLink(SubPageLink {
-                title: "MCP Servers".into(),
+                title: t!("settings_ui.page_data.mcp_servers_title").into(),
                 r#type: Default::default(),
                 json_path: Some("context_servers"),
                 description: Some(
-                    "View, add, configure, and remove Model Context Protocol servers.".into(),
+                    t!("settings_ui.page_data.mcp_servers_description").into(),
                 ),
                 search_aliases: &["context server", "mcp", "model context protocol"],
                 in_json: false,
@@ -8165,21 +8185,21 @@ fn ai_page(cx: &App) -> SettingsPage {
 
         items.extend([
             SettingsPageItem::SubPageLink(SubPageLink {
-                title: "Skills".into(),
+                title: t!("settings_ui.page_data.skills_title").into(),
                 r#type: Default::default(),
                 json_path: Some(zed_actions::AGENT_SKILLS_SETTINGS_PATH),
-                description: Some("View and manage agent skills installed globally or in project worktrees.".into()),
+                description: Some(t!("settings_ui.page_data.skills_description").into()),
                 search_aliases: &["agent skill", "agent skills", "custom instructions", "skill", "skills"],
                 in_json: false,
                 files: USER | PROJECT,
                 render: render_skills_setup_page,
             }),
             SettingsPageItem::SubPageLink(SubPageLink {
-                title: "Sandbox".into(),
+                title: t!("settings_ui.page_data.sandbox_title").into(),
                 r#type: Default::default(),
                 json_path: Some(zed_actions::AGENT_SANDBOX_SETTINGS_PATH),
                 description: Some(
-                    "Review and change the elevated terminal sandbox permissions that are always allowed without prompting."
+                    t!("settings_ui.page_data.sandbox_description")
                         .into(),
                 ),
                 search_aliases: &[
@@ -8196,10 +8216,10 @@ fn ai_page(cx: &App) -> SettingsPage {
                 render: render_sandbox_settings_page,
             }),
             SettingsPageItem::SubPageLink(SubPageLink {
-                title: "Tool Permissions".into(),
+                title: t!("settings_ui.page_data.tool_permissions_title").into(),
                 r#type: Default::default(),
                 json_path: Some("agent.tool_permissions"),
-                description: Some("Set up regex patterns to auto-allow, auto-deny, or always request confirmation, for specific tool inputs.".into()),
+                description: Some(t!("settings_ui.page_data.tool_permissions_description").into()),
                 search_aliases: &[],
                 in_json: true,
                 files: USER,
@@ -10476,10 +10496,10 @@ fn edit_prediction_language_settings_section() -> [SettingsPageItem; 5] {
     [
         SettingsPageItem::SectionHeader("Edit Predictions"),
         SettingsPageItem::SubPageLink(SubPageLink {
-            title: "Configure Providers".into(),
+            title: t!("settings_ui.page_data.configure_providers_title").into(),
             r#type: Default::default(),
             json_path: Some("edit_predictions.providers"),
-            description: Some("Set up different edit prediction providers in complement to Zed's built-in Zeta model.".into()),
+            description: Some(t!("settings_ui.page_data.configure_providers_description").into()),
             search_aliases: &[],
             in_json: false,
             files: USER,

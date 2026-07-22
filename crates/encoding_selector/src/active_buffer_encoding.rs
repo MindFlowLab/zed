@@ -12,6 +12,7 @@ use workspace::{
     EncodingDisplayOptions, HideStatusItem, StatusBarSettings, StatusItemView, Workspace,
     item::{ItemHandle, Settings},
 };
+use zed_i18n::t;
 
 pub struct ActiveBufferEncoding {
     active_encoding: Option<&'static Encoding>,
@@ -76,13 +77,13 @@ impl Render for ActiveBufferEncoding {
         }
 
         let (disabled, tooltip_text) = if self.is_dirty {
-            (true, "Save file to change encoding")
+            (true, t!("encoding_selector.save_to_change"))
         } else if self.is_shared {
-            (true, "Cannot change encoding during collaboration")
+            (true, t!("encoding_selector.cannot_change_collaboration"))
         } else if self.is_via_remote_server {
-            (true, "Cannot change encoding of remote server file")
+            (true, t!("encoding_selector.cannot_change_remote"))
         } else {
-            (false, "Reopen with Encoding")
+            (false, t!("encoding_selector.reopen_with_encoding"))
         };
 
         div().child(
@@ -101,9 +102,9 @@ impl Render for ActiveBufferEncoding {
                 }))
                 .tooltip(move |_window, cx| {
                     if disabled {
-                        Tooltip::text(tooltip_text)(_window, cx)
+                        Tooltip::text(tooltip_text.clone())(_window, cx)
                     } else {
-                        Tooltip::for_action(tooltip_text, &Toggle, cx)
+                        Tooltip::for_action(tooltip_text.clone(), &Toggle, cx)
                     }
                 }),
         )

@@ -5,6 +5,7 @@ use ui::{Tooltip, prelude::*};
 use workspace::{
     HideStatusItem, StatusBarSettings, StatusItemView, item::ItemHandle, item::Settings,
 };
+use zed_i18n::t;
 
 use crate::{LineEndingSelector, Toggle};
 
@@ -46,7 +47,9 @@ impl Render for LineEndingIndicator {
                             LineEndingSelector::toggle(editor, window, cx);
                         }
                     }))
-                    .tooltip(|_window, cx| Tooltip::for_action("Select Line Ending", &Toggle, cx)),
+                    .tooltip(|_window, cx| {
+                        Tooltip::for_action(t!("line_ending_selector.select_line_ending"), &Toggle, cx)
+                    }),
             )
         })
     }

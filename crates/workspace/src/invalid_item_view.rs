@@ -7,6 +7,7 @@ use ui::{
     Window, h_flex, v_flex,
 };
 use zed_actions::workspace::OpenWithSystem;
+use zed_i18n::t;
 
 use crate::Item;
 
@@ -90,7 +91,11 @@ impl Render for InvalidItemView {
                     v_flex()
                         .justify_center()
                         .gap_2()
-                        .child(h_flex().justify_center().child("Could not open file"))
+                        .child(
+                            h_flex()
+                                .justify_center()
+                                .child(t!("workspace.invalid_item.could_not_open_file")),
+                        )
                         .child(
                             h_flex()
                                 .justify_center()
@@ -99,7 +104,10 @@ impl Render for InvalidItemView {
                         .when(self.is_local, |contents| {
                             contents.child(
                                 h_flex().justify_center().child(
-                                    Button::new("open-with-system", "Open in Default App")
+                                    Button::new(
+                                        "open-with-system",
+                                        t!("workspace.invalid_item.open_in_default_app"),
+                                    )
                                         .on_click(move |_, _, cx| {
                                             cx.open_with_system(&abs_path);
                                         })

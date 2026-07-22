@@ -5,6 +5,7 @@ use system_specs::{CopySystemSpecsIntoClipboard, SystemSpecs};
 use util::ResultExt;
 use workspace::Workspace;
 use zed_actions::feedback::{EmailZed, FileBugReport, RequestFeature};
+use zed_i18n::t;
 
 actions!(
     zed,
@@ -60,11 +61,13 @@ pub fn init(cx: &mut App) {
                     })
                     .log_err();
 
+                    let message = t!("feedback.copy.copied_into_clipboard");
+                    let ok = t!("feedback.copy.ok");
                     cx.prompt(
                         PromptLevel::Info,
-                        "Copied into clipboard",
+                        &message,
                         Some(&specs),
-                        &["OK"],
+                        &[ok.as_str()],
                     )
                     .await
                 })
@@ -73,11 +76,13 @@ pub fn init(cx: &mut App) {
             .register_action(|_, _: &CopyInstalledExtensionsIntoClipboard, window, cx| {
                 let clipboard_text = format_installed_extensions_for_clipboard(cx);
                 cx.write_to_clipboard(ClipboardItem::new_string(clipboard_text.clone()));
+                let message = t!("feedback.copy.copied_into_clipboard");
+                let ok = t!("feedback.copy.ok");
                 drop(window.prompt(
                     PromptLevel::Info,
-                    "Copied into clipboard",
+                    &message,
                     Some(&clipboard_text),
-                    &["OK"],
+                    &[ok.as_str()],
                     cx,
                 ));
             })

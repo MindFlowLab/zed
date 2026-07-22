@@ -11,6 +11,7 @@ use multi_buffer::MultiBuffer;
 use ui::prelude::*;
 use workspace::item::Item;
 use workspace::{Pane, Workspace};
+use zed_i18n::t;
 
 use crate::{OpenFollowingPreview, OpenPreview, OpenPreviewToTheSide};
 
@@ -294,12 +295,12 @@ impl Render for SvgPreviewView {
                             .p_4()
                             .gap_2()
                             .child(Icon::new(IconName::Warning))
-                            .child("Failed to load SVG image")
+                            .child(t!("svg_preview.error.load_failed"))
                             .into_any_element()
                     }))
                 }
                 Some(Err(e)) => this.child(div().p_4().child(e).into_any_element()),
-                None => this.child(div().p_4().child("No SVG file selected")),
+                None => this.child(div().p_4().child(t!("svg_preview.empty_state.no_file"))),
             })
     }
 }

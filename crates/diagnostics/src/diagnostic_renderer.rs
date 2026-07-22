@@ -14,6 +14,7 @@ use text::Point;
 use theme_settings::ThemeSettings;
 use ui::{CopyButton, prelude::*};
 use util::maybe;
+use zed_i18n::t;
 
 use crate::toolbar_controls::DiagnosticsToolbarEditor;
 
@@ -261,7 +262,7 @@ impl DiagnosticBlock {
             )
             .child(
                 CopyButton::new(copy_button_id, self.copy_message.clone())
-                    .tooltip_label("Copy Diagnostic"),
+                    .tooltip_label(t!("diagnostics.renderer.copy_diagnostic")),
             )
             .into_any_element()
     }

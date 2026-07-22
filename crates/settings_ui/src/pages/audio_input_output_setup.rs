@@ -5,10 +5,9 @@ use settings::{AudioInputDeviceName, AudioOutputDeviceName, SettingsStore};
 use std::str::FromStr;
 use ui::{ContextMenu, DropdownMenu, DropdownStyle, FluentBuilder, IconPosition, IntoElement};
 use util::ResultExt;
+use zed_i18n::t;
 
 use crate::{SettingField, SettingsFieldMetadata, SettingsUiFile, update_settings_file};
-
-pub(crate) const SYSTEM_DEFAULT: &str = "System Default";
 
 pub(crate) fn get_current_device(
     current_id: Option<&DeviceId>,
@@ -46,7 +45,7 @@ where
         move |mut menu, _, _cx| {
             let is_system_default = current_device.is_none();
             menu = menu.toggleable_entry(
-                SYSTEM_DEFAULT,
+                t!("settings_ui.audio_input_output_setup.system_default"),
                 is_system_default,
                 IconPosition::Start,
                 None,
@@ -86,7 +85,7 @@ where
         dropdown_id,
         current_device
             .map(|info| info.desc.name().to_string())
-            .unwrap_or(SYSTEM_DEFAULT.to_string()),
+            .unwrap_or_else(|| t!("settings_ui.audio_input_output_setup.system_default")),
         menu,
     )
     .style(DropdownStyle::Outlined)

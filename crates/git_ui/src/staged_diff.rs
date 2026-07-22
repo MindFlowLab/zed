@@ -33,6 +33,7 @@ use workspace::{
     item::{Item, ItemEvent, ItemHandle, SaveOptions, TabContentParams},
     searchable::SearchableItemHandle,
 };
+use zed_i18n::t;
 
 pub(crate) struct StagedDiffDelegate;
 
@@ -110,9 +111,9 @@ impl DiffHunkDelegate for StagedDiffDelegate {
             .block_mouse_except_scroll()
             .shadow_md()
             .child(
-                Button::new(("unstage", row as u64), "Unstage")
+                Button::new(("unstage", row as u64), t!("git_ui.common.unstage"))
                     .alpha(if status.is_pending() { 0.66 } else { 1.0 })
-                    .tooltip(Tooltip::text("Unstage Hunk"))
+                    .tooltip(Tooltip::text(t!("git_ui.staged_diff.unstage_hunk")))
                     .on_click({
                         let editor = editor.clone();
                         move |_event, window, cx| {
@@ -226,7 +227,7 @@ impl StagedDiff {
             DiffMultibuffer::new(
                 branch_diff,
                 Capability::ReadOnly,
-                "No staged changes",
+                t!("git_ui.staged_diff.no_staged_changes"),
                 move |editor, cx| {
                     editor.set_diff_hunk_delegate(Some(Arc::new(StagedDiffDelegate)), cx);
                     editor.rhs_editor().update(cx, |rhs_editor, _cx| {
@@ -345,7 +346,7 @@ impl Item for StagedDiff {
     }
 
     fn tab_tooltip_text(&self, _: &App) -> Option<SharedString> {
-        Some("Staged Changes".into())
+        Some(t!("git_ui.staged_diff.staged_changes").into())
     }
 
     fn tab_content(&self, params: TabContentParams, _window: &Window, _cx: &App) -> AnyElement {
@@ -359,7 +360,7 @@ impl Item for StagedDiff {
     }
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        "Staged Changes".into()
+        t!("git_ui.staged_diff.staged_changes").into()
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {
@@ -659,7 +660,7 @@ impl Render for StagedDiffToolbar {
                             .icon_size(IconSize::Small)
                             .disabled(!button_states.prev_next)
                             .tooltip(Tooltip::for_action_title_in(
-                                "Go to Previous Hunk",
+                                t!("git_ui.common.go_to_previous_hunk"),
                                 &GoToPreviousHunk,
                                 &focus_handle,
                             ))
@@ -672,7 +673,7 @@ impl Render for StagedDiffToolbar {
                             .icon_size(IconSize::Small)
                             .disabled(!button_states.prev_next)
                             .tooltip(Tooltip::for_action_title_in(
-                                "Go to Next Hunk",
+                                t!("git_ui.common.go_to_next_hunk"),
                                 &GoToHunk,
                                 &focus_handle,
                             ))
@@ -686,9 +687,11 @@ impl Render for StagedDiffToolbar {
                 h_group_sm()
                     .when(button_states.selection, |this| {
                         this.child(
-                            Button::new("unstage", "Unstage")
+                            Button::new("unstage", t!("git_ui.common.unstage"))
                                 .disabled(!button_states.unstage)
-                                .tooltip(Tooltip::text("Unstage Selected Hunks"))
+                                .tooltip(Tooltip::text(t!(
+                                    "git_ui.staged_diff.unstage_selected_hunks"
+                                )))
                                 .on_click(cx.listener(|this, _, window, cx| {
                                     this.unstage_selected_staged_hunks(false, window, cx)
                                 })),
@@ -696,10 +699,10 @@ impl Render for StagedDiffToolbar {
                     })
                     .when(!button_states.selection, |this| {
                         this.child(
-                            Button::new("unstage", "Unstage")
+                            Button::new("unstage", t!("git_ui.common.unstage"))
                                 .disabled(!button_states.unstage)
                                 .tooltip(Tooltip::for_action_title_in(
-                                    "Unstage and Go to Next Hunk",
+                                    t!("git_ui.common.unstage_and_go_to_next_hunk"),
                                     &UnstageAndNext,
                                     &focus_handle,
                                 ))
@@ -711,11 +714,11 @@ impl Render for StagedDiffToolbar {
             )
             .child(Divider::vertical())
             .child(
-                Button::new("unstage-all", "Unstage All")
+                Button::new("unstage-all", t!("git_ui.common.unstage_all"))
                     .width(rems_from_px(80.))
                     .disabled(!button_states.unstage_all)
                     .tooltip(Tooltip::for_action_title_in(
-                        "Unstage All Changes",
+                        t!("git_ui.common.unstage_all_changes"),
                         &UnstageAll,
                         &focus_handle,
                     ))
@@ -723,9 +726,9 @@ impl Render for StagedDiffToolbar {
             )
             .child(Divider::vertical())
             .child(
-                Button::new("commit", "Commit")
+                Button::new("commit", t!("git_ui.common.commit"))
                     .tooltip(Tooltip::for_action_title_in(
-                        "Commit",
+                        t!("git_ui.common.commit"),
                         &Commit,
                         &focus_handle,
                     ))

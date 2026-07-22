@@ -21,6 +21,7 @@ use ui::{
     right_click_menu,
 };
 use util::ResultExt as _;
+use zed_i18n::t;
 
 pub(crate) const RESIZE_HANDLE_SIZE: Pixels = px(6.);
 
@@ -1247,8 +1248,13 @@ impl Render for PanelButtons {
                 let (action, tooltip) = if is_active_button {
                     let action = dock.toggle_action();
 
+                    let position_label = match dock.position {
+                        DockPosition::Left => t!("workspace.dock.position_left"),
+                        DockPosition::Right => t!("workspace.dock.position_right"),
+                        DockPosition::Bottom => t!("workspace.dock.position_bottom"),
+                    };
                     let tooltip: SharedString =
-                        format!("Close {} Dock", dock.position.label()).into();
+                        t!("workspace.dock.close_dock", position = position_label).into();
 
                     (action, tooltip)
                 } else {

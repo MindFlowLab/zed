@@ -13,6 +13,7 @@ use workspace::{
     CollaboratorId, FollowableItem, ViewId, Workspace,
     item::{self, Item},
 };
+use zed_i18n::t;
 
 pub struct DebugSession {
     remote_id: Option<workspace::ViewId>,
@@ -101,7 +102,7 @@ impl Focusable for DebugSession {
 impl Item for DebugSession {
     type Event = ();
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        "Debugger".into()
+        t!("debugger_ui.session.tab_title").into()
     }
 }
 

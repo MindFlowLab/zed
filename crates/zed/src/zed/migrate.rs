@@ -15,6 +15,7 @@ use theme_settings::ThemeSettings;
 use ui::prelude::*;
 use workspace::item::ItemHandle;
 use workspace::{ToolbarItemEvent, ToolbarItemLocation, ToolbarItemView, Workspace};
+use zed_i18n::t;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum MigrationType {
@@ -96,7 +97,7 @@ impl MigrationBanner {
     fn show(&mut self, cx: &mut Context<Self>) {
         let (file_type, backup_file_name) = match self.migration_type {
             Some(MigrationType::Keymap) => (
-                "keymap",
+                t!("zed.migrate.file_type_keymap"),
                 paths::keymap_backup_file()
                     .file_name()
                     .unwrap_or_default()
@@ -104,7 +105,7 @@ impl MigrationBanner {
                     .into_owned(),
             ),
             Some(MigrationType::Settings) => (
-                "settings",
+                t!("zed.migrate.file_type_settings"),
                 paths::settings_backup_file()
                     .file_name()
                     .unwrap_or_default()
@@ -114,10 +115,10 @@ impl MigrationBanner {
             None => return,
         };
 
-        let migration_text = format!(
-            "Your {} file uses deprecated settings which can be \
-            automatically updated. A backup will be saved to `{}`",
-            file_type, backup_file_name
+        let migration_text = t!(
+            "zed.migrate.banner_text",
+            file_type = file_type,
+            backup_file = backup_file_name
         );
 
         self.markdown = Some(cx.new(|cx| Markdown::new(migration_text.into(), None, None, cx)));
@@ -238,7 +239,7 @@ impl Render for MigrationBanner {
                     ),
             )
             .child(
-                Button::new("backup-and-migrate", "Backup and Update").on_click({
+                Button::new("backup-and-migrate", t!("zed.migrate.backup_and_update")).on_click({
                     let workspace = self.workspace.clone();
                     move |_, window, cx| {
                         let fs = <dyn Fs>::global(cx);

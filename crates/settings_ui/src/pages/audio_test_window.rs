@@ -20,6 +20,7 @@ use std::{
 use ui::{Button, ButtonStyle, Label, prelude::*};
 use util::ResultExt;
 use workspace::client_side_decorations;
+use zed_i18n::t;
 
 use super::audio_input_output_setup::render_audio_device_dropdown;
 use crate::{SettingsUiFile, update_settings_file};
@@ -133,9 +134,9 @@ impl Render for AudioTestWindow {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let is_testing = self._stop_playback.is_some();
         let button_text = if is_testing {
-            "Stop Testing"
+            t!("settings_ui.audio_test_window.stop_testing")
         } else {
-            "Start Testing"
+            t!("settings_ui.audio_test_window.start_testing")
         };
 
         let button_style = if is_testing {
@@ -219,13 +220,13 @@ impl Render for AudioTestWindow {
             .child(
                 v_flex()
                     .gap_1()
-                    .child(Label::new("Output Device"))
+                    .child(Label::new(t!("settings_ui.audio_test_window.output_device")))
                     .child(output_dropdown),
             )
             .child(
                 v_flex()
                     .gap_1()
-                    .child(Label::new("Input Device"))
+                    .child(Label::new(t!("settings_ui.audio_test_window.input_device")))
                     .child(input_dropdown),
             )
             .child(
@@ -286,7 +287,7 @@ pub fn open_audio_test_window(_window: &mut Window, cx: &mut App) {
     cx.open_window(
         WindowOptions {
             titlebar: Some(gpui::TitlebarOptions {
-                title: Some("Audio Test".into()),
+                title: Some(t!("settings_ui.audio_test_window.window_title").into()),
                 appears_transparent: true,
                 traffic_light_position: Some(gpui::point(px(12.0), px(12.0))),
             }),

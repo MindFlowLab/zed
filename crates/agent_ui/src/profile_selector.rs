@@ -21,6 +21,7 @@ use ui::{
     PopoverMenuHandle, TintColor, Tooltip, prelude::*,
 };
 use workspace::ToggleWorktreeSecurity;
+use zed_i18n::t;
 
 /// Trait for types that can provide and manage agent profiles
 pub trait ProfileProvider {
@@ -181,12 +182,17 @@ impl Render for ProfileSelector {
         }
 
         if !self.provider.profiles_supported(cx) {
-            return Button::new("tools-not-supported-button", "Tools Unsupported")
-                .disabled(true)
-                .label_size(LabelSize::Small)
-                .color(Color::Muted)
-                .tooltip(Tooltip::text("This model does not support tools."))
-                .into_any_element();
+            return Button::new(
+                "tools-not-supported-button",
+                t!("agent_ui.profile_selector.tools_unsupported"),
+            )
+            .disabled(true)
+            .label_size(LabelSize::Small)
+            .color(Color::Muted)
+            .tooltip(Tooltip::text(t!(
+                "agent_ui.profile_selector.tools_unsupported_tooltip"
+            )))
+            .into_any_element();
         }
 
         let picker = self.ensure_picker(window, cx);
@@ -197,7 +203,7 @@ impl Render for ProfileSelector {
 
         let selected_profile = profile
             .map(|profile| profile.name.clone())
-            .unwrap_or_else(|| "Unknown".into());
+            .unwrap_or_else(|| t!("agent_ui.profile_selector.unknown").into());
 
         let icon = if self.picker_handle.is_deployed() {
             IconName::ChevronUp
@@ -231,7 +237,7 @@ impl Render for ProfileSelector {
                     .gap_1()
                     .child(
                         container()
-                            .child(Label::new("Change Profile"))
+                            .child(Label::new(t!("agent_ui.profile_selector.change_profile")))
                             .child(KeyBinding::for_action(&ToggleProfileSelector, cx)),
                     )
                     .child(
@@ -239,7 +245,9 @@ impl Render for ProfileSelector {
                             .pt_1()
                             .border_t_1()
                             .border_color(cx.theme().colors().border_variant)
-                            .child(Label::new("Cycle Through Profiles"))
+                            .child(Label::new(t!(
+                                "agent_ui.profile_selector.cycle_through_profiles"
+                            )))
                             .child(KeyBinding::for_action(&CycleModeSelector, cx)),
                     )
                     .into_any()
@@ -402,7 +410,9 @@ impl ProfilePickerDelegate {
         for (idx, candidate) in candidates.iter().enumerate() {
             if !candidate.is_builtin && !inserted_custom_header {
                 if !entries.is_empty() {
-                    entries.push(ProfilePickerEntry::Header("Custom Profiles".into()));
+                    entries.push(ProfilePickerEntry::Header(
+                        t!("agent_ui.profile_selector.custom_profiles").into(),
+                    ));
                 }
                 inserted_custom_header = true;
             }
@@ -481,14 +491,14 @@ impl PickerDelegate for ProfilePickerDelegate {
     }
 
     fn placeholder_text(&self, _: &mut Window, _: &mut App) -> Arc<str> {
-        "Search profiles…".into()
+        t!("agent_ui.profile_selector.search_profiles").into()
     }
 
     fn no_matches_text(&self, _window: &mut Window, _cx: &mut App) -> Option<SharedString> {
         let text = if self.candidates.is_empty() {
-            "No profiles.".into()
+            t!("agent_ui.profile_selector.no_profiles").into()
         } else {
-            "No profiles match your search.".into()
+            t!("agent_ui.profile_selector.no_profiles_match").into()
         };
         Some(text)
     }
@@ -752,8 +762,10 @@ impl PickerDelegate for ProfilePickerDelegate {
                                                 .color(Color::Warning),
                                         )
                                         .child(
-                                            Label::new("Disabled in Restricted Mode")
-                                                .size(LabelSize::Small),
+                                            Label::new(t!(
+                                                "agent_ui.profile_selector.disabled_in_restricted_mode"
+                                            ))
+                                            .size(LabelSize::Small),
                                         ),
                                 )
                                 .children(forbidden_tools.iter().map(|tool| {
@@ -790,7 +802,7 @@ impl PickerDelegate for ProfilePickerDelegate {
                         .border_color(cx.theme().colors().border_variant)
                         .p_1p5()
                         .child(
-                            Button::new("configure", "Configure")
+                            Button::new("configure", t!("agent_ui.profile_selector.configure"))
                                 .full_width()
                                 .style(ButtonStyle::Outlined)
                                 .key_binding(
@@ -817,7 +829,10 @@ impl PickerDelegate for ProfilePickerDelegate {
                             .border_color(cx.theme().colors().border_variant)
                             .p_1p5()
                             .child(
-                                Button::new("restricted-mode", "Restricted Mode")
+                                Button::new(
+                                    "restricted-mode",
+                                    t!("agent_ui.profile_selector.restricted_mode"),
+                                )
                                     .full_width()
                                     .style(ButtonStyle::Tinted(TintColor::Warning))
                                     .color(Color::Warning)
@@ -826,9 +841,9 @@ impl PickerDelegate for ProfilePickerDelegate {
                                             .size(IconSize::Small)
                                             .color(Color::Warning),
                                     )
-                                    .tooltip(Tooltip::text(
-                                        "Some tools are disabled. Click to review trust settings.",
-                                    ))
+                                    .tooltip(Tooltip::text(t!(
+                                        "agent_ui.profile_selector.restricted_mode_tooltip"
+                                    )))
                                     .on_click(|_, window, cx| {
                                         window.dispatch_action(
                                             ToggleWorktreeSecurity.boxed_clone(),

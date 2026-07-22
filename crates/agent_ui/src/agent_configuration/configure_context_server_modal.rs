@@ -28,6 +28,7 @@ use ui::{
     CommonAnimationExt, KeyBinding, Modal, ModalFooter, ModalHeader, Section, Tooltip,
     WithScrollbar, prelude::*,
 };
+use zed_i18n::t;
 use util::ResultExt as _;
 use workspace::{ModalView, Workspace};
 
@@ -562,7 +563,7 @@ impl ConfigureContextServerModal {
                     secret_editor: cx.new(|cx| {
                         let mut editor = Editor::single_line(window, cx);
                         editor.set_placeholder_text(
-                            "Enter client secret (leave empty for public clients)",
+                            &t!("agent_ui.configure_context_server_modal.client_secret_placeholder"),
                             window,
                             cx,
                         );
@@ -747,7 +748,10 @@ impl ConfigureContextServerModal {
             .update(cx, {
                 |workspace, cx| {
                     let status_toast = StatusToast::new(
-                        format!("{} configured successfully.", id.0),
+                        t!(
+                            "agent_ui.configure_context_server_modal.configured_successfully",
+                            server = id.0
+                        ),
                         cx,
                         |this, _cx| {
                             this.icon(
@@ -755,7 +759,10 @@ impl ConfigureContextServerModal {
                                     .size(IconSize::Small)
                                     .color(Color::Muted),
                             )
-                            .action("Dismiss", |_, _| {})
+                            .action(
+                                t!("agent_ui.configure_context_server_modal.dismiss"),
+                                |_, _| {},
+                            )
                         },
                     );
 
@@ -794,15 +801,20 @@ impl EventEmitter<DismissEvent> for ConfigureContextServerModal {}
 impl ConfigureContextServerModal {
     fn render_modal_header(&self) -> ModalHeader {
         let text: SharedString = match &self.source {
-            ConfigurationSource::Existing { .. } => "Configure MCP Server".into(),
-            ConfigurationSource::Extension { id, .. } => format!("Configure {}", id.0).into(),
+            ConfigurationSource::Existing { .. } => {
+                t!("agent_ui.configure_context_server_modal.configure_mcp_server").into()
+            }
+            ConfigurationSource::Extension { id, .. } => t!(
+                "agent_ui.configure_context_server_modal.configure_named",
+                server = id.0
+            )
+            .into(),
         };
         ModalHeader::new().headline(text)
     }
 
     fn render_modal_description(&self, window: &mut Window, cx: &mut Context<Self>) -> AnyElement {
-        const MODAL_DESCRIPTION: &str =
-            "Check the server docs for required arguments and environment variables.";
+        let modal_description = t!("agent_ui.configure_context_server_modal.modal_description");
 
         if let ConfigurationSource::Extension {
             installation_instructions: Some(installation_instructions),
@@ -818,7 +830,7 @@ impl ConfigureContextServerModal {
                 ))
                 .into_any_element()
         } else {
-            Label::new(MODAL_DESCRIPTION)
+            Label::new(modal_description)
                 .color(Color::Muted)
                 .into_any_element()
         }
@@ -878,23 +890,26 @@ impl ConfigureContextServerModal {
                 } = &self.source
                 {
                     Some(
-                        Button::new("open-repository", "Open Repository")
-                            .end_icon(
-                                Icon::new(IconName::ArrowUpRight)
-                                    .size(IconSize::Small)
-                                    .color(Color::Muted),
-                            )
-                            .tooltip({
-                                let repository_url = repository_url.clone();
-                                move |_window, cx| {
-                                    Tooltip::with_meta(
-                                        "Open Repository",
-                                        None,
-                                        repository_url.clone(),
-                                        cx,
-                                    )
-                                }
-                            })
+                        Button::new(
+                            "open-repository",
+                            t!("agent_ui.configure_context_server_modal.open_repository"),
+                        )
+                        .end_icon(
+                            Icon::new(IconName::ArrowUpRight)
+                                .size(IconSize::Small)
+                                .color(Color::Muted),
+                        )
+                        .tooltip({
+                            let repository_url = repository_url.clone();
+                            move |_window, cx| {
+                                Tooltip::with_meta(
+                                    t!("agent_ui.configure_context_server_modal.open_repository"),
+                                    None,
+                                    repository_url.clone(),
+                                    cx,
+                                )
+                            }
+                        })
                             .on_click({
                                 let repository_url = repository_url.clone();
                                 move |_, _, cx| cx.open_url(&repository_url)
@@ -911,9 +926,9 @@ impl ConfigureContextServerModal {
                         Button::new(
                             "cancel",
                             if self.source.has_configuration_options() {
-                                "Cancel"
+                                t!("agent_ui.configure_context_server_modal.cancel")
                             } else {
-                                "Dismiss"
+                                t!("agent_ui.configure_context_server_modal.dismiss")
                             },
                         )
                         .key_binding(
@@ -925,7 +940,10 @@ impl ConfigureContextServerModal {
                         ),
                     )
                     .children(self.source.has_configuration_options().then(|| {
-                        Button::new("configure-server", "Configure Server")
+                        Button::new(
+                            "configure-server",
+                            t!("agent_ui.configure_context_server_modal.configure_server"),
+                        )
                             .disabled(is_busy)
                             .key_binding(
                                 KeyBinding::for_action_in(&menu::Confirm, &focus_handle, cx)
@@ -968,13 +986,18 @@ impl ConfigureContextServerModal {
                             .color(Color::Muted),
                     )
                     .child(
-                        Label::new("Authenticate to connect this server")
-                            .size(LabelSize::Small)
-                            .color(Color::Muted),
+                        Label::new(t!(
+                            "agent_ui.configure_context_server_modal.authenticate_to_connect"
+                        ))
+                        .size(LabelSize::Small)
+                        .color(Color::Muted),
                     ),
             )
             .child(
-                Button::new("authenticate-server", "Authenticate")
+                Button::new(
+                    "authenticate-server",
+                    t!("agent_ui.configure_context_server_modal.authenticate"),
+                )
                     .style(ButtonStyle::Outlined)
                     .label_size(LabelSize::Small)
                     .on_click({
@@ -1018,9 +1041,9 @@ impl ConfigureContextServerModal {
                             .color(Color::Muted),
                     )
                     .child(
-                        Label::new(
-                            "Enter your OAuth client secret, or leave empty for public clients",
-                        )
+                        Label::new(t!(
+                            "agent_ui.configure_context_server_modal.oauth_client_secret_description"
+                        ))
                         .size(LabelSize::Small)
                         .color(Color::Muted),
                     ),
@@ -1046,7 +1069,10 @@ impl ConfigureContextServerModal {
                         },
                     )))
                     .child(
-                        Button::new("submit-client-secret", "Submit")
+                        Button::new(
+                            "submit-client-secret",
+                            t!("agent_ui.configure_context_server_modal.submit"),
+                        )
                             .style(ButtonStyle::Outlined)
                             .label_size(LabelSize::Small)
                             .on_click({
@@ -1074,13 +1100,16 @@ impl ConfigureContextServerModal {
                             .with_rotate_animation(3),
                     )
                     .child(
-                        Label::new("Authenticating…")
+                        Label::new(t!("agent_ui.configure_context_server_modal.authenticating"))
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     ),
             )
             .child(
-                Button::new("cancel-authentication", "Cancel")
+                Button::new(
+                    "cancel-authentication",
+                    t!("agent_ui.configure_context_server_modal.cancel"),
+                )
                     .style(ButtonStyle::Outlined)
                     .label_size(LabelSize::Small)
                     .on_click({
@@ -1145,7 +1174,9 @@ impl Render for ConfigureContextServerModal {
                                         .child(match &self.state {
                                             State::Idle => div(),
                                             State::Waiting => {
-                                                self.render_loading("Connecting Server…")
+                                                self.render_loading(t!(
+                                                    "agent_ui.configure_context_server_modal.connecting_server"
+                                                ))
                                             }
                                             State::AuthRequired { server_id } => {
                                                 self.render_auth_required(&server_id.clone(), cx)

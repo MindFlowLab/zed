@@ -8,6 +8,7 @@ use std::sync::{Arc, Weak};
 use ui::{CollabNotification, prelude::*};
 use util::ResultExt;
 use workspace::AppState;
+use zed_i18n::t;
 
 pub fn init(app_state: &Arc<AppState>, cx: &mut App) {
     let app_state = Arc::downgrade(app_state);
@@ -123,20 +124,29 @@ impl Render for ProjectSharedNotification {
         let ui_font = theme_settings::setup_ui_font(window, cx);
         let no_worktree_root_names = self.worktree_root_names.is_empty();
 
-        let punctuation = if no_worktree_root_names { "" } else { ":" };
-        let main_label = format!(
-            "{} is sharing a project with you{}",
-            self.owner.username.clone(),
-            punctuation
-        );
+        // 有工作区根名列表时,消息末尾追加冒号以引出下方列表
+        // Append a colon when the worktree-root list follows the message.
+        let main_label = if no_worktree_root_names {
+            t!(
+                "collab_ui.project_shared.sharing_with_you",
+                username = self.owner.username.clone()
+            )
+        } else {
+            t!(
+                "collab_ui.project_shared.sharing_with_you_colon",
+                username = self.owner.username.clone()
+            )
+        };
 
         div().size_full().font(ui_font).child(
             CollabNotification::new(
                 self.owner.avatar_uri.clone(),
-                Button::new("open", "Open").on_click(cx.listener(move |this, _event, _, cx| {
-                    this.join(cx);
-                })),
-                Button::new("dismiss", "Dismiss").on_click(cx.listener(
+                Button::new("open", t!("collab_ui.project_shared.open")).on_click(cx.listener(
+                    move |this, _event, _, cx| {
+                        this.join(cx);
+                    },
+                )),
+                Button::new("dismiss", t!("collab_ui.project_shared.dismiss")).on_click(cx.listener(
                     move |this, _event, _, cx| {
                         this.dismiss(cx);
                     },

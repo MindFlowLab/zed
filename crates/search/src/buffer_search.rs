@@ -33,6 +33,7 @@ use project::{
 use settings::{SeedQuerySetting, Settings};
 use std::{any::TypeId, sync::Arc};
 use zed_actions::{outline::ToggleOutline, workspace::CopyPath, workspace::CopyRelativePath};
+use zed_i18n::t;
 
 use ui::{BASE_REM_SIZE_IN_PX, IconButtonShape, Tooltip, prelude::*, utils::SearchInputWidth};
 use util::{ResultExt, paths::PathMatcher};
@@ -119,17 +120,21 @@ impl Render for BufferSearchBar {
                 .map(|editor: Entity<Editor>| editor.read(cx).has_any_buffer_folded(cx))
                 .unwrap_or_default();
             let (icon, tooltip_label) = if is_collapsed {
-                (IconName::ChevronUpDown, "Expand All Files")
+                (IconName::ChevronUpDown, t!("search.buffer.expand_all_files"))
             } else {
-                (IconName::ChevronDownUp, "Collapse All Files")
+                (IconName::ChevronDownUp, t!("search.buffer.collapse_all_files"))
             };
 
             let collapse_expand_icon_button = |id| {
+                // tooltip 闭包需满足 Fn:捕获克隆值,调用时再克隆传入
+                // the tooltip closure must be Fn: capture a cloned value and
+                // clone again at call time
+                let tooltip_label = tooltip_label.clone();
                 IconButton::new(id, icon)
                     .icon_size(IconSize::Small)
                     .tooltip(move |_, cx| {
                         Tooltip::for_action_in(
-                            tooltip_label,
+                            tooltip_label.clone(),
                             &ToggleFoldAll,
                             &query_editor_focus,
                             cx,
@@ -177,12 +182,12 @@ impl Render for BufferSearchBar {
 
         self.query_editor.update(cx, |query_editor, cx| {
             if query_editor.placeholder_text(cx).is_none() {
-                query_editor.set_placeholder_text("Search…", window, cx);
+                query_editor.set_placeholder_text(&t!("search.buffer.search_placeholder"), window, cx);
             }
         });
 
         self.replacement_editor.update(cx, |editor, cx| {
-            editor.set_placeholder_text("Replace with…", window, cx);
+            editor.set_placeholder_text(&t!("search.buffer.replace_placeholder"), window, cx);
         });
 
         let mut color_override = None;
@@ -270,7 +275,7 @@ impl Render for BufferSearchBar {
                     "buffer-search-bar-toggle",
                     IconName::Replace,
                     self.replace_enabled.then_some(ActionButtonState::Toggled),
-                    "Toggle Replace",
+                    t!("search.action.toggle_replace"),
                     &ToggleReplace,
                     focus_handle.clone(),
                 ))
@@ -294,7 +299,7 @@ impl Render for BufferSearchBar {
                         let focus_handle = focus_handle.clone();
                         move |_window, cx| {
                             Tooltip::for_action_in(
-                                "Toggle Search Selection",
+                                t!("search.buffer.toggle_search_selection"),
                                 &ToggleSelection,
                                 &focus_handle,
                                 cx,
@@ -316,7 +321,7 @@ impl Render for BufferSearchBar {
                         self.active_match_index
                             .is_none()
                             .then_some(ActionButtonState::Disabled),
-                        "Select Previous Match",
+                        t!("search.action.select_previous_match"),
                         &SelectPreviousMatch,
                         query_focus.clone(),
                     ))
@@ -326,7 +331,7 @@ impl Render for BufferSearchBar {
                         self.active_match_index
                             .is_none()
                             .then_some(ActionButtonState::Disabled),
-                        "Select Next Match",
+                        t!("search.action.select_next_match"),
                         &SelectNextMatch,
                         query_focus.clone(),
                     ))
@@ -347,7 +352,7 @@ impl Render for BufferSearchBar {
                         "buffer-search-nav-button",
                         IconName::SelectAll,
                         Default::default(),
-                        "Select All Matches",
+                        t!("search.action.select_all_matches"),
                         &SelectAllMatches,
                         query_focus.clone(),
                     ))
@@ -359,7 +364,7 @@ impl Render for BufferSearchBar {
                     "buffer-search",
                     IconName::Close,
                     Default::default(),
-                    "Close Search Bar",
+                    t!("search.action.close_search_bar"),
                     &Dismiss,
                     focus_handle.clone(),
                 ))
@@ -393,7 +398,7 @@ impl Render for BufferSearchBar {
                     "buffer-search-replace-button",
                     IconName::ReplaceNext,
                     Default::default(),
-                    "Replace Next Match",
+                    t!("search.action.replace_next_match"),
                     &ReplaceNext,
                     focus_handle.clone(),
                 ))
@@ -401,7 +406,7 @@ impl Render for BufferSearchBar {
                     "buffer-search-replace-button",
                     IconName::ReplaceAll,
                     Default::default(),
-                    "Replace All Matches",
+                    t!("search.action.replace_all_matches"),
                     &ReplaceAll,
                     focus_handle,
                 ));
@@ -446,7 +451,7 @@ impl Render for BufferSearchBar {
                                 "buffer-search",
                                 IconName::Close,
                                 Default::default(),
-                                "Close Search Bar",
+                                t!("search.action.close_search_bar"),
                                 &Dismiss,
                                 focus_handle.clone(),
                             )),

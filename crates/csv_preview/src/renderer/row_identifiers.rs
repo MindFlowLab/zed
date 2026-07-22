@@ -3,6 +3,7 @@ use ui::{
     Clickable as _, Context, ElementId, IntoElement as _, ParentElement as _, SharedString,
     Styled as _, StyledTypography as _, Tooltip, div,
 };
+use zed_i18n::t;
 
 use crate::{
     CsvPreviewView,
@@ -108,8 +109,8 @@ impl CsvPreviewView {
     ) -> AnyElement {
         // First column: row identifier (clickable to toggle between Lines and Rows)
         let row_identifier_text = match self.settings.numbering_type {
-            RowIdentifiers::SrcLines => "Lines",
-            RowIdentifiers::RowNum => "Rows",
+            RowIdentifiers::SrcLines => t!("csv_preview.row_identifier.lines"),
+            RowIdentifiers::RowNum => t!("csv_preview.row_identifier.rows"),
         };
 
         let view = cx.entity();
@@ -122,9 +123,7 @@ impl CsvPreviewView {
                 )
                 .style(ButtonStyle::Subtle)
                 .size(ButtonSize::Compact)
-                .tooltip(Tooltip::text(
-                    "Toggle between: file line numbers or sequential row numbers",
-                ))
+                .tooltip(Tooltip::text(t!("csv_preview.row_identifier.toggle_tooltip")))
                 .on_click(move |_event, _window, cx| {
                     view.update(cx, |this, cx| {
                         this.settings.numbering_type = match this.settings.numbering_type {

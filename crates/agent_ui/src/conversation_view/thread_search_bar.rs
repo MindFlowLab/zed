@@ -23,6 +23,7 @@ use settings::Settings as _;
 use theme_settings::ThemeSettings;
 use ui::{IconButtonShape, Tooltip, prelude::*};
 use util::paths::PathMatcher;
+use zed_i18n::t;
 
 use crate::entry_view_state::EntryViewState;
 
@@ -169,7 +170,11 @@ impl ThreadSearchBar {
     ) -> Self {
         let query_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Search this thread…", window, cx);
+            editor.set_placeholder_text(
+                &t!("agent_ui.thread_search_bar.search_this_thread"),
+                window,
+                cx,
+            );
             editor
         });
         let editor_subscription = cx.subscribe_in(
@@ -778,7 +783,7 @@ impl Render for ThreadSearchBar {
                         "thread-search-prev",
                         IconName::ChevronLeft,
                         !has_matches,
-                        "Previous Match",
+                        t!("agent_ui.thread_search_bar.previous_match"),
                         &SelectPreviousThreadMatch,
                         focus_handle.clone(),
                     ))
@@ -786,7 +791,7 @@ impl Render for ThreadSearchBar {
                         "thread-search-next",
                         IconName::ChevronRight,
                         !has_matches,
-                        "Next Match",
+                        t!("agent_ui.thread_search_bar.next_match"),
                         &SelectNextThreadMatch,
                         focus_handle.clone(),
                     ))
@@ -801,7 +806,7 @@ impl Render for ThreadSearchBar {
                         "thread-search-dismiss",
                         IconName::Close,
                         false,
-                        "Close Search",
+                        t!("agent_ui.thread_search_bar.close_search"),
                         &DismissThreadSearch,
                         focus_handle,
                     )),
@@ -859,11 +864,12 @@ fn nav_button(
     id: &'static str,
     icon: IconName,
     disabled: bool,
-    tooltip: &'static str,
+    tooltip: impl Into<SharedString>,
     action: &'static dyn Action,
     focus_handle: FocusHandle,
 ) -> IconButton {
     let action_for_dispatch = action;
+    let tooltip: SharedString = tooltip.into();
     IconButton::new(id, icon)
         .shape(IconButtonShape::Square)
         .disabled(disabled)
@@ -876,7 +882,9 @@ fn nav_button(
                 window.dispatch_action(action_for_dispatch.boxed_clone(), cx);
             }
         })
-        .tooltip(move |_window, cx| Tooltip::for_action_in(tooltip, action, &focus_handle, cx))
+        .tooltip(move |_window, cx| {
+            Tooltip::for_action_in(tooltip.clone(), action, &focus_handle, cx)
+        })
 }
 
 fn collect_markdowns(

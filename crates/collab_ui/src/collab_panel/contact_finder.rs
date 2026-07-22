@@ -8,6 +8,7 @@ use std::sync::Arc;
 use ui::{Avatar, ListItem, ListItemSpacing, prelude::*};
 use util::{ResultExt as _, TryFutureExt};
 use workspace::ModalView;
+use zed_i18n::t;
 
 pub struct ContactFinder {
     picker: Entity<Picker<ContactFinderDelegate>>,
@@ -44,8 +45,8 @@ impl Render for ContactFinder {
                     .bg(cx.theme().colors().element_background)
                     // HACK: Prevent the background color from overflowing the parent container.
                     .rounded_t(px(8.))
-                    .child(Label::new("Contacts"))
-                    .child(h_flex().child(Label::new("Invite new contacts"))),
+                    .child(Label::new(t!("collab_ui.contact_finder.contacts")))
+                    .child(h_flex().child(Label::new(t!("collab_ui.contact_finder.invite_new_contacts")))),
             )
             .child(self.picker.clone())
     }
@@ -92,7 +93,7 @@ impl PickerDelegate for ContactFinderDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search collaborator by username...".into()
+        t!("collab_ui.contact_finder.placeholder").into()
     }
 
     fn update_matches(

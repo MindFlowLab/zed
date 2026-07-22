@@ -1,6 +1,7 @@
 use gpui::{Action, IntoElement, ParentElement, RenderOnce};
 use language_model::{IconOrSvg, LanguageModelRegistry, ZED_CLOUD_PROVIDER_ID};
 use ui::{Divider, List, ListBulletItem, prelude::*};
+use zed_i18n::t;
 
 pub struct ApiKeysWithProviders {
     configured_providers: Vec<(IconOrSvg, SharedString)>,
@@ -96,7 +97,7 @@ impl Render for ApiKeysWithProviders {
                                 div()
                                     .w_full()
                                     .child(
-                                        Label::new("Start now using API keys from your environment for the following providers:")
+                                        Label::new(t!("ai_onboarding.api_keys.start_now"))
                                             .color(Color::Muted)
                                     )
                             )
@@ -124,18 +125,18 @@ impl RenderOnce for ApiKeysWithoutProviders {
                 h_flex()
                     .gap_2()
                     .child(
-                        Label::new("API Keys")
+                        Label::new(t!("ai_onboarding.api_keys.title"))
                             .size(LabelSize::Small)
                             .color(Color::Muted)
                             .buffer_font(cx),
                     )
                     .child(Divider::horizontal()),
             )
-            .child(List::new().child(ListBulletItem::new(
-                "Add your own keys to use AI without signing in.",
-            )))
+            .child(List::new().child(ListBulletItem::new(t!(
+                "ai_onboarding.api_keys.add_own_keys"
+            ))))
             .child(
-                Button::new("configure-providers", "Configure Providers")
+                Button::new("configure-providers", t!("ai_onboarding.api_keys.configure_providers"))
                     .full_width()
                     .style(ButtonStyle::Outlined)
                     .on_click(move |_, window, cx| {

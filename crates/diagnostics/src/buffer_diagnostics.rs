@@ -33,6 +33,7 @@ use workspace::{
     ItemHandle, ItemNavHistory, Workspace,
     item::{Item, ItemEvent, TabContentParams},
 };
+use zed_i18n::t;
 
 actions!(
     diagnostics,
@@ -862,15 +863,15 @@ impl Item for BufferDiagnosticsEditor {
     }
 
     fn tab_content_text(&self, _detail: usize, _app: &App) -> SharedString {
-        "Buffer Diagnostics".into()
+        t!("diagnostics.buffer_diagnostics.tab_title").into()
     }
 
     fn tab_tooltip_text(&self, cx: &App) -> Option<SharedString> {
         let path_style = self.project.read(cx).path_style(cx);
         Some(
-            format!(
-                "Buffer Diagnostics - {}",
-                self.project_path.path.display(path_style)
+            t!(
+                "diagnostics.buffer_diagnostics.tab_tooltip",
+                path = self.project_path.path.display(path_style)
             )
             .into(),
         )
@@ -897,8 +898,8 @@ impl Render for BufferDiagnosticsEditor {
 
         let child = if error_count + warning_count == 0 {
             let label = match warning_count {
-                0 => "No problems in",
-                _ => "No errors in",
+                0 => t!("diagnostics.buffer_diagnostics.no_problems_in"),
+                _ => t!("diagnostics.buffer_diagnostics.no_errors_in"),
             };
 
             v_flex()
@@ -916,7 +917,7 @@ impl Render for BufferDiagnosticsEditor {
                         .child(
                             Button::new("open-file", filename)
                                 .style(ButtonStyle::Transparent)
-                                .tooltip(Tooltip::text("Open File"))
+                                .tooltip(Tooltip::text(t!("diagnostics.common.open_file")))
                                 .on_click(cx.listener(|buffer_diagnostics, _, window, cx| {
                                     if let Some(workspace) = Workspace::for_window(window, cx) {
                                         workspace.update(cx, |workspace, cx| {
@@ -936,8 +937,10 @@ impl Render for BufferDiagnosticsEditor {
                 )
                 .when(self.summary.warning_count > 0, |div| {
                     let label = match self.summary.warning_count {
-                        1 => "Show 1 warning".into(),
-                        warning_count => format!("Show {} warnings", warning_count),
+                        1 => t!("diagnostics.common.show_one_warning"),
+                        warning_count => {
+                            t!("diagnostics.common.show_warnings", count = warning_count)
+                        }
                     };
 
                     div.child(

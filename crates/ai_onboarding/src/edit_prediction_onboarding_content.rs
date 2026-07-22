@@ -4,6 +4,7 @@ use client::{Client, UserStore};
 use cloud_api_types::Plan;
 use gpui::{Entity, IntoElement, ParentElement};
 use ui::prelude::*;
+use zed_i18n::t;
 
 use crate::ZedAiOnboarding;
 
@@ -45,17 +46,17 @@ impl Render for EditPredictionOnboarding {
         let github_copilot = v_flex()
             .gap_1()
             .child(Label::new(if self.copilot_is_configured {
-                "Alternatively, you can continue to use GitHub Copilot as that's already set up."
+                t!("ai_onboarding.edit_prediction.copilot_configured_label")
             } else {
-                "Alternatively, you can use GitHub Copilot as your edit prediction provider."
+                t!("ai_onboarding.edit_prediction.copilot_not_configured_label")
             }))
             .child(
                 Button::new(
                     "configure-copilot",
                     if self.copilot_is_configured {
-                        "Use Copilot"
+                        t!("ai_onboarding.edit_prediction.use_copilot")
                     } else {
-                        "Configure Copilot"
+                        t!("ai_onboarding.edit_prediction.configure_copilot")
                     },
                 )
                 .full_width()

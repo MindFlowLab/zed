@@ -15,6 +15,7 @@ use sysinfo::{ProcessRefreshKind, RefreshKind, System, UpdateKind};
 use ui::{Context, Tooltip, prelude::*};
 use ui::{ListItem, ListItemSpacing};
 use workspace::{ModalView, Workspace};
+use zed_i18n::t;
 
 use crate::debugger_panel::DebugPanel;
 
@@ -51,7 +52,7 @@ impl AttachModalDelegate {
             intent,
             selected_index: 0,
             matches: Vec::default(),
-            placeholder_text: Arc::from("Select the process you want to attach the debugger to"),
+            placeholder_text: Arc::from(t!("debugger_ui.attach.placeholder")),
         }
     }
 }

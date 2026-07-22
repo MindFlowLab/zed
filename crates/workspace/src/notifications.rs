@@ -4,8 +4,8 @@ use crate::{
 use anyhow::Context as _;
 use gpui::{
     AnyEntity, AnyView, App, AppContext as _, AsyncApp, AsyncWindowContext, ClickEvent, Context,
-    DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, PromptLevel, Render, ScrollHandle,
-    Task, TextStyleRefinement, UnderlineStyle, WeakEntity,
+    DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, PromptButton, PromptLevel, Render,
+    ScrollHandle, Task, TextStyleRefinement, UnderlineStyle, WeakEntity,
 };
 use markdown::{CopyButtonVisibility, Markdown, MarkdownElement, MarkdownStyle};
 use parking_lot::Mutex;
@@ -18,6 +18,7 @@ use std::sync::{Arc, LazyLock};
 use std::{any::TypeId, time::Duration};
 use ui::{CopyButton, Tooltip, prelude::*};
 use util::ResultExt;
+use zed_i18n::t;
 
 #[derive(Default)]
 pub struct Notifications {
@@ -351,23 +352,29 @@ impl Render for LanguageServerPrompt {
                                             "copy-description",
                                             request.message.clone(),
                                         )
-                                        .tooltip_label("Copy Description"),
+                                        .tooltip_label(t!(
+                                            "workspace.notifications.copy_description"
+                                        )),
                                     )
                                     .child(
                                         IconButton::new(close_id, close_icon)
                                             .tooltip(move |_window, cx| {
                                                 if suppress {
                                                     Tooltip::with_meta(
-                                                        "Suppress",
+                                                        t!("workspace.notifications.suppress"),
                                                         Some(&SuppressNotification),
-                                                        "Click to close",
+                                                        t!(
+                                                            "workspace.notifications.click_to_close"
+                                                        ),
                                                         cx,
                                                     )
                                                 } else {
                                                     Tooltip::with_meta(
-                                                        "Close",
+                                                        t!("workspace.notifications.close"),
                                                         Some(&menu::Cancel),
-                                                        "Suppress with shift-click",
+                                                        t!(
+                                                            "workspace.notifications.suppress_shift_click"
+                                                        ),
                                                         cx,
                                                     )
                                                 }
@@ -480,6 +487,9 @@ pub mod simple_message_notification {
     };
 
     use super::{Notification, SuppressEvent};
+    // 嵌套模块有独立作用域,需单独导入 t! 宏
+    // Nested modules have their own scope; import the t! macro here too.
+    use zed_i18n::t;
 
     const FADE_OUT_DURATION: Duration = Duration::from_secs(2);
     const FADE_TO_FULL_OPACITY_DURATION: Duration = Duration::from_millis(200);
@@ -995,20 +1005,24 @@ pub mod simple_message_notification {
                             .tooltip(move |_window, cx| {
                                 if suppress {
                                     Tooltip::with_meta(
-                                        "Suppress",
+                                        t!("workspace.notifications.suppress"),
                                         Some(&SuppressNotification),
-                                        "Click to Close",
+                                        t!("workspace.notifications.click_to_close_caps"),
                                         cx,
                                     )
                                 } else if show_suppress_button {
                                     Tooltip::with_meta(
-                                        "Close",
+                                        t!("workspace.notifications.close"),
                                         Some(&menu::Cancel),
-                                        "Shift-click to Suppress",
+                                        t!("workspace.notifications.shift_click_to_suppress"),
                                         cx,
                                     )
                                 } else {
-                                    Tooltip::for_action("Close", &menu::Cancel, cx)
+                                    Tooltip::for_action(
+                                        t!("workspace.notifications.close"),
+                                        &menu::Cancel,
+                                        cx,
+                                    )
                                 }
                             })
                             .on_click(cx.listener(move |_, _, _, cx| {
@@ -1670,7 +1684,13 @@ where
                         display.push('.');
                     }
                     let detail = f(err, window, cx).unwrap_or(display);
-                    window.prompt(PromptLevel::Critical, &msg, Some(&detail), &["OK"], cx)
+                    window.prompt(
+                        PromptLevel::Critical,
+                        &msg,
+                        Some(&detail),
+                        &[PromptButton::ok(t!("workspace.notifications.ok"))],
+                        cx,
+                    )
                 }) {
                     prompt.await.ok();
                 }

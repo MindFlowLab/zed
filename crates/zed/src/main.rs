@@ -71,10 +71,12 @@ use workspace::{
     notifications::{NotificationId, NotifyResultExt},
     restore_multiworkspace,
 };
+use zed_i18n::t;
 use zed::{
     OpenListener, OpenRequest, RawOpenRequest, app_menus, build_window_options,
     derive_paths_with_position, edit_prediction_registry, handle_cli_connection,
-    handle_keymap_file_changes, initialize_workspace, open_paths_with_positions,
+    handle_keymap_file_changes, handle_ui_language_changes, initialize_workspace,
+    open_paths_with_positions,
 };
 
 use crate::zed::{CrashHandler, OpenRequestKind, eager_load_active_theme_and_icon_theme};
@@ -130,9 +132,9 @@ fn files_not_created_on_launch(errors: HashMap<io::ErrorKind, Vec<&Path>>) {
                     .update(cx, |_, window, cx| {
                         let response = window.prompt(
                             gpui::PromptLevel::Critical,
-                            message,
+                            &t!("zed.startup.launch_failed"),
                             Some(&error_details),
-                            &["Exit"],
+                            &[gpui::PromptButton::new(t!("zed.common.exit"))],
                             cx,
                         );
 
@@ -172,16 +174,19 @@ fn fail_to_open_window(e: anyhow::Error, _cx: &mut App) {
             };
 
             let notification_id = "dev.zed.Oops";
+            // 桌面通知标题与正文走 i18n;eprintln 输出属日志,保持英文
+            // Desktop notification title/body are localized; the eprintln
+            // output above is a log line and stays in English.
+            let summary = t!("zed.startup.launch_failed");
+            let body = t!(
+                "zed.startup.linux_launch_failed_body",
+                error = format!("{e:?}")
+            );
             proxy
                 .add_notification(
                     notification_id,
-                    Notification::new("Zed failed to launch")
-                        .body(Some(
-                            format!(
-                                "{e:?}. See https://zed.dev/docs/linux for troubleshooting steps."
-                            )
-                            .as_str(),
-                        ))
+                    Notification::new(summary.as_str())
+                        .body(Some(body.as_str()))
                         .priority(Priority::High)
                         .icon(ashpd::desktop::Icon::with_names(&[
                             "dialog-question-symbolic",
@@ -199,6 +204,10 @@ static STARTUP_TIME: OnceLock<Instant> = OnceLock::new();
 
 fn main() {
     STARTUP_TIME.get_or_init(|| Instant::now());
+
+    // 初始化界面国际化(默认 zh-CN),必须在任何 UI 构建之前完成
+    // Initialize UI i18n (default zh-CN) before any UI is built.
+    zed_i18n::init();
 
     // If this process was re-executed as a Linux sandbox helper, run that mode
     // without returning. Must run before argument parsing: the wrapped command's
@@ -497,6 +506,10 @@ fn main() {
         zlog_settings::init(cx);
         zed::watch_settings_files(fs.clone(), cx);
         handle_keymap_file_changes(user_keymap_file_rx, user_keymap_watcher, cx);
+        // 按用户设置应用界面语言并监听后续切换(在设置加载之后、UI 构建之前)
+        // Apply the configured UI language and watch for later switches
+        // (after settings are loaded, before the UI is built).
+        handle_ui_language_changes(cx);
 
         let user_agent = format!(
             "Zed/{} ({}; {})",
@@ -1455,12 +1468,9 @@ pub(crate) async fn restore_or_create_workspace(
 
         if error_count > 0 {
             let message = if error_count == 1 {
-                "Failed to restore 1 workspace. Check logs for details.".to_string()
+                t!("zed.toast.restore_failed_one")
             } else {
-                format!(
-                    "Failed to restore {} workspaces. Check logs for details.",
-                    error_count
-                )
+                t!("zed.toast.restore_failed_many", count = error_count)
             };
 
             // Try to find an active workspace to show the toast

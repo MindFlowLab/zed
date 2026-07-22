@@ -2,6 +2,7 @@ use gpui::ElementId;
 use ui::{
     ContextMenu, GradientFade, IconButton, IconName, IconSize, PopoverMenu, Tooltip, prelude::*,
 };
+use zed_i18n::t;
 
 use crate::{
     CsvPreviewView,
@@ -107,10 +108,10 @@ impl CsvPreviewView {
         )
         .tooltip(Tooltip::text(match self.engine.applied_sorting {
             Some(ordering) if ordering.col_idx == col_idx => match ordering.direction {
-                SortDirection::Asc => "Sorted A-Z. Click to sort Z-A",
-                SortDirection::Desc => "Sorted Z-A. Click to disable sorting",
+                SortDirection::Asc => t!("csv_preview.table_header.sort_asc"),
+                SortDirection::Desc => t!("csv_preview.table_header.sort_desc"),
             },
-            _ => "Not sorted. Click to sort A-Z",
+            _ => t!("csv_preview.table_header.sort_none"),
         }))
         .on_click(cx.listener(move |this, _event, _window, cx| {
             let new_sorting = match this.engine.applied_sorting {
@@ -164,9 +165,9 @@ impl CsvPreviewView {
             })
             .toggle_state(has_active_filters),
             Tooltip::text(if has_active_filters {
-                "Column has active filters. Click to manage"
+                t!("csv_preview.table_header.filter_active")
             } else {
-                "No filters applied. Click to add filters"
+                t!("csv_preview.table_header.filter_none")
             }),
         )
         .menu({
@@ -258,15 +259,21 @@ impl CsvPreviewView {
 
             if has_active_filters {
                 menu = menu
-                    .toggleable_entry("Clear all", false, ui::IconPosition::Start, None, {
-                        let view_entity = view_entity.clone();
-                        move |_window, cx| {
-                            view_entity.update(cx, |view, cx| {
-                                view.clear_filters(col, cx);
-                                cx.notify();
-                            });
-                        }
-                    })
+                    .toggleable_entry(
+                        t!("csv_preview.table_header.clear_all"),
+                        false,
+                        ui::IconPosition::Start,
+                        None,
+                        {
+                            let view_entity = view_entity.clone();
+                            move |_window, cx| {
+                                view_entity.update(cx, |view, cx| {
+                                    view.clear_filters(col, cx);
+                                    cx.notify();
+                                });
+                            }
+                        },
+                    )
                     .separator();
             }
 
@@ -292,7 +299,9 @@ impl CsvPreviewView {
             }
 
             if !unavailable_cloned.is_empty() {
-                menu = menu.separator().header("Hidden by other filters");
+                menu = menu
+                    .separator()
+                    .header(t!("csv_preview.table_header.hidden_by_other_filters"));
                 for (entry, _blocked_by) in &unavailable_cloned {
                     let label: SharedString =
                         format_filter_label(entry.content.as_ref(), entry.occurred_times()).into();

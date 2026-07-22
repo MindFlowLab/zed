@@ -7,6 +7,7 @@ use std::sync::{Arc, Weak};
 use ui::{CollabNotification, prelude::*};
 use util::ResultExt;
 use workspace::AppState;
+use zed_i18n::t;
 
 pub fn init(app_state: &Arc<AppState>, cx: &mut App) {
     let app_state = Arc::downgrade(app_state);
@@ -116,18 +117,18 @@ impl Render for IncomingCallNotification {
         div().size_full().font(ui_font).child(
             CollabNotification::new(
                 self.state.call.calling_user.avatar_uri.clone(),
-                Button::new("accept", "Accept").on_click({
+                Button::new("accept", t!("collab_ui.incoming_call.accept")).on_click({
                     let state = self.state.clone();
                     move |_, _, cx| state.respond(true, cx)
                 }),
-                Button::new("decline", "Decline").on_click({
+                Button::new("decline", t!("collab_ui.incoming_call.decline")).on_click({
                     let state = self.state.clone();
                     move |_, _, cx| state.respond(false, cx)
                 }),
             )
-            .child(Label::new(format!(
-                "{} is sharing a project in Zed",
-                self.state.call.calling_user.username
+            .child(Label::new(t!(
+                "collab_ui.incoming_call.sharing_project",
+                username = self.state.call.calling_user.username
             ))),
         )
     }

@@ -27,6 +27,7 @@ pub use remote_connection::{
     RemoteClientDelegate, RemoteConnectionModal, RemoteConnectionPrompt, SshConnectionHeader,
     connect,
 };
+use zed_i18n::t;
 
 #[derive(RegisterSetting)]
 pub struct RemoteSettings {
@@ -312,19 +313,24 @@ pub async fn open_remote_project(
                 log::error!("Failed to open project: {e:#}");
                 let response = window
                     .update(cx, |_, window, cx| {
+                        let title = match connection_options {
+                            RemoteConnectionOptions::Ssh(_) => {
+                                t!("recent_projects.remote.failed_to_connect_ssh")
+                            }
+                            RemoteConnectionOptions::Wsl(_) => {
+                                t!("recent_projects.remote.failed_to_connect_wsl")
+                            }
+                            RemoteConnectionOptions::Docker(_) => {
+                                t!("recent_projects.remote.failed_to_connect_dev_container")
+                            }
+                            #[cfg(any(test, feature = "test-support"))]
+                            RemoteConnectionOptions::Mock(_) => {
+                                t!("recent_projects.remote.failed_to_connect_mock")
+                            }
+                        };
                         window.prompt(
                             PromptLevel::Critical,
-                            match connection_options {
-                                RemoteConnectionOptions::Ssh(_) => "Failed to connect over SSH",
-                                RemoteConnectionOptions::Wsl(_) => "Failed to connect to WSL",
-                                RemoteConnectionOptions::Docker(_) => {
-                                    "Failed to connect to Dev Container"
-                                }
-                                #[cfg(any(test, feature = "test-support"))]
-                                RemoteConnectionOptions::Mock(_) => {
-                                    "Failed to connect to mock server"
-                                }
-                            },
+                            &title,
                             Some(&format!("{e:#}")),
                             &["Retry", "Cancel"],
                             cx,
@@ -373,19 +379,24 @@ pub async fn open_remote_project(
                 log::error!("Failed to open project: {e:#}");
                 let response = window
                     .update(cx, |_, window, cx| {
+                        let title = match connection_options {
+                            RemoteConnectionOptions::Ssh(_) => {
+                                t!("recent_projects.remote.failed_to_connect_ssh")
+                            }
+                            RemoteConnectionOptions::Wsl(_) => {
+                                t!("recent_projects.remote.failed_to_connect_wsl")
+                            }
+                            RemoteConnectionOptions::Docker(_) => {
+                                t!("recent_projects.remote.failed_to_connect_dev_container")
+                            }
+                            #[cfg(any(test, feature = "test-support"))]
+                            RemoteConnectionOptions::Mock(_) => {
+                                t!("recent_projects.remote.failed_to_connect_mock")
+                            }
+                        };
                         window.prompt(
                             PromptLevel::Critical,
-                            match connection_options {
-                                RemoteConnectionOptions::Ssh(_) => "Failed to connect over SSH",
-                                RemoteConnectionOptions::Wsl(_) => "Failed to connect to WSL",
-                                RemoteConnectionOptions::Docker(_) => {
-                                    "Failed to connect to Dev Container"
-                                }
-                                #[cfg(any(test, feature = "test-support"))]
-                                RemoteConnectionOptions::Mock(_) => {
-                                    "Failed to connect to mock server"
-                                }
-                            },
+                            &title,
                             Some(&format!("{e:#}")),
                             &["Retry", "Cancel"],
                             cx,

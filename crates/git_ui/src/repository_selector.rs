@@ -6,6 +6,7 @@ use project::{Project, git_store::Repository};
 use std::sync::Arc;
 use ui::{ListItem, ListItemSpacing, prelude::*};
 use workspace::{ModalView, Workspace};
+use zed_i18n::t;
 
 pub fn register(workspace: &mut Workspace) {
     workspace.register_action(open);
@@ -171,7 +172,7 @@ impl PickerDelegate for RepositorySelectorDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select a repository...".into()
+        t!("git_ui.repository_selector.select_repository").into()
     }
 
     fn editor_position(&self) -> PickerEditorPosition {

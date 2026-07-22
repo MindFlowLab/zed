@@ -32,6 +32,7 @@ use zed_actions::{
     agent::ToggleModelSelector,
     editor::{MoveDown, MoveUp},
 };
+use zed_i18n::t;
 
 use crate::agent_model_selector::AgentModelSelector;
 use crate::buffer_codegen::{BufferCodegen, CodegenAlternative};
@@ -129,7 +130,12 @@ impl<T: 'static> Render for PromptEditor<T> {
             .icon_color(Color::Muted)
             .when(!menu_visible, |this| {
                 this.tooltip(move |_window, cx| {
-                    Tooltip::with_meta("Add Context", None, "Or type @ to include context", cx)
+                    Tooltip::with_meta(
+                        t!("agent_ui.inline_prompt_editor.add_context"),
+                        None,
+                        t!("agent_ui.inline_prompt_editor.add_context_meta"),
+                        cx,
+                    )
                 })
             })
             .on_click(cx.listener(move |this, _, window, cx| {
@@ -357,7 +363,7 @@ impl<T: 'static> PromptEditor<T> {
         self.editor = cx.new(|cx| {
             let mut editor = Editor::auto_height(1, Self::MAX_LINES as usize, window, cx);
             editor.set_soft_wrap_mode(language::language_settings::SoftWrap::EditorWidth, cx);
-            editor.set_placeholder_text("Add a prompt…", window, cx);
+            editor.set_placeholder_text(&t!("agent_ui.inline_prompt_editor.add_a_prompt"), window, cx);
             editor.set_text(prompt, window, cx);
             creases = insert_message_creases(&mut editor, &existing_creases, window, cx);
 
@@ -390,20 +396,26 @@ impl<T: 'static> PromptEditor<T> {
         let action = match mode {
             PromptEditorMode::Buffer { codegen, .. } => {
                 if codegen.read(cx).is_insertion {
-                    "Generate"
+                    t!("agent_ui.inline_prompt_editor.generate")
                 } else {
-                    "Transform"
+                    t!("agent_ui.inline_prompt_editor.transform")
                 }
             }
-            PromptEditorMode::Terminal { .. } => "Generate",
+            PromptEditorMode::Terminal { .. } => t!("agent_ui.inline_prompt_editor.generate"),
         };
 
         let agent_panel_keybinding =
             ui::text_for_action(&zed_actions::assistant::ToggleFocus, window, cx)
-                .map(|keybinding| format!("{keybinding} to chat"))
+                .map(|keybinding| {
+                    t!("agent_ui.inline_prompt_editor.to_chat", keybinding = keybinding)
+                })
                 .unwrap_or_default();
 
-        format!("{action}… ({agent_panel_keybinding} ― ↓↑ for history — @ to include context)")
+        t!(
+            "agent_ui.inline_prompt_editor.placeholder",
+            action = action,
+            chat_hint = agent_panel_keybinding
+        )
     }
 
     pub fn prompt(&self, cx: &App) -> String {
@@ -596,12 +608,12 @@ impl<T: 'static> PromptEditor<T> {
     fn thumbs_up(&mut self, _: &ThumbsUpResult, _window: &mut Window, cx: &mut Context<Self>) {
         match &self.session_state.completion {
             CompletionState::Pending => {
-                self.toast("Can't rate, still generating...", None, cx);
+                self.toast(&t!("agent_ui.inline_prompt_editor.cant_rate_generating"), None, cx);
                 return;
             }
             CompletionState::Rated => {
                 self.toast(
-                    "Already rated this completion",
+                    &t!("agent_ui.inline_prompt_editor.already_rated"),
                     Some(self.session_state.session_id),
                     cx,
                 );
@@ -611,7 +623,7 @@ impl<T: 'static> PromptEditor<T> {
                 let model_info = self.model_selector.read(cx).active_model(cx);
                 let (model_id, use_streaming_tools) = {
                     let Some(configured_model) = model_info else {
-                        self.toast("No configured model", None, cx);
+                        self.toast(&t!("agent_ui.inline_prompt_editor.no_configured_model"), None, cx);
                         return;
                     };
                     (
@@ -659,12 +671,12 @@ impl<T: 'static> PromptEditor<T> {
     fn thumbs_down(&mut self, _: &ThumbsDownResult, _window: &mut Window, cx: &mut Context<Self>) {
         match &self.session_state.completion {
             CompletionState::Pending => {
-                self.toast("Can't rate, still generating...", None, cx);
+                self.toast(&t!("agent_ui.inline_prompt_editor.cant_rate_generating"), None, cx);
                 return;
             }
             CompletionState::Rated => {
                 self.toast(
-                    "Already rated this completion",
+                    &t!("agent_ui.inline_prompt_editor.already_rated"),
                     Some(self.session_state.session_id),
                     cx,
                 );
@@ -674,7 +686,7 @@ impl<T: 'static> PromptEditor<T> {
                 let model_info = self.model_selector.read(cx).active_model(cx);
                 let (model_telemetry_id, use_streaming_tools) = {
                     let Some(configured_model) = model_info else {
-                        self.toast("No configured model", None, cx);
+                        self.toast(&t!("agent_ui.inline_prompt_editor.no_configured_model"), None, cx);
                         return;
                     };
                     (
@@ -732,9 +744,12 @@ impl<T: 'static> PromptEditor<T> {
                         .autohide();
 
                         if let Some(uuid) = uuid {
-                            toast = toast.on_click("Click to copy rating ID", move |_, cx| {
-                                cx.write_to_clipboard(ClipboardItem::new_string(uuid.to_string()));
-                            });
+                            toast = toast.on_click(
+                                t!("agent_ui.inline_prompt_editor.click_to_copy_rating_id"),
+                                move |_, cx| {
+                                    cx.write_to_clipboard(ClipboardItem::new_string(uuid.to_string()));
+                                },
+                            );
                         };
 
                         toast
@@ -824,7 +839,7 @@ impl<T: 'static> PromptEditor<T> {
                         Tooltip::with_meta(
                             mode.tooltip_interrupt(),
                             Some(&menu::Cancel),
-                            "Changes won't be discarded",
+                            t!("agent_ui.inline_prompt_editor.changes_wont_be_discarded"),
                             cx,
                         )
                     })
@@ -842,7 +857,7 @@ impl<T: 'static> PromptEditor<T> {
                                 Tooltip::with_meta(
                                     mode.tooltip_restart(),
                                     Some(&menu::Confirm),
-                                    "Changes will be discarded",
+                                    t!("agent_ui.inline_prompt_editor.changes_will_be_discarded"),
                                     cx,
                                 )
                             })
@@ -883,9 +898,9 @@ impl<T: 'static> PromptEditor<T> {
                                                     .icon_color(Color::Disabled)
                                                     .tooltip(move |_, cx| {
                                                         Tooltip::with_meta(
-                                                            "Good Result",
+                                                            t!("agent_ui.inline_prompt_editor.good_result"),
                                                             None,
-                                                            "You already rated this result",
+                                                            t!("agent_ui.inline_prompt_editor.already_rated_result"),
                                                             cx,
                                                         )
                                                     })
@@ -893,7 +908,7 @@ impl<T: 'static> PromptEditor<T> {
                                                 this.icon_color(Color::Muted).tooltip(
                                                     move |_, cx| {
                                                         Tooltip::for_action(
-                                                            "Good Result",
+                                                            t!("agent_ui.inline_prompt_editor.good_result"),
                                                             &ThumbsUpResult,
                                                             cx,
                                                         )
@@ -914,9 +929,9 @@ impl<T: 'static> PromptEditor<T> {
                                                     .icon_color(Color::Disabled)
                                                     .tooltip(move |_, cx| {
                                                         Tooltip::with_meta(
-                                                            "Bad Result",
+                                                            t!("agent_ui.inline_prompt_editor.bad_result"),
                                                             None,
-                                                            "You already rated this result",
+                                                            t!("agent_ui.inline_prompt_editor.already_rated_result"),
                                                             cx,
                                                         )
                                                     })
@@ -924,7 +939,7 @@ impl<T: 'static> PromptEditor<T> {
                                                 this.icon_color(Color::Muted).tooltip(
                                                     move |_, cx| {
                                                         Tooltip::for_action(
-                                                            "Bad Result",
+                                                            t!("agent_ui.inline_prompt_editor.bad_result"),
                                                             &ThumbsDownResult,
                                                             cx,
                                                         )
@@ -950,7 +965,7 @@ impl<T: 'static> PromptEditor<T> {
                                     .shape(IconButtonShape::Square)
                                     .tooltip(|_window, cx| {
                                         Tooltip::for_action(
-                                            "Execute Generated Command",
+                                            t!("agent_ui.inline_prompt_editor.execute_generated_command"),
                                             &menu::SecondaryConfirm,
                                             cx,
                                         )
@@ -1007,7 +1022,7 @@ impl<T: 'static> PromptEditor<T> {
             .tooltip({
                 move |_window, cx| {
                     Tooltip::for_action_in(
-                        "Close Assistant",
+                        t!("agent_ui.inline_prompt_editor.close_assistant"),
                         &editor::actions::Cancel,
                         &focus_handle,
                         cx,
@@ -1060,7 +1075,10 @@ impl<T: 'static> PromptEditor<T> {
                         let focus_handle = self.editor.focus_handle(cx);
                         move |_window, cx| {
                             cx.new(|cx| {
-                                let mut tooltip = Tooltip::new("Previous Alternative").key_binding(
+                                let mut tooltip = Tooltip::new(t!(
+                                    "agent_ui.inline_prompt_editor.previous_alternative"
+                                ))
+                                .key_binding(
                                     KeyBinding::for_action_in(
                                         &CyclePreviousInlineAssist,
                                         &focus_handle,
@@ -1101,7 +1119,10 @@ impl<T: 'static> PromptEditor<T> {
                         let focus_handle = self.editor.focus_handle(cx);
                         move |_window, cx| {
                             cx.new(|cx| {
-                                let mut tooltip = Tooltip::new("Next Alternative").key_binding(
+                                let mut tooltip = Tooltip::new(t!(
+                                    "agent_ui.inline_prompt_editor.next_alternative"
+                                ))
+                                .key_binding(
                                     KeyBinding::for_action_in(
                                         &CycleNextInlineAssist,
                                         &focus_handle,
@@ -1540,30 +1561,30 @@ pub enum GenerationMode {
 }
 
 impl GenerationMode {
-    fn start_label(self) -> &'static str {
+    fn start_label(self) -> String {
         match self {
-            GenerationMode::Generate => "Generate",
-            GenerationMode::Transform => "Transform",
+            GenerationMode::Generate => t!("agent_ui.inline_prompt_editor.generate"),
+            GenerationMode::Transform => t!("agent_ui.inline_prompt_editor.transform"),
         }
     }
-    fn tooltip_interrupt(self) -> &'static str {
+    fn tooltip_interrupt(self) -> String {
         match self {
-            GenerationMode::Generate => "Interrupt Generation",
-            GenerationMode::Transform => "Interrupt Transform",
-        }
-    }
-
-    fn tooltip_restart(self) -> &'static str {
-        match self {
-            GenerationMode::Generate => "Restart Generation",
-            GenerationMode::Transform => "Restart Transform",
+            GenerationMode::Generate => t!("agent_ui.inline_prompt_editor.interrupt_generation"),
+            GenerationMode::Transform => t!("agent_ui.inline_prompt_editor.interrupt_transform"),
         }
     }
 
-    fn tooltip_accept(self) -> &'static str {
+    fn tooltip_restart(self) -> String {
         match self {
-            GenerationMode::Generate => "Accept Generation",
-            GenerationMode::Transform => "Accept Transform",
+            GenerationMode::Generate => t!("agent_ui.inline_prompt_editor.restart_generation"),
+            GenerationMode::Transform => t!("agent_ui.inline_prompt_editor.restart_transform"),
+        }
+    }
+
+    fn tooltip_accept(self) -> String {
+        match self {
+            GenerationMode::Generate => t!("agent_ui.inline_prompt_editor.accept_generation"),
+            GenerationMode::Transform => t!("agent_ui.inline_prompt_editor.accept_transform"),
         }
     }
 }

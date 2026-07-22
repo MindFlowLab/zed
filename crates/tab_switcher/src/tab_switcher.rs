@@ -27,6 +27,7 @@ use workspace::{
     item::{ItemHandle, ItemSettings, ShowDiagnostics, TabContentParams},
     pane::{render_item_indicator, tab_details},
 };
+use zed_i18n::t;
 
 const PANEL_WIDTH_REMS: f32 = 28.;
 
@@ -723,11 +724,11 @@ impl PickerDelegate for TabSwitcherDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search all tabs…".into()
+        t!("tab_switcher.placeholder").into()
     }
 
     fn no_matches_text(&self, _window: &mut Window, _cx: &mut App) -> Option<SharedString> {
-        Some("No tabs".into())
+        Some(t!("tab_switcher.no_tabs").into())
     }
 
     fn match_count(&self) -> usize {
@@ -868,7 +869,10 @@ impl PickerDelegate for TabSwitcherDelegate {
                 IconButton::new("close_tab", IconName::Close)
                     .icon_size(IconSize::Small)
                     .icon_color(indicator_color)
-                    .tooltip(Tooltip::for_action_title("Close", &CloseSelectedItem))
+                    .tooltip(Tooltip::for_action_title(
+                        t!("tab_switcher.close"),
+                        &CloseSelectedItem,
+                    ))
                     .on_click(cx.listener(move |picker, _, window, cx| {
                         cx.stop_propagation();
                         picker.delegate.close_item_at(ix, window, cx);

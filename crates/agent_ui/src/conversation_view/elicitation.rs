@@ -11,6 +11,7 @@ use ui::{
     Button, Checkbox, Color, Icon, IconName, IconSize, Indicator, Label, LabelSize, ToggleState,
     prelude::*,
 };
+use zed_i18n::t;
 
 #[derive(Clone)]
 struct ElicitationOption {
@@ -1225,14 +1226,36 @@ impl<'a> ElicitationCard<'a> {
             (ElicitationStatus::Accepted, acp::ElicitationMode::Url(_))
         );
         let (status_label, status_icon, status_color) = match &self.elicitation.status {
-            ElicitationStatus::Pending { .. } => ("Waiting for input", IconName::Info, Color::Info),
-            ElicitationStatus::Accepted if is_accepted_url => {
-                ("Waiting for completion", IconName::Info, Color::Info)
-            }
-            ElicitationStatus::Accepted => ("Submitted", IconName::Check, Color::Success),
-            ElicitationStatus::Declined => ("Declined", IconName::Close, Color::Muted),
-            ElicitationStatus::Canceled => ("Canceled", IconName::Circle, Color::Muted),
-            ElicitationStatus::Completed => ("Completed", IconName::Check, Color::Success),
+            ElicitationStatus::Pending { .. } => (
+                t!("agent_ui.elicitation.waiting_for_input"),
+                IconName::Info,
+                Color::Info,
+            ),
+            ElicitationStatus::Accepted if is_accepted_url => (
+                t!("agent_ui.elicitation.waiting_for_completion"),
+                IconName::Info,
+                Color::Info,
+            ),
+            ElicitationStatus::Accepted => (
+                t!("agent_ui.elicitation.submitted"),
+                IconName::Check,
+                Color::Success,
+            ),
+            ElicitationStatus::Declined => (
+                t!("agent_ui.elicitation.declined"),
+                IconName::Close,
+                Color::Muted,
+            ),
+            ElicitationStatus::Canceled => (
+                t!("agent_ui.elicitation.canceled"),
+                IconName::Circle,
+                Color::Muted,
+            ),
+            ElicitationStatus::Completed => (
+                t!("agent_ui.elicitation.completed"),
+                IconName::Check,
+                Color::Success,
+            ),
         };
 
         let body = v_flex()
@@ -1274,7 +1297,7 @@ impl<'a> ElicitationCard<'a> {
                                     .color(status_color),
                             )
                             .child(
-                                Label::new("Input Requested")
+                                Label::new(t!("agent_ui.elicitation.input_requested"))
                                     .size(LabelSize::Custom(tool_name_font_size))
                                     .truncate(),
                             ),
@@ -1655,9 +1678,17 @@ impl<'a> ElicitationCard<'a> {
             _ => None,
         };
         let (accept_label, accept_icon, accept_icon_color) = if open_url.is_some() {
-            ("Open", IconName::ArrowUpRight, Color::Muted)
+            (
+                t!("agent_ui.elicitation.open"),
+                IconName::ArrowUpRight,
+                Color::Muted,
+            )
         } else {
-            ("Submit", IconName::Check, Color::Success)
+            (
+                t!("agent_ui.elicitation.submit"),
+                IconName::Check,
+                Color::Success,
+            )
         };
         let border_color = cx.theme().colors().border.opacity(0.8);
         let on_submit = self.handlers.on_submit.clone();
@@ -1692,7 +1723,10 @@ impl<'a> ElicitationCard<'a> {
                     }),
             )
             .child(
-                Button::new(("elicitation-decline", self.entry_ix), "Decline")
+                Button::new(
+                    ("elicitation-decline", self.entry_ix),
+                    t!("agent_ui.elicitation.decline"),
+                )
                     .start_icon(
                         Icon::new(IconName::Close)
                             .size(IconSize::XSmall)
@@ -1704,7 +1738,10 @@ impl<'a> ElicitationCard<'a> {
                     }),
             )
             .child(
-                Button::new(("elicitation-cancel", self.entry_ix), "Cancel")
+                Button::new(
+                    ("elicitation-cancel", self.entry_ix),
+                    t!("agent_ui.elicitation.cancel"),
+                )
                     .label_size(LabelSize::Small)
                     .on_click(move |_, window, cx| {
                         on_cancel(cancel_id.clone(), window, cx);

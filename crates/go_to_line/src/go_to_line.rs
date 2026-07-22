@@ -16,6 +16,7 @@ use theme::ActiveTheme;
 use ui::prelude::*;
 use util::paths::FILE_ROW_COLUMN_DELIMITER;
 use workspace::{DismissDecision, ModalView};
+use zed_i18n::t;
 
 pub fn init(cx: &mut App) {
     cx.observe_new(GoToLine::register).detach();
@@ -133,11 +134,11 @@ impl GoToLine {
         });
         let line_editor_change = cx.subscribe_in(&line_editor, window, Self::on_line_editor_event);
 
-        let current_text = format!(
-            "Current Line: {} of {} (column {})",
-            line,
-            last_line + 1,
-            column
+        let current_text = t!(
+            "go_to_line.current_line",
+            line = line,
+            total = last_line + 1,
+            column = column
         );
 
         Self {
@@ -313,13 +314,21 @@ impl Render for GoToLine {
             } else {
                 self.current_line.saturating_sub(offset.unsigned_abs())
             };
-            format!("Go to line {target_line} ({offset:+} from current)").into()
+            t!(
+                "go_to_line.go_to_line_relative",
+                line = target_line,
+                offset = format!("{offset:+}")
+            )
+            .into()
         } else {
             match self.line_and_char_from_query(cx) {
-                Some((line, Some(character))) => {
-                    format!("Go to line {line}, character {character}").into()
-                }
-                Some((line, None)) => format!("Go to line {line}").into(),
+                Some((line, Some(character))) => t!(
+                    "go_to_line.go_to_line_character",
+                    line = line,
+                    character = character
+                )
+                .into(),
+                Some((line, None)) => t!("go_to_line.go_to_line", line = line).into(),
                 None => self.current_text.clone(),
             }
         };

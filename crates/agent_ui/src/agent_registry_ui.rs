@@ -21,6 +21,7 @@ use workspace::{
     Workspace,
     item::{Item, ItemEvent},
 };
+use zed_i18n::t;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum RegistryFilter {
@@ -94,7 +95,7 @@ impl AgentRegistryPage {
             let registry_store = AgentRegistryStore::global(cx);
             let query_editor = cx.new(|cx| {
                 let mut input = Editor::single_line(window, cx);
-                input.set_placeholder_text("Search agents...", window, cx);
+                input.set_placeholder_text(&t!("agent_ui.agent_registry_ui.search_agents"), window, cx);
                 input
             });
             cx.subscribe(&query_editor, Self::on_query_change).detach();
@@ -292,30 +293,30 @@ impl AgentRegistryPage {
         let fetch_error = registry_store.fetch_error();
 
         let message = if is_fetching {
-            "Loading registry..."
+            t!("agent_ui.agent_registry_ui.loading_registry")
         } else if fetch_error.is_some() {
-            "Failed to load the agent registry. Please check your connection and try again."
+            t!("agent_ui.agent_registry_ui.failed_to_load_registry")
         } else {
             match self.filter {
                 RegistryFilter::All => {
                     if has_search {
-                        "No agents match your search."
+                        t!("agent_ui.agent_registry_ui.no_agents_match")
                     } else {
-                        "No agents available."
+                        t!("agent_ui.agent_registry_ui.no_agents_available")
                     }
                 }
                 RegistryFilter::Installed => {
                     if has_search {
-                        "No installed agents match your search."
+                        t!("agent_ui.agent_registry_ui.no_installed_agents_match")
                     } else {
-                        "No installed agents."
+                        t!("agent_ui.agent_registry_ui.no_installed_agents")
                     }
                 }
                 RegistryFilter::NotInstalled => {
                     if has_search {
-                        "No uninstalled agents match your search."
+                        t!("agent_ui.agent_registry_ui.no_uninstalled_agents_match")
                     } else {
-                        "No uninstalled agents."
+                        t!("agent_ui.agent_registry_ui.no_uninstalled_agents")
                     }
                 }
             }
@@ -351,7 +352,7 @@ impl AgentRegistryPage {
             .when_some(fetch_error, |this, _| {
                 let registry_store = self.registry_store.clone();
                 this.child(
-                    Button::new("retry-agent-registry", "Retry")
+                    Button::new("retry-agent-registry", t!("agent_ui.agent_registry_ui.retry"))
                         .style(ButtonStyle::Outlined)
                         .size(ButtonSize::Compact)
                         .on_click(move |_, _, cx| {
@@ -382,7 +383,7 @@ impl AgentRegistryPage {
 
     fn render_missing_agent(&self) -> AgentRegistryCard {
         AgentRegistryCard::new().child(
-            Label::new("Missing registry entry.")
+            Label::new(t!("agent_ui.agent_registry_ui.missing_registry_entry"))
                 .size(LabelSize::Small)
                 .color(Color::Muted),
         )
@@ -417,7 +418,7 @@ impl AgentRegistryPage {
             .icon_size(IconSize::Small)
             .tooltip(move |_, cx| {
                 Tooltip::with_meta(
-                    "Visit Agent Repository",
+                    t!("agent_ui.agent_registry_ui.visit_agent_repository"),
                     None,
                     repository_for_tooltip.clone(),
                     cx,
@@ -437,7 +438,12 @@ impl AgentRegistryPage {
             )
             .icon_size(IconSize::Small)
             .tooltip(move |_, cx| {
-                Tooltip::with_meta("Visit Agent Website", None, website.clone(), cx)
+                Tooltip::with_meta(
+                    t!("agent_ui.agent_registry_ui.visit_agent_website"),
+                    None,
+                    website.clone(),
+                    cx,
+                )
             })
             .on_click(move |_, _, cx| {
                 cx.open_url(&website_for_click);
@@ -456,9 +462,11 @@ impl AgentRegistryPage {
                             .child(Label::new(format!("v{}", agent.version())).color(Color::Muted))
                             .when(!supports_current_platform, |this| {
                                 this.child(
-                                    Label::new("Not supported on this platform")
-                                        .size(LabelSize::Small)
-                                        .color(Color::Warning),
+                                    Label::new(t!(
+                                        "agent_ui.agent_registry_ui.not_supported_platform"
+                                    ))
+                                    .size(LabelSize::Small)
+                                    .color(Color::Warning),
                                 )
                             }),
                     )
@@ -477,10 +485,13 @@ impl AgentRegistryPage {
                         h_flex()
                             .gap_1()
                             .child(
-                                Label::new(format!("ID: {}", agent.id()))
-                                    .size(LabelSize::Small)
-                                    .color(Color::Muted)
-                                    .truncate(),
+                                Label::new(t!(
+                                    "agent_ui.agent_registry_ui.agent_id_label",
+                                    id = agent.id()
+                                ))
+                                .size(LabelSize::Small)
+                                .color(Color::Muted)
+                                .truncate(),
                             )
                             .when_some(repository_button, |this, button| this.child(button))
                             .when_some(website_button, |this, button| this.child(button)),
@@ -498,7 +509,7 @@ impl AgentRegistryPage {
         let button_id = SharedString::from(format!("install-agent-{}", agent.id()));
 
         if !supports_current_platform {
-            return Button::new(button_id, "Unavailable")
+            return Button::new(button_id, t!("agent_ui.agent_registry_ui.unavailable"))
                 .style(ButtonStyle::OutlinedGhost)
                 .disabled(true);
         }
@@ -507,7 +518,7 @@ impl AgentRegistryPage {
             RegistryInstallStatus::NotInstalled => {
                 let fs = <dyn Fs>::global(cx);
                 let agent_id = agent.id().to_string();
-                Button::new(button_id, "Install")
+                Button::new(button_id, t!("agent_ui.agent_registry_ui.install"))
                     .style(ButtonStyle::Tinted(ui::TintColor::Accent))
                     .start_icon(
                         Icon::new(IconName::Download)
@@ -540,7 +551,7 @@ impl AgentRegistryPage {
             RegistryInstallStatus::InstalledRegistry => {
                 let fs = <dyn Fs>::global(cx);
                 let agent_id = agent.id().to_string();
-                Button::new(button_id, "Remove")
+                Button::new(button_id, t!("agent_ui.agent_registry_ui.remove"))
                     .style(ButtonStyle::OutlinedGhost)
                     .on_click(move |_, _, cx| {
                         let agent_id = agent_id.clone();
@@ -559,9 +570,12 @@ impl AgentRegistryPage {
                         });
                     })
             }
-            RegistryInstallStatus::InstalledCustom => Button::new(button_id, "Installed")
-                .style(ButtonStyle::OutlinedGhost)
-                .disabled(true),
+            RegistryInstallStatus::InstalledCustom => Button::new(
+                button_id,
+                t!("agent_ui.agent_registry_ui.installed"),
+            )
+            .style(ButtonStyle::OutlinedGhost)
+            .disabled(true),
         }
     }
 }
@@ -582,9 +596,15 @@ impl Render for AgentRegistryPage {
                             .w_full()
                             .gap_1p5()
                             .justify_between()
-                            .child(Headline::new("ACP Registry").size(HeadlineSize::Large))
                             .child(
-                                Button::new("learn-more", "Learn More")
+                                Headline::new(t!("agent_ui.agent_registry_ui.acp_registry"))
+                                    .size(HeadlineSize::Large),
+                            )
+                            .child(
+                                Button::new(
+                                    "learn-more",
+                                    t!("agent_ui.agent_registry_ui.learn_more"),
+                                )
                                     .style(ButtonStyle::Outlined)
                                     .size(ButtonSize::Medium)
                                     .end_icon(
@@ -609,7 +629,7 @@ impl Render for AgentRegistryPage {
                                         "registry-filter-buttons",
                                         [
                                             ToggleButtonSimple::new(
-                                                "All",
+                                                t!("agent_ui.agent_registry_ui.filter_all"),
                                                 cx.listener(|this, _event, _, cx| {
                                                     this.filter = RegistryFilter::All;
                                                     this.filter_registry_agents(cx);
@@ -617,7 +637,7 @@ impl Render for AgentRegistryPage {
                                                 }),
                                             ),
                                             ToggleButtonSimple::new(
-                                                "Installed",
+                                                t!("agent_ui.agent_registry_ui.installed"),
                                                 cx.listener(|this, _event, _, cx| {
                                                     this.filter = RegistryFilter::Installed;
                                                     this.filter_registry_agents(cx);
@@ -625,7 +645,7 @@ impl Render for AgentRegistryPage {
                                                 }),
                                             ),
                                             ToggleButtonSimple::new(
-                                                "Not Installed",
+                                                t!("agent_ui.agent_registry_ui.not_installed"),
                                                 cx.listener(|this, _event, _, cx| {
                                                     this.filter = RegistryFilter::NotInstalled;
                                                     this.filter_registry_agents(cx);
@@ -679,7 +699,7 @@ impl Item for AgentRegistryPage {
     type Event = ItemEvent;
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        "ACP Registry".into()
+        t!("agent_ui.agent_registry_ui.acp_registry").into()
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {

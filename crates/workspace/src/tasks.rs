@@ -12,6 +12,7 @@ use task::{
 };
 use ui::Window;
 use util::TryFutureExt;
+use zed_i18n::t;
 
 use crate::{SaveIntent, Toast, Workspace, notifications::NotificationId};
 
@@ -152,7 +153,13 @@ impl Workspace {
                             log::error!("Task spawn failed: {e:#}");
                             _ = workspace.update(cx, |w, cx| {
                                 let id = NotificationId::unique::<ResolvedTask>();
-                                w.show_toast(Toast::new(id, format!("Task spawn failed: {e}")), cx);
+                                w.show_toast(
+                                    Toast::new(
+                                        id,
+                                        t!("workspace.tasks.task_spawn_failed", error = e),
+                                    ),
+                                    cx,
+                                );
                             });
                             ScheduledTaskResult::SpawnFailed
                         }

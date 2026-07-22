@@ -20,6 +20,7 @@ use workspace::{
     ModalView, Workspace,
     dock::{Dock, PanelHandle},
 };
+use zed_i18n::t;
 
 // nate: It is a pain to get editors to size correctly and not overflow.
 //
@@ -296,7 +297,7 @@ impl CommitModal {
                             })
                             .when(has_previous_commit, |this| {
                                 this.toggleable_entry(
-                                    "Amend",
+                                    t!("git_ui.common.amend"),
                                     amend_enabled,
                                     IconPosition::Start,
                                     Some(Box::new(Amend)),
@@ -313,7 +314,7 @@ impl CommitModal {
                                 )
                             })
                             .toggleable_entry(
-                                "Signoff",
+                                t!("git_ui.common.signoff"),
                                 signoff_enabled,
                                 IconPosition::Start,
                                 Some(Box::new(Signoff)),
@@ -375,7 +376,7 @@ impl CommitModal {
             .as_ref()
             .and_then(|repo| repo.read(cx).branch.as_ref())
             .map(|b| b.name().to_owned())
-            .unwrap_or_else(|| "<no branch>".to_owned());
+            .unwrap_or_else(|| t!("git_ui.commit_modal.no_branch"));
 
         let branch_picker_button = Button::new("branch_picker_button", branch)
             .label_size(LabelSize::Small)
@@ -401,7 +402,10 @@ impl CommitModal {
             .with_handle(self.branch_list_handle.clone())
             .trigger_with_tooltip(
                 branch_picker_button,
-                Tooltip::for_action_title("Switch Branch", &zed_actions::git::Branch),
+                Tooltip::for_action_title(
+                    t!("git_ui.common.switch_branch"),
+                    &zed_actions::git::Branch,
+                ),
             )
             .anchor(Anchor::BottomLeft)
             .offset(gpui::Point {
@@ -412,7 +416,8 @@ impl CommitModal {
         let focus_handle = self.focus_handle(cx);
 
         let close_kb_hint = ui::KeyBinding::for_action(&menu::Cancel, cx).map(|close_kb| {
-            KeybindingHint::new(close_kb, cx.theme().colors().editor_background).suffix("Cancel")
+            KeybindingHint::new(close_kb, cx.theme().colors().editor_background)
+                .suffix(t!("git_ui.common.cancel"))
         });
 
         h_flex()
@@ -446,7 +451,7 @@ impl CommitModal {
                             .layer(ElevationIndex::ModalSurface)
                             .size(ButtonSize::Compact)
                             .disabled(!can_commit)
-                            .child(Label::new(commit_label).size(LabelSize::Small).mr_0p5())
+                            .child(Label::new(commit_label.clone()).size(LabelSize::Small).mr_0p5())
                             .on_click(cx.listener(move |this, _: &ClickEvent, window, cx| {
                                 telemetry::event!("Git Committed", source = "Git Modal");
                                 this.git_panel.update(cx, |git_panel, cx| {
@@ -467,7 +472,7 @@ impl CommitModal {
                                 move |_window, cx| {
                                     if can_commit {
                                         Tooltip::with_meta_in(
-                                            tooltip,
+                                            tooltip.clone(),
                                             Some(&git::Commit),
                                             format!(
                                                 "git commit{}{}",
@@ -478,7 +483,7 @@ impl CommitModal {
                                             cx,
                                         )
                                     } else {
-                                        Tooltip::simple(tooltip, cx)
+                                        Tooltip::simple(tooltip.clone(), cx)
                                     }
                                 }
                             }),
@@ -666,8 +671,9 @@ impl Render for CommitModal {
                                         .color(Color::Warning),
                                 )
                                 .child(
-                                    Label::new(format!(
-                                        "Commit message title exceeds {max_title_length}-character limit."
+                                    Label::new(t!(
+                                        "git_ui.commit_modal.title_exceeds_limit",
+                                        max_title_length = max_title_length
                                     ))
                                     .size(LabelSize::Small),
                                 ),

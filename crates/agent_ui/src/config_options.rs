@@ -21,6 +21,7 @@ use ui::{
 use unicode_segmentation::UnicodeSegmentation;
 use util::ResultExt as _;
 use zed_actions::agent::ToggleModelSelector;
+use zed_i18n::t;
 
 use crate::ui::documentation_aside_side;
 use crate::{
@@ -381,15 +382,15 @@ impl ConfigOptionSelector {
 
     fn current_value_name(&self) -> String {
         let Some(option) = self.current_option() else {
-            return "Unknown".to_string();
+            return t!("agent_ui.config_options.unknown");
         };
 
         match &option.kind {
             acp::SessionConfigKind::Select(select) => {
                 find_option_name(&select.options, &select.current_value)
-                    .unwrap_or_else(|| "Unknown".to_string())
+                    .unwrap_or_else(|| t!("agent_ui.config_options.unknown"))
             }
-            _ => "Unknown".to_string(),
+            _ => t!("agent_ui.config_options.unknown"),
         }
     }
 
@@ -406,7 +407,7 @@ impl ConfigOptionSelector {
 
     fn render_trigger_button(&self, _window: &mut Window, _cx: &mut Context<Self>) -> Button {
         let Some(option) = self.current_option() else {
-            return Button::new("config-option-trigger", "Unknown")
+            return Button::new("config-option-trigger", t!("agent_ui.config_options.unknown"))
                 .label_size(LabelSize::Small)
                 .color(Color::Muted)
                 .disabled(true);
@@ -477,7 +478,7 @@ impl Render for ConfigOptionSelector {
                         );
                     }
 
-                    let action_tooltip_container = |label: &str, keybinding: KeyBinding| {
+                    let action_tooltip_container = |label: String, keybinding: KeyBinding| {
                         h_flex()
                             .pt_1()
                             .gap_2()
@@ -493,33 +494,33 @@ impl Render for ConfigOptionSelector {
                             acp::SessionConfigOptionCategory::Mode => {
                                 content = content
                                     .child(action_tooltip_container(
-                                        "Change Mode",
+                                        t!("agent_ui.config_options.change_mode"),
                                         KeyBinding::for_action(&ToggleProfileSelector, cx),
                                     ))
                                     .child(action_tooltip_container(
-                                        "Cycle Through Modes",
+                                        t!("agent_ui.config_options.cycle_through_modes"),
                                         KeyBinding::for_action(&CycleModeSelector, cx),
                                     ));
                             }
                             acp::SessionConfigOptionCategory::Model => {
                                 content = content
                                     .child(action_tooltip_container(
-                                        "Change Model",
+                                        t!("agent_ui.config_options.change_model"),
                                         KeyBinding::for_action(&ToggleModelSelector, cx),
                                     ))
                                     .child(action_tooltip_container(
-                                        "Cycle Favorite Models",
+                                        t!("agent_ui.config_options.cycle_favorite_models"),
                                         KeyBinding::for_action(&CycleFavoriteModels, cx),
                                     ));
                             }
                             acp::SessionConfigOptionCategory::ThoughtLevel => {
                                 content = content
                                     .child(action_tooltip_container(
-                                        "Change Thinking Effort",
+                                        t!("agent_ui.config_options.change_thinking_effort"),
                                         KeyBinding::for_action(&ToggleThinkingEffortMenu, cx),
                                     ))
                                     .child(action_tooltip_container(
-                                        "Cycle Thinking Effort",
+                                        t!("agent_ui.config_options.cycle_thinking_effort"),
                                         KeyBinding::for_action(&CycleThinkingEffort, cx),
                                     ));
                             }
@@ -726,7 +727,7 @@ impl PickerDelegate for ConfigOptionPickerDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select an option…".into()
+        t!("agent_ui.config_options.select_an_option").into()
     }
 
     fn update_matches(
@@ -862,9 +863,17 @@ impl PickerDelegate for ConfigOptionPickerDelegate {
                                 }))
                                 .end_slot_on_hover(div().pr_1p5().child({
                                     let (icon, color, tooltip) = if is_favorite {
-                                        (IconName::StarFilled, Color::Accent, "Unfavorite")
+                                        (
+                                            IconName::StarFilled,
+                                            Color::Accent,
+                                            t!("agent_ui.config_options.unfavorite"),
+                                        )
                                     } else {
-                                        (IconName::Star, Color::Default, "Favorite")
+                                        (
+                                            IconName::Star,
+                                            Color::Default,
+                                            t!("agent_ui.config_options.favorite"),
+                                        )
                                     };
 
                                     let config_id = self.config_id.clone();
@@ -999,7 +1008,9 @@ fn options_to_picker_entries(
     }
 
     if !favorite_options.is_empty() {
-        entries.push(ConfigOptionPickerEntry::Separator("Favorites".into()));
+        entries.push(ConfigOptionPickerEntry::Separator(
+            t!("agent_ui.config_options.favorites").into(),
+        ));
         for option in favorite_options {
             entries.push(ConfigOptionPickerEntry::Option(option));
         }
@@ -1009,7 +1020,9 @@ fn options_to_picker_entries(
         if let Some(option) = options.first()
             && option.group.is_none()
         {
-            entries.push(ConfigOptionPickerEntry::Separator("All Options".into()));
+            entries.push(ConfigOptionPickerEntry::Separator(
+                t!("agent_ui.config_options.all_options").into(),
+            ));
         }
     }
 

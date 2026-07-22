@@ -52,6 +52,7 @@ use workspace::{
     item::PreviewTabsSettings, notifications::NotifyResultExt, pane,
 };
 use zed_actions::search::ToggleIncludeIgnored;
+use zed_i18n::t;
 
 actions!(
     file_finder,
@@ -1328,11 +1329,14 @@ impl FileFinderDelegate {
                 } => (
                     channel_name.to_string(),
                     string_match.positions.clone(),
-                    "Channel Notes".to_string(),
+                    t!("file_finder.channel_notes"),
                     vec![],
                 ),
                 Match::CreateNew(project_path) => (
-                    format!("Create File: {}", project_path.path.display(path_style)),
+                    t!(
+                        "file_finder.create_file_label",
+                        path = project_path.path.display(path_style)
+                    ),
                     vec![],
                     String::from(""),
                     vec![],
@@ -1773,7 +1777,7 @@ impl PickerDelegate for FileFinderDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search project files...".into()
+        t!("file_finder.placeholder").into()
     }
 
     fn searchbar_trailer(
@@ -1786,16 +1790,21 @@ impl PickerDelegate for FileFinderDelegate {
         // Clicking includes ignored files unless they're already included, in
         // which case it excludes them again (see `handle_toggle_ignored`).
         let tooltip_label = if including_ignored {
-            "Exclude Ignored Files"
+            t!("file_finder.exclude_ignored")
         } else {
-            "Include Ignored Files"
+            t!("file_finder.include_ignored")
         };
 
         let filter_button = IconButton::new("filter-ignored", IconName::FileIgnored)
             .icon_size(IconSize::Small)
             .toggle_state(including_ignored)
             .tooltip(move |_window, cx| {
-                Tooltip::for_action_in(tooltip_label, &ToggleIncludeIgnored, &focus_handle, cx)
+                Tooltip::for_action_in(
+                    tooltip_label.clone(),
+                    &ToggleIncludeIgnored,
+                    &focus_handle,
+                    cx,
+                )
             })
             .on_click(|_, window, cx| {
                 window.dispatch_action(ToggleIncludeIgnored.boxed_clone(), cx)
@@ -2041,9 +2050,9 @@ impl PickerDelegate for FileFinderDelegate {
                     ..Default::default()
                 };
                 let mut message = picker::HighlightedTextBuilder::default();
-                message.push_plain("Create file ");
+                message.push_plain(t!("file_finder.create_file_prefix"));
                 message.push_styled(project_path.path.display(path_style), path_highlight);
-                message.push_plain("?");
+                message.push_plain(t!("file_finder.create_file_suffix"));
                 Some(picker::PreviewUpdate::message(message.build()))
             }
             _ => Some(picker::PreviewUpdate::from_path(
@@ -2079,16 +2088,28 @@ impl PickerDelegate for FileFinderDelegate {
         _cx: &mut Context<Picker<Self>>,
     ) -> Vec<picker::PickerAction> {
         let open_label: SharedString = if self.selected_matches.len() > 1 {
-            "Open multiple".into()
+            t!("file_finder.open_multiple").into()
         } else {
-            "Open File".into()
+            t!("file_finder.open_file").into()
         };
         vec![
-            picker::PickerAction::header("Split…"),
-            picker::PickerAction::button("Left", pane::SplitLeft::default().boxed_clone()),
-            picker::PickerAction::button("Right", pane::SplitRight::default().boxed_clone()),
-            picker::PickerAction::button("Up", pane::SplitUp::default().boxed_clone()),
-            picker::PickerAction::button("Down", pane::SplitDown::default().boxed_clone()),
+            picker::PickerAction::header(t!("file_finder.split_header")),
+            picker::PickerAction::button(
+                t!("file_finder.split_left"),
+                pane::SplitLeft::default().boxed_clone(),
+            ),
+            picker::PickerAction::button(
+                t!("file_finder.split_right"),
+                pane::SplitRight::default().boxed_clone(),
+            ),
+            picker::PickerAction::button(
+                t!("file_finder.split_up"),
+                pane::SplitUp::default().boxed_clone(),
+            ),
+            picker::PickerAction::button(
+                t!("file_finder.split_down"),
+                pane::SplitDown::default().boxed_clone(),
+            ),
             picker::PickerAction::separator(),
             picker::PickerAction::button(open_label, menu::Confirm.boxed_clone()),
         ]

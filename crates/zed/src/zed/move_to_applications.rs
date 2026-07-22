@@ -14,6 +14,7 @@ use ui::{
 use util::ResultExt;
 use util::command::new_command;
 use workspace::{ModalView, MultiWorkspace};
+use zed_i18n::t;
 
 const DONT_ASK_AGAIN_KEY: &str = "move_to_applications_dont_ask_again";
 static PROMPTED_THIS_SESSION: AtomicBool = AtomicBool::new(false);
@@ -73,14 +74,12 @@ impl MoveToApplicationsRequest {
         let response = cx
             .prompt(
                 PromptLevel::Info,
-                "Move Zed to Applications?",
-                Some(
-                    "Zed is running from a temporary location. Move it to Applications to finish installing it.",
-                ),
+                &t!("zed.move_to_applications.prompt_title"),
+                Some(&t!("zed.move_to_applications.prompt_message")),
                 &[
-                    PromptButton::ok("Yes"),
-                    PromptButton::cancel("No"),
-                    PromptButton::new("Don't ask me again"),
+                    PromptButton::ok(t!("zed.move_to_applications.yes")),
+                    PromptButton::cancel(t!("zed.move_to_applications.no")),
+                    PromptButton::new(t!("zed.move_to_applications.dont_ask_again")),
                 ],
             )
             .await?;
@@ -103,9 +102,9 @@ impl MoveToApplicationsRequest {
                         .ok();
                     cx.prompt(
                         PromptLevel::Critical,
-                        "Failed to move Zed to Applications",
+                        &t!("zed.move_to_applications.failed_title"),
                         Some(&error.to_string()),
-                        &["OK"],
+                        &[PromptButton::ok(t!("zed.common.ok"))],
                     )
                     .await
                     .log_err();
@@ -178,7 +177,7 @@ impl Render for InstallingZedModal {
                     .py_3()
                     .border_b_1()
                     .border_color(theme.colors().border_variant)
-                    .child(Label::new("Installing Zed…")),
+                    .child(Label::new(t!("zed.move_to_applications.installing_title"))),
             )
             .child(
                 h_flex()
@@ -196,9 +195,9 @@ impl Render for InstallingZedModal {
                     .child(
                         v_flex()
                             .gap_1()
-                            .child(Label::new("Moving Zed to Applications"))
+                            .child(Label::new(t!("zed.move_to_applications.moving_label")))
                             .child(
-                                Label::new("Zed will reopen when installation is complete.")
+                                Label::new(t!("zed.move_to_applications.reopen_when_done"))
                                     .size(LabelSize::Small)
                                     .color(Color::Muted),
                             ),

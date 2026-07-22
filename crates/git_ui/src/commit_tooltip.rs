@@ -16,6 +16,7 @@ use theme_settings::ThemeSettings;
 use time::{OffsetDateTime, UtcOffset};
 use ui::{Avatar, Chip, CopyButton, Divider, Tooltip, prelude::*, tooltip_container};
 use workspace::Workspace;
+use zed_i18n::t;
 
 #[derive(Clone, Debug)]
 pub struct CommitDetails {
@@ -445,7 +446,7 @@ impl Render for CommitTooltip {
                                         .child(Divider::vertical())
                                         .child(
                                             CopyButton::new("copy-commit-sha", full_sha)
-                                                .tooltip_label("Copy SHA"),
+                                                .tooltip_label(t!("git_ui.common.copy_sha")),
                                         ),
                                 ),
                         ),
@@ -465,7 +466,7 @@ fn blame_entry_timestamp(blame_entry: &BlameEntry, format: time_format::Timestam
                 format,
             )
         }
-        Err(_) => "Error parsing date".to_string(),
+        Err(_) => t!("git_ui.common.error_parsing_date"),
     }
 }
 

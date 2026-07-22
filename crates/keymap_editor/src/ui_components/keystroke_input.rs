@@ -6,6 +6,7 @@ use ui::{
     ActiveTheme as _, Color, IconButton, IconButtonShape, IconName, IconSize, Label, LabelSize,
     ParentElement as _, Render, Styled as _, Tooltip, Window, prelude::*,
 };
+use zed_i18n::t;
 
 actions!(
     keystroke_input,
@@ -502,7 +503,7 @@ impl Render for KeystrokeInput {
             .rounded_sm()
             .child(recording_pulse(Color::Error))
             .child(
-                Label::new("REC")
+                Label::new(t!("keymap_editor.keystroke_input.rec"))
                     .size(LabelSize::XSmall)
                     .weight(FontWeight::SEMIBOLD)
                     .color(Color::Error),
@@ -520,7 +521,7 @@ impl Render for KeystrokeInput {
             .rounded_sm()
             .child(recording_pulse(Color::Accent))
             .child(
-                Label::new("SEARCH")
+                Label::new(t!("keymap_editor.keystroke_input.search"))
                     .size(LabelSize::XSmall)
                     .weight(FontWeight::SEMIBOLD)
                     .color(Color::Accent),
@@ -610,9 +611,9 @@ impl Render for KeystrokeInput {
                                     .map(|this| {
                                         this.tooltip(Tooltip::for_action_title(
                                             if self.search {
-                                                "Stop Searching"
+                                                t!("keymap_editor.keystroke_input.stop_searching")
                                             } else {
-                                                "Stop Recording"
+                                                t!("keymap_editor.keystroke_input.stop_recording")
                                             },
                                             &StopRecording,
                                         ))
@@ -629,9 +630,9 @@ impl Render for KeystrokeInput {
                                     .map(|this| {
                                         this.tooltip(Tooltip::for_action_title(
                                             if self.search {
-                                                "Start Searching"
+                                                t!("keymap_editor.keystroke_input.start_searching")
                                             } else {
-                                                "Start Recording"
+                                                t!("keymap_editor.keystroke_input.start_recording")
                                             },
                                             &StartRecording,
                                         ))
@@ -650,9 +651,9 @@ impl Render for KeystrokeInput {
                                 .shape(IconButtonShape::Square)
                                 .tooltip(move |_, cx| {
                                     Tooltip::with_meta(
-                                        "Clear Keystrokes",
+                                        t!("keymap_editor.keystroke_input.clear_keystrokes"),
                                         Some(&ClearKeystrokes),
-                                        "Hit it three times to execute",
+                                        t!("keymap_editor.keystroke_input.clear_keystrokes_hint"),
                                         cx,
                                     )
                                 })

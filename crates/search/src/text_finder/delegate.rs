@@ -43,6 +43,7 @@ use project::{SearchResults, search::SearchQuery, search::SearchResult};
 use settings::Settings;
 use smol::future::yield_now;
 use text::Anchor;
+use zed_i18n::t;
 use theme_settings::ThemeSettings;
 use ui::{
     Disclosure, Divider, FluentBuilder, ListItem, ListItemSpacing, Toggleable, Tooltip, prelude::*,
@@ -694,7 +695,7 @@ impl PickerDelegate for Delegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search all files…".into()
+        t!("search.placeholder.search_all_files").into()
     }
 
     fn searchbar_trailer(
@@ -716,7 +717,6 @@ impl PickerDelegate for Delegate {
         .map(|option| {
             let options = option.as_options();
             let action = option.to_toggle_action();
-            let label = option.label();
             let focus_handle = focus_handle.clone();
             let picker = picker.clone();
 
@@ -726,7 +726,11 @@ impl PickerDelegate for Delegate {
             )
             .icon_size(IconSize::Small)
             .toggle_state(active.contains(options))
-            .tooltip(move |_window, cx| Tooltip::for_action_in(label, action, &focus_handle, cx))
+            .tooltip(move |_window, cx| {
+                // option 是 Copy,闭包内计算本地化标签
+                // option is Copy; compute the localized label inside the closure
+                Tooltip::for_action_in(option.label_text(), action, &focus_handle, cx)
+            })
             .on_click(move |_, window, cx| {
                 picker.update(cx, |picker, cx| {
                     picker.delegate.search_options.toggle(options);
@@ -756,30 +760,36 @@ impl PickerDelegate for Delegate {
     ) -> Vec<picker::PickerAction> {
         use gpui::Action as _;
         vec![
-            picker::PickerAction::header("Split…"),
+            picker::PickerAction::header(t!("search.text_finder.split_header")),
             picker::PickerAction::button(
-                "Left",
+                t!("search.text_finder.split_left"),
                 workspace::pane::SplitLeft::default().boxed_clone(),
             ),
             picker::PickerAction::button(
-                "Right",
+                t!("search.text_finder.split_right"),
                 workspace::pane::SplitRight::default().boxed_clone(),
             ),
-            picker::PickerAction::button("Up", workspace::pane::SplitUp::default().boxed_clone()),
             picker::PickerAction::button(
-                "Down",
+                t!("search.text_finder.split_up"),
+                workspace::pane::SplitUp::default().boxed_clone(),
+            ),
+            picker::PickerAction::button(
+                t!("search.text_finder.split_down"),
                 workspace::pane::SplitDown::default().boxed_clone(),
             ),
             picker::PickerAction::separator(),
             picker::PickerAction::button(
                 if self.selected_matches.len() > 1 {
-                    "Open Multiple"
+                    t!("search.text_finder.open_multiple")
                 } else {
-                    "Open File"
+                    t!("search.text_finder.open_file")
                 },
                 menu::Confirm.boxed_clone(),
             ),
-            picker::PickerAction::button("Open as Tab", super::ToProjectSearch.boxed_clone()),
+            picker::PickerAction::button(
+                t!("search.text_finder.open_as_tab"),
+                super::ToProjectSearch.boxed_clone(),
+            ),
         ]
     }
 
@@ -1094,16 +1104,16 @@ impl Delegate {
                                             .tooltip(move |_window, cx| {
                                                 let (label, action): (_, &dyn gpui::Action) =
                                                     if is_collapsed {
-                                                        ("Unfold", &Unfold)
+                                                        (t!("search.text_finder.unfold"), &Unfold)
                                                     } else {
-                                                        ("Fold", &Fold)
+                                                        (t!("search.text_finder.fold"), &Fold)
                                                     };
                                                 Tooltip::with_meta_in(
                                                     label,
                                                     Some(action),
-                                                    format!(
-                                                        "{} to toggle all",
-                                                        text_for_keystroke(
+                                                    t!(
+                                                        "search.text_finder.toggle_all_meta",
+                                                        key = text_for_keystroke(
                                                             &Modifiers::alt(),
                                                             "click",
                                                             cx

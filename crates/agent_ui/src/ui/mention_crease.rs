@@ -13,6 +13,7 @@ use settings::Settings;
 use theme_settings::ThemeSettings;
 use ui::{ButtonLike, TintColor, Tooltip, prelude::*};
 use workspace::{OpenOptions, Workspace};
+use zed_i18n::t;
 
 use crate::open_abs_path_at_point;
 
@@ -228,9 +229,9 @@ pub(crate) fn open_migrated_rule(
     workspace.show_toast(
         workspace::Toast::new(
             workspace::notifications::NotificationId::unique::<RulesMigratedToSkillsToast>(),
-            "Rules have been migrated to Skills.",
+            t!("agent_ui.mention_crease.rules_migrated_to_skills"),
         )
-        .on_click("View docs", |_, cx| {
+        .on_click(t!("agent_ui.mention_crease.view_docs"), |_, cx| {
             cx.open_url("https://zed.dev/docs/ai/skills");
         })
         .autohide(),

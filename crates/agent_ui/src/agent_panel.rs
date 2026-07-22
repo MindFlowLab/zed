@@ -33,6 +33,7 @@ use zed_actions::{
         ToggleFocus,
     },
 };
+use zed_i18n::t;
 
 use crate::ExpandMessageEditor;
 use crate::ManageProfiles;
@@ -3720,7 +3721,11 @@ impl AgentPanel {
 
     fn copy_thread_to_clipboard(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         let Some(thread) = self.active_native_agent_thread(cx) else {
-            Self::show_deferred_toast(&self.workspace, "No active native thread to copy", cx);
+            Self::show_deferred_toast(
+                &self.workspace,
+                t!("agent_ui.agent_panel.no_active_native_thread_to_copy"),
+                cx,
+            );
             return;
         };
 
@@ -3741,7 +3746,7 @@ impl AgentPanel {
                         workspace.show_toast(
                             workspace::Toast::new(
                                 workspace::notifications::NotificationId::unique::<ThreadCopiedToast>(),
-                                "Thread copied to clipboard (base64 encoded)",
+                                t!("agent_ui.agent_panel.thread_copied_to_clipboard"),
                             )
                             .autohide(),
                             cx,
@@ -3757,7 +3762,7 @@ impl AgentPanel {
 
     fn show_deferred_toast(
         workspace: &WeakEntity<workspace::Workspace>,
-        message: &'static str,
+        message: String,
         cx: &mut App,
     ) {
         let workspace = workspace.clone();
@@ -3780,17 +3785,29 @@ impl AgentPanel {
 
     fn load_thread_from_clipboard(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         if !self.has_open_project(cx) {
-            Self::show_deferred_toast(&self.workspace, "Open a project to load a thread", cx);
+            Self::show_deferred_toast(
+                &self.workspace,
+                t!("agent_ui.agent_panel.open_project_to_load_thread"),
+                cx,
+            );
             return;
         }
 
         let Some(clipboard) = cx.read_from_clipboard() else {
-            Self::show_deferred_toast(&self.workspace, "No clipboard content available", cx);
+            Self::show_deferred_toast(
+                &self.workspace,
+                t!("agent_ui.agent_panel.no_clipboard_content"),
+                cx,
+            );
             return;
         };
 
         let Some(encoded) = clipboard.text() else {
-            Self::show_deferred_toast(&self.workspace, "Clipboard does not contain text", cx);
+            Self::show_deferred_toast(
+                &self.workspace,
+                t!("agent_ui.agent_panel.clipboard_does_not_contain_text"),
+                cx,
+            );
             return;
         };
 
@@ -3800,7 +3817,7 @@ impl AgentPanel {
             Err(_) => {
                 Self::show_deferred_toast(
                     &self.workspace,
-                    "Failed to decode clipboard content (expected base64)",
+                    t!("agent_ui.agent_panel.failed_to_decode_clipboard"),
                     cx,
                 );
                 return;
@@ -3812,7 +3829,7 @@ impl AgentPanel {
             Err(_) => {
                 Self::show_deferred_toast(
                     &self.workspace,
-                    "Failed to parse thread data from clipboard",
+                    t!("agent_ui.agent_panel.failed_to_parse_thread_data"),
                     cx,
                 );
                 return;
@@ -3843,7 +3860,7 @@ impl AgentPanel {
                         workspace.show_toast(
                             workspace::Toast::new(
                                 workspace::notifications::NotificationId::unique::<ThreadLoadedToast>(),
-                                "Thread loaded from clipboard",
+                                t!("agent_ui.agent_panel.thread_loaded_from_clipboard"),
                             )
                             .autohide(),
                             cx,
@@ -3864,23 +3881,34 @@ impl AgentPanel {
         cx: &mut Context<Self>,
     ) {
         let Some(thread_id) = self.active_thread_id(cx) else {
-            Self::show_deferred_toast(&self.workspace, "No active thread", cx);
+            Self::show_deferred_toast(&self.workspace, t!("agent_ui.agent_panel.no_active_thread"), cx);
             return;
         };
 
         let Some(store) = ThreadMetadataStore::try_global(cx) else {
-            Self::show_deferred_toast(&self.workspace, "Thread metadata store not available", cx);
+            Self::show_deferred_toast(
+                &self.workspace,
+                t!("agent_ui.agent_panel.thread_metadata_store_not_available"),
+                cx,
+            );
             return;
         };
 
         let Some(metadata) = store.read(cx).entry(thread_id).cloned() else {
-            Self::show_deferred_toast(&self.workspace, "No metadata found for active thread", cx);
+            Self::show_deferred_toast(
+                &self.workspace,
+                t!("agent_ui.agent_panel.no_metadata_for_active_thread"),
+                cx,
+            );
             return;
         };
 
         let json = thread_metadata_to_debug_json(&metadata);
         let text = serde_json::to_string_pretty(&json).unwrap_or_default();
-        let title = format!("Thread Metadata: {}", metadata.display_title());
+        let title = t!(
+            "agent_ui.agent_panel.thread_metadata_title",
+            title = metadata.display_title()
+        );
 
         self.open_json_buffer(title, text, window, cx);
     }
@@ -3892,7 +3920,11 @@ impl AgentPanel {
         cx: &mut Context<Self>,
     ) {
         let Some(store) = ThreadMetadataStore::try_global(cx) else {
-            Self::show_deferred_toast(&self.workspace, "Thread metadata store not available", cx);
+            Self::show_deferred_toast(
+                &self.workspace,
+                t!("agent_ui.agent_panel.thread_metadata_store_not_available"),
+                cx,
+            );
             return;
         };
 
@@ -3906,7 +3938,12 @@ impl AgentPanel {
         let json = serde_json::Value::Array(entries);
         let text = serde_json::to_string_pretty(&json).unwrap_or_default();
 
-        self.open_json_buffer("All Sidebar Thread Metadata".to_string(), text, window, cx);
+        self.open_json_buffer(
+            t!("agent_ui.agent_panel.all_sidebar_thread_metadata"),
+            text,
+            window,
+            cx,
+        );
     }
 
     fn open_json_buffer(
@@ -5384,7 +5421,7 @@ impl AgentPanel {
                                         .icon_size(IconSize::Small)
                                         .tooltip(move |_window, cx| {
                                             Tooltip::with_meta(
-                                                "Title generation failed. Click to retry.",
+                                                t!("agent_ui.agent_panel.title_generation_failed"),
                                                 None,
                                                 title_generation_error.clone(),
                                                 cx,
@@ -5452,11 +5489,13 @@ impl AgentPanel {
                             .into_any_element()
                     }
                 } else {
-                    Label::new("Terminal").into_any_element()
+                    Label::new(t!("agent_ui.agent_panel.terminal")).into_any_element()
                 }
             }
 
-            VisibleSurface::Uninitialized => Label::new("Agent").truncate().into_any_element(),
+            VisibleSurface::Uninitialized => Label::new(t!("agent_ui.agent_panel.agent"))
+                .truncate()
+                .into_any_element(),
         };
 
         let toolbar_bg = cx.theme().colors().tab_bar_background;
@@ -5490,7 +5529,9 @@ impl AgentPanel {
                             .child(
                                 IconButton::new("edit_tile", IconName::Pencil)
                                     .icon_size(IconSize::Small)
-                                    .tooltip(Tooltip::text("Edit Thread Title")),
+                                    .tooltip(Tooltip::text(t!(
+                                        "agent_ui.agent_panel.edit_thread_title"
+                                    ))),
                             ),
                     )
             })
@@ -5500,7 +5541,7 @@ impl AgentPanel {
     fn show_no_thread_summary_model_toast(workspace: Entity<Workspace>, cx: &mut App) {
         workspace.update(cx, |workspace, cx| {
             let toast = StatusToast::new(
-                "No model is configured for summarizing thread titles.",
+                t!("agent_ui.agent_panel.no_summary_model"),
                 cx,
                 |this, _cx| {
                     this.icon(
@@ -5592,7 +5633,7 @@ impl AgentPanel {
                     .icon_size(IconSize::Small),
                 move |_window, cx| {
                     Tooltip::for_action_in(
-                        "Toggle Agent Menu",
+                        t!("agent_ui.agent_panel.toggle_agent_menu"),
                         &ToggleOptionsMenu,
                         &focus_handle,
                         cx,
@@ -5607,40 +5648,48 @@ impl AgentPanel {
                         menu = menu.context(menu_action_context.clone());
 
                         if has_thread_messages {
-                            menu = menu.header("Current Thread");
+                            menu = menu.header(t!("agent_ui.agent_panel.current_thread"));
 
                             if let Some(conversation_view) = conversation_view.as_ref() {
                                 if can_regenerate_thread_title {
-                                    menu = menu.entry("Regenerate Thread Title", None, {
-                                        let conversation_view = conversation_view.clone();
-                                        let workspace = workspace.clone();
-                                        move |_, cx| {
-                                            Self::handle_regenerate_thread_title(
-                                                conversation_view.clone(),
-                                                workspace.clone(),
-                                                cx,
-                                            );
-                                        }
-                                    });
+                                    menu = menu.entry(
+                                        t!("agent_ui.agent_panel.regenerate_thread_title"),
+                                        None,
+                                        {
+                                            let conversation_view = conversation_view.clone();
+                                            let workspace = workspace.clone();
+                                            move |_, cx| {
+                                                Self::handle_regenerate_thread_title(
+                                                    conversation_view.clone(),
+                                                    workspace.clone(),
+                                                    cx,
+                                                );
+                                            }
+                                        },
+                                    );
                                 }
 
                                 let root_thread_view =
                                     conversation_view.read(cx).root_thread_view();
                                 if let Some(thread_view) = root_thread_view {
                                     let workspace = workspace.clone();
-                                    menu = menu.entry("Open Thread as Markdown", None, {
-                                        move |window, cx| {
-                                            if let Some(workspace) = workspace.upgrade() {
-                                                thread_view.update(cx, |thread_view, cx| {
-                                                    thread_view
-                                                        .open_thread_as_markdown(
-                                                            workspace, window, cx,
-                                                        )
-                                                        .detach_and_log_err(cx);
-                                                });
+                                    menu = menu.entry(
+                                        t!("agent_ui.agent_panel.open_thread_as_markdown"),
+                                        None,
+                                        {
+                                            move |window, cx| {
+                                                if let Some(workspace) = workspace.upgrade() {
+                                                    thread_view.update(cx, |thread_view, cx| {
+                                                        thread_view
+                                                            .open_thread_as_markdown(
+                                                                workspace, window, cx,
+                                                            )
+                                                            .detach_and_log_err(cx);
+                                                    });
+                                                }
                                             }
-                                        }
-                                    });
+                                        },
+                                    );
                                 }
 
                                 menu = menu.separator();
@@ -5649,16 +5698,16 @@ impl AgentPanel {
 
                         if !showing_terminal {
                             menu = menu
-                                .header("MCP Servers")
+                                .header(t!("agent_ui.agent_panel.mcp_servers"))
                                 .action(
-                                    "Add Server…",
+                                    t!("agent_ui.agent_panel.add_server"),
                                     Box::new(zed_actions::OpenSettingsAt {
                                         path: "context_servers".to_string(),
                                         target: None,
                                     }),
                                 )
                                 .action(
-                                    "Install New Servers…",
+                                    t!("agent_ui.agent_panel.install_new_servers"),
                                     Box::new(zed_actions::Extensions {
                                         category_filter: Some(
                                             zed_actions::ExtensionCategoryFilter::ContextServers,
@@ -5667,8 +5716,11 @@ impl AgentPanel {
                                     }),
                                 )
                                 .separator()
-                                .header("Context")
-                                .action("Skills", Box::new(ManageSkills));
+                                .header(t!("agent_ui.agent_panel.context"))
+                                .action(
+                                    t!("agent_ui.agent_panel.skills"),
+                                    Box::new(ManageSkills),
+                                );
 
                             if project_agents_md_path.is_some() || global_agents_md_loaded {
                                 if global_agents_md_loaded {
@@ -5679,7 +5731,9 @@ impl AgentPanel {
                                             h_flex()
                                                 .w_full()
                                                 .gap_1()
-                                                .child(Label::new("Open Global Rules"))
+                                                .child(Label::new(t!(
+                                                    "agent_ui.agent_panel.open_global_rules"
+                                                )))
                                                 .child(
                                                     Label::new("(AGENTS.md)")
                                                         .color(Color::Muted)
@@ -5704,7 +5758,9 @@ impl AgentPanel {
                                             h_flex()
                                                 .w_full()
                                                 .gap_1()
-                                                .child(Label::new("Open Project Rules"))
+                                                .child(Label::new(t!(
+                                                    "agent_ui.agent_panel.open_project_rules"
+                                                )))
                                                 .child(
                                                     Label::new("(AGENTS.md)")
                                                         .color(Color::Muted)
@@ -5725,22 +5781,34 @@ impl AgentPanel {
 
                             menu = menu
                                 .separator()
-                                .action("Profiles", Box::new(ManageProfiles::default()));
+                                .action(
+                                    t!("agent_ui.agent_panel.profiles"),
+                                    Box::new(ManageProfiles::default()),
+                                );
                         }
 
                         menu = menu
-                            .action("Settings", Box::new(OpenSettings))
+                            .action(t!("agent_ui.agent_panel.settings"), Box::new(OpenSettings))
                             .separator()
-                            .action("Toggle Threads Sidebar", Box::new(ToggleWorkspaceSidebar));
+                            .action(
+                                t!("agent_ui.agent_panel.toggle_threads_sidebar"),
+                                Box::new(ToggleWorkspaceSidebar),
+                            );
 
                         if has_auth_methods || supports_logout {
                             menu = menu.separator()
                         }
                         if has_auth_methods {
-                            menu = menu.action("Reauthenticate", Box::new(ReauthenticateAgent))
+                            menu = menu.action(
+                                t!("agent_ui.agent_panel.reauthenticate"),
+                                Box::new(ReauthenticateAgent),
+                            )
                         }
                         if supports_logout {
-                            menu = menu.action("Log Out", Box::new(LogoutAgent))
+                            menu = menu.action(
+                                t!("agent_ui.agent_panel.log_out"),
+                                Box::new(LogoutAgent),
+                            )
                         }
 
                         menu
@@ -5753,7 +5821,7 @@ impl AgentPanel {
         let focus_handle = self.focus_handle(cx);
 
         ProjectEmptyState::new(
-            "Agent Panel",
+            t!("agent_ui.agent_panel.agent_panel"),
             focus_handle.clone(),
             KeyBinding::for_action_in(&workspace::Open::default(), &focus_handle, cx),
         )
@@ -5777,7 +5845,7 @@ impl AgentPanel {
         let showing_terminal = matches!(self.visible_surface(), VisibleSurface::Terminal(_));
 
         let (selected_agent_custom_icon, selected_agent_label) = if showing_terminal {
-            (None, SharedString::from("Terminal"))
+            (None, SharedString::from(t!("agent_ui.agent_panel.terminal")))
         } else if let Agent::Custom { id, .. } = &self.selected_agent {
             let store = agent_server_store.read(cx);
             let icon = store.agent_icon(&id);
@@ -5810,7 +5878,7 @@ impl AgentPanel {
                 Some(ContextMenu::build(window, cx, |menu, _window, cx| {
                     menu.context(focus_handle.clone())
                         .item(
-                            ContextMenuEntry::new("Zed Agent")
+                            ContextMenuEntry::new(t!("agent_ui.agent_panel.zed_agent"))
                                 .when(
                                     !showing_terminal && is_agent_selected(Agent::NativeAgent),
                                     |this| this.action(Box::new(NewThread)),
@@ -5842,7 +5910,7 @@ impl AgentPanel {
                         )
                         .when(supports_terminal, |menu| {
                             menu.item(
-                                ContextMenuEntry::new("Terminal")
+                                ContextMenuEntry::new(t!("agent_ui.agent_panel.terminal"))
                                     .when(showing_terminal, |this| this.action(Box::new(NewThread)))
                                     .when(!showing_terminal, |this| {
                                         this.action(Box::new(NewTerminalThread))
@@ -5903,7 +5971,9 @@ impl AgentPanel {
                                 .collect::<Vec<_>>();
 
                             if !agent_items.is_empty() {
-                                menu = menu.separator().header("External Agents");
+                                menu = menu
+                                    .separator()
+                                    .header(t!("agent_ui.agent_panel.external_agents"));
                             }
                             for item in &agent_items {
                                 let mut entry = ContextMenuEntry::new(item.display_name.clone());
@@ -5963,7 +6033,7 @@ impl AgentPanel {
                         })
                         .separator()
                         .item(
-                            ContextMenuEntry::new("Add More Agents")
+                            ContextMenuEntry::new(t!("agent_ui.agent_panel.add_more_agents"))
                                 .icon(IconName::Plus)
                                 .icon_color(Color::Muted)
                                 .handler({
@@ -6009,7 +6079,7 @@ impl AgentPanel {
                 Tooltip::with_meta(
                     selected_agent_label_for_tooltip.clone(),
                     None,
-                    "Selected Agent",
+                    t!("agent_ui.agent_panel.selected_agent"),
                     cx,
                 )
             });
@@ -6043,22 +6113,22 @@ impl AgentPanel {
         };
 
         let is_full_screen = self.is_zoomed(window, cx);
-        let (icon_id, icon_name, tooltip_text) = if is_full_screen {
+        let (icon_id, icon_name, tooltip_text): (&str, IconName, SharedString) = if is_full_screen {
             (
                 "disable-full-screen",
                 IconName::Minimize,
-                "Disable Full Screen",
+                t!("agent_ui.agent_panel.disable_full_screen").into(),
             )
         } else {
             (
                 "enable-full-screen",
                 IconName::Maximize,
-                "Enable Full Screen",
+                t!("agent_ui.agent_panel.enable_full_screen").into(),
             )
         };
         let full_screen_button = IconButton::new(icon_id, icon_name)
             .icon_size(IconSize::Small)
-            .tooltip(move |_, cx| Tooltip::for_action(tooltip_text, &ToggleZoom, cx))
+            .tooltip(move |_, cx| Tooltip::for_action(tooltip_text.clone(), &ToggleZoom, cx))
             .on_click(cx.listener(move |this, _, window, cx| {
                 this.toggle_zoom(&ToggleZoom, window, cx);
             }));
@@ -6075,10 +6145,13 @@ impl AgentPanel {
             .justify_between();
 
         let empty_thread_title = matches!(mode, ToolbarMode::EmptyThread).then(|| {
-            Label::new(format!("New {} Thread", selected_agent_label))
-                .color(Color::Muted)
-                .truncate()
-                .into_any_element()
+            Label::new(t!(
+                "agent_ui.agent_panel.new_agent_thread",
+                agent = selected_agent_label
+            ))
+            .color(Color::Muted)
+            .truncate()
+            .into_any_element()
         });
 
         let toolbar_content = {
@@ -6089,7 +6162,7 @@ impl AgentPanel {
                     {
                         move |_window, cx| {
                             Tooltip::for_action_in(
-                                "New Thread\u{2026}",
+                                t!("agent_ui.agent_panel.new_thread"),
                                 &ToggleNewThreadMenu,
                                 &focus_handle,
                                 cx,

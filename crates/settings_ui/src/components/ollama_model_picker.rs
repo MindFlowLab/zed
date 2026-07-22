@@ -6,6 +6,7 @@ use picker::{Picker, PickerDelegate};
 use settings::SettingsStore;
 use ui::{ListItem, ListItemSpacing, PopoverMenu, prelude::*};
 use util::ResultExt;
+use zed_i18n::t;
 
 use crate::{
     SettingField, SettingsFieldMetadata, SettingsUiFile, render_picker_trigger_button,
@@ -85,7 +86,7 @@ impl PickerDelegate for OllamaModelPickerDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search models…".into()
+        t!("settings_ui.components.ollama_model_picker.search_placeholder").into()
     }
 
     fn update_matches(
@@ -171,7 +172,7 @@ pub fn render_ollama_model_picker(
         .unwrap_or_else(|| "".into());
 
     let trigger_value: SharedString = if current_value.is_empty() {
-        "Select a model…".into()
+        t!("settings_ui.components.ollama_model_picker.select_model").into()
     } else {
         current_value.clone()
     };

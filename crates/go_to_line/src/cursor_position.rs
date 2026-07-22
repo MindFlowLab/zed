@@ -9,6 +9,7 @@ use ui::{
 };
 use util::paths::FILE_ROW_COLUMN_DELIMITER;
 use workspace::{HideStatusItem, StatusBarSettings, StatusItemView, Workspace, item::ItemHandle};
+use zed_i18n::t;
 
 #[derive(Copy, Clone, Debug, Default, PartialOrd, PartialEq)]
 pub(crate) struct SelectionStats {
@@ -226,9 +227,10 @@ impl Render for CursorPosition {
                 Button::new("go-to-line-column", text)
                     .label_size(LabelSize::Small)
                     .tab_index(0isize)
-                    .aria_label(format!(
-                        "Line {}, column {}",
-                        position.line, position.character
+                    .aria_label(t!(
+                        "go_to_line.line_column_aria",
+                        line = position.line,
+                        column = position.character
                     ))
                     .on_click(cx.listener(|this, _, window, cx| {
                         if let Some(workspace) = this.workspace.upgrade() {
@@ -247,13 +249,13 @@ impl Render for CursorPosition {
                     }))
                     .tooltip(move |_window, cx| match context.as_ref() {
                         Some(context) => Tooltip::for_action_in(
-                            "Go to Line/Column",
+                            t!("go_to_line.go_to_line_column_tooltip"),
                             &editor::actions::ToggleGoToLine,
                             context,
                             cx,
                         ),
                         None => Tooltip::for_action(
-                            "Go to Line/Column",
+                            t!("go_to_line.go_to_line_column_tooltip"),
                             &editor::actions::ToggleGoToLine,
                             cx,
                         ),

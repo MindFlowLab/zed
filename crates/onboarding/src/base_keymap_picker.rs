@@ -10,6 +10,7 @@ use std::sync::Arc;
 use ui::{ListItem, ListItemSpacing, prelude::*};
 use util::ResultExt;
 use workspace::{ModalView, Workspace, ui::HighlightedLabel};
+use zed_i18n::t;
 
 actions!(
     zed,
@@ -107,7 +108,7 @@ impl PickerDelegate for BaseKeymapSelectorDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select a base keymap...".into()
+        t!("onboarding.base_keymap_picker.placeholder").into()
     }
 
     fn match_count(&self) -> usize {

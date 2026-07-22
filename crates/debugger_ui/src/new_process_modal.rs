@@ -30,6 +30,7 @@ use ui::{
 use ui_input::InputField;
 use util::{ResultExt, debug_panic, rel_path::RelPath, shell::ShellKind};
 use workspace::{ModalView, Workspace, notifications::DetachAndPromptErr, pane};
+use zed_i18n::t;
 
 use crate::{
     attach_modal::{AttachModal, ModalIntent},
@@ -454,7 +455,12 @@ impl NewProcessModal {
                 cx.emit(DismissEvent);
             })
         })
-        .detach_and_prompt_err("Failed to edit debug.json", window, cx, |_, _, _| None);
+        .detach_and_prompt_err(
+            &t!("debugger_ui.new_process.failed_edit_debug_json"),
+            window,
+            cx,
+            |_, _, _| None,
+        );
     }
 
     fn adapter_drop_down_menu(
@@ -494,7 +500,7 @@ impl NewProcessModal {
             .debugger
             .as_ref()
             .map(|d| d.0.clone())
-            .unwrap_or_else(|| SELECT_DEBUGGER_LABEL.clone());
+            .unwrap_or_else(|| t!("debugger_ui.new_process.select_debugger").into());
 
         DropdownMenu::new(
             "dap-adapter-picker",
@@ -531,8 +537,6 @@ impl NewProcessModal {
     }
 }
 
-static SELECT_DEBUGGER_LABEL: SharedString = SharedString::new_static("Select Debugger");
-
 #[derive(Clone, Copy)]
 pub(crate) enum NewProcessMode {
     Task,
@@ -544,10 +548,10 @@ pub(crate) enum NewProcessMode {
 impl std::fmt::Display for NewProcessMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mode = match self {
-            NewProcessMode::Task => "Run",
-            NewProcessMode::Debug => "Debug",
-            NewProcessMode::Attach => "Attach",
-            NewProcessMode::Launch => "Launch",
+            NewProcessMode::Task => t!("debugger_ui.new_process.mode_run"),
+            NewProcessMode::Debug => t!("debugger_ui.new_process.mode_debug"),
+            NewProcessMode::Attach => t!("debugger_ui.new_process.mode_attach"),
+            NewProcessMode::Launch => t!("debugger_ui.new_process.mode_launch"),
         };
 
         write!(f, "{}", mode)
@@ -642,7 +646,7 @@ impl Render for NewProcessModal {
                             )
                             .tooltip(move |_, cx| {
                                 Tooltip::for_action_in(
-                                    "Run predefined task",
+                                    t!("debugger_ui.new_process.tooltip_run"),
                                     &ActivateTaskTab,
                                     &task_focus_handle,
                                     cx,
@@ -658,7 +662,7 @@ impl Render for NewProcessModal {
                             )
                             .tooltip(move |_, cx| {
                                 Tooltip::for_action_in(
-                                    "Start a predefined debug scenario",
+                                    t!("debugger_ui.new_process.tooltip_debug"),
                                     &ActivateDebugTab,
                                     &debug_focus_handle,
                                     cx,
@@ -683,7 +687,7 @@ impl Render for NewProcessModal {
                             )
                             .tooltip(move |_, cx| {
                                 Tooltip::for_action_in(
-                                    "Attach the debugger to a running process",
+                                    t!("debugger_ui.new_process.tooltip_attach"),
                                     &ActivateAttachTab,
                                     &attach_focus_handle,
                                     cx,
@@ -699,7 +703,7 @@ impl Render for NewProcessModal {
                             )
                             .tooltip(move |_, cx| {
                                 Tooltip::for_action_in(
-                                    "Launch a new process with a debugger",
+                                    t!("debugger_ui.new_process.tooltip_launch"),
                                     &ActivateLaunchTab,
                                     &launch_focus_handle,
                                     cx,
@@ -733,27 +737,14 @@ impl Render for NewProcessModal {
                         container
                             .child(
                                 h_flex().child(
-                                    Button::new("edit-custom-debug", "Edit in debug.json")
-                                        .on_click(cx.listener(|this, _, window, cx| {
-                                            this.save_debug_scenario(window, cx);
-                                        }))
-                                        .key_binding(KeyBinding::for_action(&*secondary_action, cx))
-                                        .disabled(
-                                            self.debugger.is_none()
-                                                || self
-                                                    .configure_mode
-                                                    .read(cx)
-                                                    .program
-                                                    .read(cx)
-                                                    .is_empty(cx),
-                                        ),
-                                ),
-                            )
-                            .child(
-                                Button::new("debugger-spawn", "Start")
+                                    Button::new(
+                                        "edit-custom-debug",
+                                        t!("debugger_ui.new_process.edit_in_debug_json"),
+                                    )
                                     .on_click(cx.listener(|this, _, window, cx| {
-                                        this.start_new_session(window, cx)
+                                        this.save_debug_scenario(window, cx);
                                     }))
+                                    .key_binding(KeyBinding::for_action(&*secondary_action, cx))
                                     .disabled(
                                         self.debugger.is_none()
                                             || self
@@ -763,6 +754,25 @@ impl Render for NewProcessModal {
                                                 .read(cx)
                                                 .is_empty(cx),
                                     ),
+                                ),
+                            )
+                            .child(
+                                Button::new(
+                                    "debugger-spawn",
+                                    t!("debugger_ui.new_process.start"),
+                                )
+                                .on_click(cx.listener(|this, _, window, cx| {
+                                    this.start_new_session(window, cx)
+                                }))
+                                .disabled(
+                                    self.debugger.is_none()
+                                        || self
+                                            .configure_mode
+                                            .read(cx)
+                                            .program
+                                            .read(cx)
+                                            .is_empty(cx),
+                                ),
                             ),
                     ),
                     NewProcessMode::Attach => el.child({
@@ -780,12 +790,15 @@ impl Render for NewProcessModal {
                         let secondary_action = menu::SecondaryConfirm.boxed_clone();
                         container
                             .child(div().child({
-                                Button::new("edit-attach-task", "Edit in debug.json")
-                                    .key_binding(KeyBinding::for_action(&*secondary_action, cx))
-                                    .on_click(move |_, window, cx| {
-                                        window.dispatch_action(secondary_action.boxed_clone(), cx)
-                                    })
-                                    .disabled(disabled)
+                                Button::new(
+                                    "edit-attach-task",
+                                    t!("debugger_ui.new_process.edit_in_debug_json"),
+                                )
+                                .key_binding(KeyBinding::for_action(&*secondary_action, cx))
+                                .on_click(move |_, window, cx| {
+                                    window.dispatch_action(secondary_action.boxed_clone(), cx)
+                                })
+                                .disabled(disabled)
                             }))
                             .child(
                                 h_flex()
@@ -829,14 +842,14 @@ impl ConfigureMode {
     pub(super) fn new(window: &mut Window, cx: &mut App) -> Entity<Self> {
         let program = cx.new(|cx| {
             InputField::new(window, cx, "ENV=Zed ~/bin/program --option")
-                .label("Program")
+                .label(t!("debugger_ui.new_process.program_label"))
                 .tab_stop(true)
                 .tab_index(1)
         });
 
         let cwd = cx.new(|cx| {
-            InputField::new(window, cx, "Ex: $ZED_WORKTREE_ROOT")
-                .label("Working Directory")
+            InputField::new(window, cx, &t!("debugger_ui.new_process.cwd_placeholder"))
+                .label(t!("debugger_ui.new_process.cwd_label"))
                 .tab_stop(true)
                 .tab_index(2)
         });
@@ -933,7 +946,7 @@ impl ConfigureMode {
             .child(
                 h_flex()
                     .gap_1()
-                    .child(Label::new("Debugger:").color(Color::Muted))
+                    .child(Label::new(t!("debugger_ui.new_process.debugger_label")).color(Color::Muted))
                     .child(adapter_menu),
             )
             .child(self.program.clone())
@@ -941,7 +954,7 @@ impl ConfigureMode {
             .child(
                 Switch::new("debugger-stop-on-entry", self.stop_on_entry)
                     .tab_index(3_isize)
-                    .label("Stop on Entry")
+                    .label(t!("debugger_ui.new_process.stop_on_entry"))
                     .label_position(SwitchLabelPosition::Start)
                     .label_size(LabelSize::Default)
                     .on_click({
@@ -1083,19 +1096,21 @@ impl DebugDelegate {
                 Some(abs_path.to_string_lossy().into_owned())
             }
             Some(TaskSourceKind::Lsp { language_name, .. }) => {
-                Some(format!("LSP: {language_name}"))
+                Some(t!("debugger_ui.new_process.subtitle_lsp", language = language_name))
             }
-            Some(TaskSourceKind::Language { name }) => Some(format!("Language: {name}")),
+            Some(TaskSourceKind::Language { name }) => {
+                Some(t!("debugger_ui.new_process.subtitle_language", name = name))
+            }
             _ => context.clone().and_then(|ctx| {
                 ctx.task_context
                     .task_variables
                     .get(&VariableName::RelativeFile)
-                    .map(|f| format!("in {f}"))
+                    .map(|f| t!("debugger_ui.new_process.subtitle_in_file", path = f))
                     .or_else(|| {
                         ctx.task_context
                             .task_variables
                             .get(&VariableName::Dirname)
-                            .map(|d| format!("in {d}/"))
+                            .map(|d| t!("debugger_ui.new_process.subtitle_in_dir", path = d))
                     })
             }),
         }
@@ -1230,7 +1245,7 @@ impl PickerDelegate for DebugDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> std::sync::Arc<str> {
-        "Find a debug task, or debug a command".into()
+        t!("debugger_ui.new_process.search_placeholder").into()
     }
 
     fn update_matches(
@@ -1490,7 +1505,11 @@ impl PickerDelegate for DebugDelegate {
             .child({
                 let action = menu::SecondaryConfirm.boxed_clone();
                 if self.matches.is_empty() {
-                    Button::new("edit-debug-json", "Edit debug.json").on_click(cx.listener(
+                    Button::new(
+                        "edit-debug-json",
+                        t!("debugger_ui.new_process.edit_debug_json"),
+                    )
+                    .on_click(cx.listener(
                         |_picker, _, window, cx| {
                             window.dispatch_action(
                                 zed_actions::OpenProjectDebugTasks.boxed_clone(),
@@ -1500,27 +1519,37 @@ impl PickerDelegate for DebugDelegate {
                         },
                     ))
                 } else {
-                    Button::new("edit-debug-task", "Edit in debug.json")
-                        .key_binding(KeyBinding::for_action(&*action, cx))
-                        .on_click(move |_, window, cx| {
-                            window.dispatch_action(action.boxed_clone(), cx)
-                        })
+                    Button::new(
+                        "edit-debug-task",
+                        t!("debugger_ui.new_process.edit_in_debug_json"),
+                    )
+                    .key_binding(KeyBinding::for_action(&*action, cx))
+                    .on_click(move |_, window, cx| {
+                        window.dispatch_action(action.boxed_clone(), cx)
+                    })
                 }
             })
             .map(|this| {
                 if (current_modifiers.alt || self.matches.is_empty()) && !self.prompt.is_empty() {
                     let action = picker::ConfirmInput { secondary: false }.boxed_clone();
                     this.child({
-                        Button::new("launch-custom", "Launch Custom")
-                            .key_binding(KeyBinding::for_action(&*action, cx))
-                            .on_click(move |_, window, cx| {
-                                window.dispatch_action(action.boxed_clone(), cx)
-                            })
+                        Button::new(
+                            "launch-custom",
+                            t!("debugger_ui.new_process.launch_custom"),
+                        )
+                        .key_binding(KeyBinding::for_action(&*action, cx))
+                        .on_click(move |_, window, cx| {
+                            window.dispatch_action(action.boxed_clone(), cx)
+                        })
                     })
                 } else {
                     this.child({
                         let is_recent_selected = self.divider_index >= Some(self.selected_index);
-                        let run_entry_label = if is_recent_selected { "Rerun" } else { "Spawn" };
+                        let run_entry_label = if is_recent_selected {
+                            t!("debugger_ui.new_process.rerun")
+                        } else {
+                            t!("debugger_ui.new_process.spawn")
+                        };
 
                         Button::new("spawn", run_entry_label)
                             .key_binding(KeyBinding::for_action(&menu::Confirm, cx))

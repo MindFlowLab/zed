@@ -10,6 +10,7 @@ use project::{Project, ProjectPath, Toolchains, WorktreeId, toolchain_store::Too
 use ui::{Button, ButtonCommon, Clickable, LabelSize, SharedString, Tooltip};
 use util::{maybe, rel_path::RelPath};
 use workspace::{HideStatusItem, StatusItemView, Workspace, item::ItemHandle};
+use zed_i18n::t;
 
 use crate::ToolchainSelector;
 
@@ -47,7 +48,7 @@ impl ActiveToolchain {
         Self {
             active_toolchain: None,
             active_buffer: None,
-            term: SharedString::new_static("Toolchain"),
+            term: SharedString::from(t!("toolchain_selector.toolchain_term")),
             workspace: workspace.weak_handle(),
 
             _update_toolchain_task: Self::spawn_tracker_task(window, cx),
@@ -248,7 +249,10 @@ impl Render for ActiveToolchain {
                         });
                     }
                 }))
-                .tooltip(Tooltip::text(format!("Select {}", &self.term))),
+                .tooltip(Tooltip::text(t!(
+                    "toolchain_selector.select_term",
+                    term = self.term
+                ))),
         )
     }
 }

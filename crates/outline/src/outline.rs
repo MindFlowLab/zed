@@ -18,6 +18,7 @@ use theme_settings::ThemeSettings;
 use ui::{ListItem, ListItemSpacing, prelude::*};
 use util::ResultExt;
 use workspace::{DismissDecision, ModalView};
+use zed_i18n::t;
 
 pub fn init(cx: &mut App) {
     cx.observe_new(OutlineView::register).detach();
@@ -276,7 +277,7 @@ impl PickerDelegate for OutlineViewDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search buffer symbols...".into()
+        t!("outline.placeholder").into()
     }
 
     fn match_count(&self) -> usize {

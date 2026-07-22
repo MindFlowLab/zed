@@ -64,6 +64,7 @@ use workspace::{
     ModalView, Workspace,
     item::{Item, ItemEvent, TabTooltipContent},
 };
+use zed_i18n::t;
 
 const COMMIT_CIRCLE_RADIUS: Pixels = px(3.5);
 const COMMIT_CIRCLE_STROKE_WIDTH: Pixels = px(1.5);
@@ -147,7 +148,7 @@ impl PickerDelegate for CommitTagPickerDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Copy Tag".into()
+        t!("git_ui.common.copy_tag").into()
     }
 
     fn match_count(&self) -> usize {
@@ -304,7 +305,9 @@ impl ChangedFileEntry {
                 } else {
                     format!("{}/{}", dir_path, file_name).into()
                 };
-                move |_, cx| Tooltip::with_meta("View Changes", None, meta.clone(), cx)
+                move |_, cx| {
+                    Tooltip::with_meta(t!("git_ui.git_graph.view_changes"), None, meta.clone(), cx)
+                }
             })
             .on_click({
                 let entry = self.clone();
@@ -385,7 +388,9 @@ impl ChangedFileDirectoryEntry {
             )
             .tooltip({
                 let name = self.name.clone();
-                move |_, cx| Tooltip::with_meta("Toggle Folder", None, name.clone(), cx)
+                move |_, cx| {
+                    Tooltip::with_meta(t!("git_ui.git_graph.toggle_folder"), None, name.clone(), cx)
+                }
             })
             .on_click(move |_, _, cx| {
                 git_graph
@@ -612,7 +617,7 @@ fn timestamp_format() -> &'static [BorrowedFormatItem<'static>] {
 
 fn format_timestamp(timestamp: i64) -> String {
     let Ok(datetime) = OffsetDateTime::from_unix_timestamp(timestamp) else {
-        return "Unknown".to_string();
+        return t!("git_ui.git_graph.unknown");
     };
 
     let local_offset = UtcOffset::current_local_offset().unwrap_or(UtcOffset::UTC);
@@ -1472,7 +1477,7 @@ impl GitGraph {
 
         let search_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Search commits…", window, cx);
+            editor.set_placeholder_text(&t!("git_ui.git_graph.search_commits"), window, cx);
             editor
         });
 
@@ -1831,7 +1836,7 @@ impl GitGraph {
                     author_name = data.author_name.clone();
                     formatted_time = format_timestamp(data.commit_timestamp);
                 } else {
-                    subject = "Loading…".into();
+                    subject = t!("git_ui.common.loading").into();
                     author_name = "".into();
                 }
 
@@ -2492,10 +2497,21 @@ impl GitGraph {
         cx: &mut Context<Self>,
     ) {
         let is_path_history = matches!(self.log_source, LogSource::Path(_));
-        let columns: &[&str] = if is_path_history {
-            &["Description", "Date", "Author", "Commit"]
+        let columns: Vec<String> = if is_path_history {
+            vec![
+                t!("git_ui.git_graph.column_description"),
+                t!("git_ui.git_graph.column_date"),
+                t!("git_ui.git_graph.column_author"),
+                t!("git_ui.git_graph.column_commit"),
+            ]
         } else {
-            &["Graph", "Description", "Date", "Author", "Commit"]
+            vec![
+                t!("git_ui.git_graph.column_graph"),
+                t!("git_ui.git_graph.column_description"),
+                t!("git_ui.git_graph.column_date"),
+                t!("git_ui.git_graph.column_author"),
+                t!("git_ui.git_graph.column_commit"),
+            ]
         };
 
         let filter = self.column_visibility.clone();
@@ -2508,7 +2524,9 @@ impl GitGraph {
         let focus_handle = self.focus_handle.clone();
         let git_graph = cx.entity();
         let context_menu = ContextMenu::build(window, cx, |mut context_menu, _window, _cx| {
-            context_menu = context_menu.context(focus_handle).header("Columns");
+            context_menu = context_menu
+                .context(focus_handle)
+                .header(t!("git_ui.git_graph.columns_header"));
             for (col_idx, label) in columns.iter().enumerate() {
                 let is_visible = !filter.get(col_idx).copied().unwrap_or(false);
                 // Disable hiding the last remaining visible column.
@@ -2592,7 +2610,7 @@ impl GitGraph {
                             .icon_size(IconSize::Small)
                             .tooltip(move |_, cx| {
                                 Tooltip::for_action_in(
-                                    "Select Previous Match",
+                                    t!("git_ui.common.select_previous_match"),
                                     &SelectPreviousMatch,
                                     &focus_handle,
                                     cx,
@@ -2615,7 +2633,7 @@ impl GitGraph {
                             .icon_size(IconSize::Small)
                             .tooltip(move |_, cx| {
                                 Tooltip::for_action_in(
-                                    "Select Next Match",
+                                    t!("git_ui.common.select_next_match"),
                                     &SelectNextMatch,
                                     &focus_handle,
                                     cx,
@@ -2722,7 +2740,7 @@ impl GitGraph {
                 data.author_email.clone(),
                 Some(data.commit_timestamp),
             ),
-            CommitDataState::Loading(_) => ("Loading…".into(), "".into(), None),
+            CommitDataState::Loading(_) => (t!("git_ui.common.loading").into(), "".into(), None),
         };
 
         let date_string = commit_timestamp
@@ -2801,11 +2819,11 @@ impl GitGraph {
             .toggle_state(self.changed_files_view_mode.is_tree())
             .tooltip({
                 let tooltip = if is_tree_view {
-                    "Show Flat View"
+                    t!("git_ui.git_graph.show_flat_view")
                 } else {
-                    "Show Tree View"
+                    t!("git_ui.git_graph.show_tree_view")
                 };
-                move |_, cx| Tooltip::for_action(tooltip, &ToggleChangedFilesView, cx)
+                move |_, cx| Tooltip::for_action(tooltip.clone(), &ToggleChangedFilesView, cx)
             })
             .on_click(cx.listener(|this, _, _window, cx| {
                 this.changed_files_view_mode = this.changed_files_view_mode.toggled();
@@ -2877,9 +2895,17 @@ impl GitGraph {
                                 let is_copied = copied_state.read(cx).is_copied();
 
                                 let (icon, icon_color, tooltip_label) = if is_copied {
-                                    (IconName::Check, Color::Success, "Email Copied!")
+                                    (
+                                        IconName::Check,
+                                        Color::Success,
+                                        t!("git_ui.git_graph.email_copied"),
+                                    )
                                 } else {
-                                    (IconName::Envelope, Color::Muted, "Copy Email")
+                                    (
+                                        IconName::Envelope,
+                                        Color::Muted,
+                                        t!("git_ui.common.copy_email"),
+                                    )
                                 };
 
                                 let copy_email = author_email.clone();
@@ -2895,7 +2921,7 @@ impl GitGraph {
                                         .color(Color::Muted)
                                         .tooltip(move |_, cx| {
                                             Tooltip::with_meta(
-                                                tooltip_label,
+                                                tooltip_label.clone(),
                                                 None,
                                                 author_email_for_tooltip.clone(),
                                                 cx,
@@ -2928,9 +2954,17 @@ impl GitGraph {
                                 let is_copied = copied_state.read(cx).is_copied();
 
                                 let (icon, icon_color, tooltip_label) = if is_copied {
-                                    (IconName::Check, Color::Success, "Commit SHA Copied!")
+                                    (
+                                        IconName::Check,
+                                        Color::Success,
+                                        t!("git_ui.git_graph.commit_sha_copied"),
+                                    )
                                 } else {
-                                    (IconName::Hash, Color::Muted, "Copy Commit SHA")
+                                    (
+                                        IconName::Hash,
+                                        Color::Muted,
+                                        t!("git_ui.common.copy_commit_sha"),
+                                    )
                                 };
 
                                 Button::new("sha-button", &full_sha)
@@ -2944,7 +2978,7 @@ impl GitGraph {
                                         let full_sha = full_sha.clone();
                                         move |_, cx| {
                                             Tooltip::with_meta(
-                                                tooltip_label,
+                                                tooltip_label.clone(),
                                                 None,
                                                 full_sha.clone(),
                                                 cx,
@@ -3025,15 +3059,17 @@ impl GitGraph {
                                 h_flex()
                                     .gap_1()
                                     .child(
-                                        Label::new(format!(
-                                            "{} Changed {}",
-                                            changed_files_count,
-                                            if changed_files_count == 1 {
-                                                "File"
-                                            } else {
-                                                "Files"
-                                            }
-                                        ))
+                                        Label::new(if changed_files_count == 1 {
+                                            t!(
+                                                "git_ui.git_graph.changed_files_singular",
+                                                count = changed_files_count
+                                            )
+                                        } else {
+                                            t!(
+                                                "git_ui.git_graph.changed_files_plural",
+                                                count = changed_files_count
+                                            )
+                                        })
                                         .size(LabelSize::Small)
                                         .color(Color::Muted),
                                     )
@@ -3143,7 +3179,7 @@ impl GitGraph {
             .child(Divider::horizontal())
             .child(
                 h_flex().p_1p5().w_full().child(
-                    Button::new("view-commit", "View Commit")
+                    Button::new("view-commit", t!("git_ui.common.view_commit"))
                         .full_width()
                         .start_icon(
                             Icon::new(IconName::GitCommit)
@@ -3716,11 +3752,11 @@ impl Render for GitGraph {
 
         let content = if commit_count == 0 {
             let message = if let Some(error) = &error {
-                format!("Error loading: {}", error)
+                t!("git_ui.git_graph.error_loading", error = error)
             } else if is_loading {
-                "Loading".to_string()
+                t!("git_ui.git_graph.loading")
             } else {
-                "No commits found".to_string()
+                t!("git_ui.git_graph.no_commits_found")
             };
             let label = Label::new(message)
                 .color(Color::Muted)
@@ -3795,20 +3831,22 @@ impl Render for GitGraph {
                                     if !is_path_history {
                                         TableRow::from_vec(
                                             vec![
-                                                Label::new("Graph")
+                                                Label::new(t!("git_ui.git_graph.column_graph"))
                                                     .color(Color::Muted)
                                                     .truncate()
                                                     .into_any_element(),
-                                                Label::new("Description")
+                                                Label::new(t!(
+                                                    "git_ui.git_graph.column_description"
+                                                ))
+                                                .color(Color::Muted)
+                                                .into_any_element(),
+                                                Label::new(t!("git_ui.git_graph.column_date"))
                                                     .color(Color::Muted)
                                                     .into_any_element(),
-                                                Label::new("Date")
+                                                Label::new(t!("git_ui.git_graph.column_author"))
                                                     .color(Color::Muted)
                                                     .into_any_element(),
-                                                Label::new("Author")
-                                                    .color(Color::Muted)
-                                                    .into_any_element(),
-                                                Label::new("Commit")
+                                                Label::new(t!("git_ui.git_graph.column_commit"))
                                                     .color(Color::Muted)
                                                     .into_any_element(),
                                             ],
@@ -3817,16 +3855,18 @@ impl Render for GitGraph {
                                     } else {
                                         TableRow::from_vec(
                                             vec![
-                                                Label::new("Description")
+                                                Label::new(t!(
+                                                    "git_ui.git_graph.column_description"
+                                                ))
+                                                .color(Color::Muted)
+                                                .into_any_element(),
+                                                Label::new(t!("git_ui.git_graph.column_date"))
                                                     .color(Color::Muted)
                                                     .into_any_element(),
-                                                Label::new("Date")
+                                                Label::new(t!("git_ui.git_graph.column_author"))
                                                     .color(Color::Muted)
                                                     .into_any_element(),
-                                                Label::new("Author")
-                                                    .color(Color::Muted)
-                                                    .into_any_element(),
-                                                Label::new("Commit")
+                                                Label::new(t!("git_ui.git_graph.column_commit"))
                                                     .color(Color::Muted)
                                                     .into_any_element(),
                                             ],
@@ -4124,9 +4164,9 @@ impl Item for GitGraph {
             move |_, _| {
                 v_flex()
                     .child(Label::new(if path_history_path.is_some() {
-                        "Path History"
+                        t!("git_ui.git_graph.path_history")
                     } else {
-                        "Git Graph"
+                        t!("git_ui.git_graph.git_graph_title")
                     }))
                     .when_some(path_history_path.clone(), |this, path| {
                         this.child(Label::new(path).color(Color::Muted).size(LabelSize::Small))
@@ -4155,7 +4195,10 @@ impl Item for GitGraph {
                     .file_name()
                     .map(|name| name.to_string_lossy().to_string())
             })
-            .map_or_else(|| "Git Graph".into(), |name| SharedString::from(name))
+            .map_or_else(
+                || t!("git_ui.git_graph.git_graph_title").into(),
+                |name| SharedString::from(name),
+            )
     }
 
     fn show_toolbar(&self) -> bool {

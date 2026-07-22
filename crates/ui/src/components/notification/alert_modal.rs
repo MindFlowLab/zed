@@ -7,6 +7,7 @@ use gpui::IntoElement;
 use gpui::Stateful;
 use smallvec::{SmallVec, smallvec};
 use theme::ActiveTheme;
+use zed_i18n::t;
 
 type ActionHandler = Box<dyn FnOnce(Stateful<Div>) -> Stateful<Div>>;
 
@@ -141,8 +142,12 @@ impl RenderOnce for AlertModal {
         if let Some(footer) = self.footer {
             modal = modal.child(footer);
         } else if has_default_footer {
-            let primary_action = self.primary_action.unwrap_or_else(|| "OK".into());
-            let dismiss_label = self.dismiss_label.unwrap_or_else(|| "Cancel".into());
+            let primary_action = self
+                .primary_action
+                .unwrap_or_else(|| t!("ui.alert_modal.ok").into());
+            let dismiss_label = self
+                .dismiss_label
+                .unwrap_or_else(|| t!("ui.alert_modal.cancel").into());
 
             modal = modal.child(
                 h_flex()

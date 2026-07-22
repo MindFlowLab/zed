@@ -22,6 +22,7 @@ use ui::{Banner, Divider, SwitchField, WithScrollbar, prelude::*};
 use ui_input::{ErasedEditorEvent, InputField};
 use util::ResultExt;
 use workspace::MultiWorkspace;
+use zed_i18n::t;
 
 use crate::{SettingsUiFile, SettingsWindow, all_projects};
 
@@ -183,7 +184,7 @@ impl SkillCreatorPage {
 
         let name_editor = cx.new(|cx| {
             InputField::new(window, cx, "my-new-skill")
-                .label("Name")
+                .label(t!("settings_ui.skill_creator.name_label"))
                 .tab_index(NAME_FIELD_TAB_INDEX)
                 .tab_stop(true)
         });
@@ -194,9 +195,9 @@ impl SkillCreatorPage {
             InputField::new(
                 window,
                 cx,
-                "e.g., Fill the PR description following this template.",
+                &t!("settings_ui.skill_creator.description_placeholder"),
             )
-            .label("Description")
+            .label(t!("settings_ui.skill_creator.description_label"))
             .tab_index(DESCRIPTION_FIELD_TAB_INDEX)
             .tab_stop(true)
         });
@@ -208,7 +209,11 @@ impl SkillCreatorPage {
                 buffer
             });
             let mut editor = Editor::for_buffer(buffer, None, window, cx);
-            editor.set_placeholder_text("Add skill content…", window, cx);
+            editor.set_placeholder_text(
+                t!("settings_ui.skill_creator.body_placeholder").as_str(),
+                window,
+                cx,
+            );
             editor.set_soft_wrap_mode(SoftWrap::EditorWidth, cx);
             editor.set_show_gutter(false, cx);
             editor.set_show_wrap_guides(false, cx);
@@ -457,9 +462,10 @@ impl SkillCreatorPage {
         match parse_imported_skill(&content, "") {
             Ok(imported) => self.apply_imported_skill(imported, window, cx),
             Err(err) => {
-                self.save_error = Some(SharedString::from(format!(
-                    "Couldn't read shared skill: {err}"
-                )));
+                self.save_error = Some(
+                    t!("settings_ui.skill_creator.could_not_read_shared_skill", err = err)
+                        .into(),
+                );
                 cx.notify();
             }
         }
@@ -703,20 +709,21 @@ impl SkillCreatorPage {
             .child(
                 h_flex()
                     .gap_1()
-                    .child(Label::new("Import from URL"))
-                    .child(Label::new("(optional)").color(Color::Muted)),
+                    .child(Label::new(t!("settings_ui.skill_creator.import_from_url")))
+                    .child(
+                        Label::new(t!("settings_ui.skill_creator.optional"))
+                            .color(Color::Muted),
+                    ),
             )
             .child(self.url_editor.clone())
             .child(match &self.url_import_status {
-                UrlImportStatus::Idle => Label::new(
-                    "Paste a GitHub .md URL to fetch it and fill out the form. \
-                     For private files, Zed retries using GITHUB_TOKEN, if set.",
-                )
-                .size(LabelSize::Small)
-                .color(Color::Muted)
-                .into_any_element(),
+                UrlImportStatus::Idle => Label::new(t!("settings_ui.skill_creator.import_idle_hint"))
+                    .size(LabelSize::Small)
+                    .color(Color::Muted)
+                    .into_any_element(),
                 UrlImportStatus::Fetching => {
-                    LoadingLabel::new("Fetching and parsing…").into_any_element()
+                    LoadingLabel::new(t!("settings_ui.skill_creator.fetching_and_parsing"))
+                        .into_any_element()
                 }
                 UrlImportStatus::Error(error) => h_flex()
                     .gap_1()
@@ -743,7 +750,7 @@ impl SkillCreatorPage {
             .child(
                 v_flex()
                     .gap_2()
-                    .child(Label::new("Front-matter"))
+                    .child(Label::new(t!("settings_ui.skill_creator.front_matter")))
                     .child(self.name_editor.clone())
                     .child(self.description_editor.clone()),
             )
@@ -754,7 +761,7 @@ impl SkillCreatorPage {
                     .flex_grow_1()
                     .flex_shrink_0()
                     .gap_2()
-                    .child(Label::new("Skill Content"))
+                    .child(Label::new(t!("settings_ui.skill_creator.skill_content")))
                     .child(self.render_body_field(window, cx))
                     .when_some(self.body_error, |this, error| {
                         this.child(Label::new(error).size(LabelSize::Small).color(Color::Error))
@@ -767,11 +774,8 @@ impl SkillCreatorPage {
 
         SwitchField::new(
             "disable-model-invocation",
-            Some("Disable model invocation"),
-            Some(
-                "Hide this skill from the model's catalog. It can still be invoked via slash command."
-                    .into(),
-            ),
+            Some(t!("settings_ui.skill_creator.disable_model_invocation")),
+            Some(t!("settings_ui.skill_creator.disable_model_invocation_description").into()),
             toggle_state,
             cx.listener(|this, _state: &ToggleState, _window, cx| {
                 this.toggle_disable_model_invocation(cx);
@@ -835,7 +839,11 @@ impl SkillCreatorPage {
 
     fn render_footer(&self, _window: &Window, cx: &mut Context<Self>) -> impl IntoElement {
         let saving = self.saving;
-        let main_action = if saving { "Saving…" } else { "Save Skill" };
+        let main_action = if saving {
+            t!("settings_ui.skill_creator.saving")
+        } else {
+            t!("settings_ui.skill_creator.save_skill")
+        };
 
         v_flex()
             .w_full()

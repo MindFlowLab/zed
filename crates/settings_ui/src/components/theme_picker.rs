@@ -5,6 +5,7 @@ use gpui::{AnyElement, App, Context, DismissEvent, SharedString, Task, Window};
 use picker::{Picker, PickerDelegate};
 use theme::ThemeRegistry;
 use ui::{ListItem, ListItemSpacing, prelude::*};
+use zed_i18n::t;
 
 type ThemePicker = Picker<ThemePickerDelegate>;
 
@@ -72,7 +73,7 @@ impl PickerDelegate for ThemePickerDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search theme…".into()
+        t!("settings_ui.components.theme_picker.search_placeholder").into()
     }
 
     fn update_matches(

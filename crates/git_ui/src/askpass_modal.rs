@@ -10,6 +10,7 @@ use ui::{
 };
 use util::maybe;
 use workspace::ModalView;
+use zed_i18n::t;
 use zeroize::Zeroize;
 
 pub(crate) struct AskPassModal {
@@ -90,10 +91,10 @@ impl AskPassModal {
                             Icon::new(IconName::Github).size(IconSize::Small)
                         )
                         .child(
-                            Label::new("You may need to configure git for Github.")
+                            Label::new(t!("git_ui.askpass_modal.configure_git_hint"))
                                 .size(LabelSize::Small),
                         )
-                        .child(Button::new("learn-more", "Learn more").color(Color::Accent).label_size(LabelSize::Small).on_click(|_, _, cx| {
+                        .child(Button::new("learn-more", t!("git_ui.askpass_modal.learn_more")).color(Color::Accent).label_size(LabelSize::Small).on_click(|_, _, cx| {
                             cx.open_url("https://docs.github.com/en/get-started/git-basics/set-up-git#authenticating-with-github-from-git")
                         })),
                 )

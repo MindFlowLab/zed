@@ -8,6 +8,7 @@ use picker::{Picker, PickerDelegate};
 use settings::{AgentProfileContent, ContextServerPresetContent, update_settings_file};
 use ui::{ListItem, ListItemSpacing, prelude::*};
 use util::ResultExt as _;
+use zed_i18n::t;
 
 pub struct ToolPicker {
     picker: Entity<Picker<ToolPickerDelegate>>,
@@ -182,8 +183,8 @@ impl PickerDelegate for ToolPickerDelegate {
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
         match self.mode {
-            ToolPickerMode::BuiltinTools => "Search built-in tools…",
-            ToolPickerMode::McpTools => "Search MCP tools…",
+            ToolPickerMode::BuiltinTools => t!("agent_ui.tool_picker.search_builtin_tools"),
+            ToolPickerMode::McpTools => t!("agent_ui.tool_picker.search_mcp_tools"),
         }
         .into()
     }

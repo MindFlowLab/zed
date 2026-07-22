@@ -17,6 +17,7 @@ use std::{ops::Not as _, path::Path, sync::Arc};
 use ui::{HighlightedLabel, ListItem, ListItemSpacing, prelude::*};
 use util::ResultExt;
 use workspace::{ModalView, Workspace};
+use zed_i18n::t;
 
 actions!(
     language_selector,
@@ -164,7 +165,7 @@ impl LanguageSelectorDelegate {
         if let Some(buffer_language) = buffer_language
             .filter(|buffer_language| buffer_language.name().as_ref() == mat.string.as_str())
         {
-            label.push_str(" (current)");
+            label = t!("language_selector.language_current", name = label);
             let icon = need_icon
                 .then(|| self.language_icon(&buffer_language.config().matcher, cx))
                 .flatten();
@@ -202,7 +203,7 @@ impl PickerDelegate for LanguageSelectorDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select a language…".into()
+        t!("language_selector.placeholder").into()
     }
 
     fn match_count(&self) -> usize {

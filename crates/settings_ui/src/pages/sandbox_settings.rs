@@ -6,13 +6,10 @@ use http_proxy::HostPattern;
 use settings::{Settings as _, SettingsStore};
 use ui::{Banner, Divider, Severity, SwitchField, ToggleState, Tooltip, prelude::*};
 use util::ResultExt as _;
+use zed_i18n::t;
 
 use crate::SettingsWindow;
 use crate::components::{SettingsInputField, SettingsSectionHeader};
-
-const DOMAINS_DESCRIPTION: &str = "Each entry is an exact domain (github.com) or a leading-*. subdomain wildcard (*.npmjs.org). IP addresses and local domains are not allowed.";
-
-const WRITE_PATHS_DESCRIPTION: &str = "Each entry must be an absolute path and grants write access to the whole subtree, except protected Git metadata.";
 
 pub(crate) fn render_sandbox_settings_page(
     settings_window: &SettingsWindow,
@@ -61,11 +58,8 @@ pub(crate) fn render_sandbox_settings_page(
         .child(
             SwitchField::new(
                 "sandbox-enabled",
-                Some("Enable Sandbox"),
-                Some(
-                    "Wrap agent-run terminal commands in an OS-level sandbox. When off, commands run with Zed's own permissions."
-                        .into(),
-                ),
+                Some(t!("settings_ui.sandbox_settings.enable_sandbox")),
+                Some(t!("settings_ui.sandbox_settings.enable_sandbox_description").into()),
                 sandbox_enabled,
                 move |state, _window, cx| {
                     set_sandbox_enabled(*state == ToggleState::Selected, cx);
@@ -76,11 +70,14 @@ pub(crate) fn render_sandbox_settings_page(
         .child({
             let docs_url =
                 client::zed_urls::sandboxing_docs(Some("persistent-sandbox-permissions"), cx);
-            let tooltip = format!("Opens {docs_url}");
+            let tooltip = t!("settings_ui.sandbox_settings.opens_url", url = docs_url);
             // Wrap in a row so the button shrinks to its content width instead
             // of stretching across the settings page.
             h_flex().child(
-                Button::new("sandbox-docs-link", "Learn more about sandboxing")
+                Button::new(
+                    "sandbox-docs-link",
+                    t!("settings_ui.sandbox_settings.learn_more"),
+                )
                     .label_size(LabelSize::Small)
                     .color(Color::Muted)
                     .end_icon(
@@ -99,7 +96,10 @@ pub(crate) fn render_sandbox_settings_page(
                     .severity(Severity::Warning)
                     .child(Label::new(error).size(LabelSize::Small))
                     .action_slot(
-                        Button::new("dismiss-sandbox-host-error", "Dismiss")
+                        Button::new(
+                            "dismiss-sandbox-host-error",
+                            t!("settings_ui.sandbox_settings.dismiss"),
+                        )
                             .style(ButtonStyle::Tinted(ui::TintColor::Warning))
                             .on_click(cx.listener(|this, _, _, cx| {
                                 this.sandbox_host_validation_error = None;
@@ -111,15 +111,14 @@ pub(crate) fn render_sandbox_settings_page(
         .child(
             v_flex()
                 .gap_4()
-                .child(SettingsSectionHeader::new("Network").no_padding(true))
+                .child(SettingsSectionHeader::new(t!(
+                    "settings_ui.sandbox_settings.network"
+                )).no_padding(true))
                 .child(
                     SwitchField::new(
                         "sandbox-allow-all-hosts",
-                        Some("Allow All Domains"),
-                        Some(
-                            "Let sandboxed commands reach any domain over the network without prompting."
-                                .into(),
-                        ),
+                        Some(t!("settings_ui.sandbox_settings.allow_all_domains")),
+                        Some(t!("settings_ui.sandbox_settings.allow_all_domains_description").into()),
                         permissions.allow_all_hosts,
                         move |state, _window, cx| {
                             set_allow_all_hosts(*state == ToggleState::Selected, cx);
@@ -128,8 +127,8 @@ pub(crate) fn render_sandbox_settings_page(
                     .tab_index(0),
                 )
                 .child(render_list_section(
-                    "Allowed Domains",
-                    DOMAINS_DESCRIPTION,
+                    t!("settings_ui.sandbox_settings.allowed_domains"),
+                    t!("settings_ui.sandbox_settings.domains_description"),
                     host_rows,
                     add_host_input,
                     empty_border,
@@ -140,15 +139,14 @@ pub(crate) fn render_sandbox_settings_page(
         .child(
             v_flex()
                 .gap_4()
-                .child(SettingsSectionHeader::new("File System").no_padding(true))
+                .child(SettingsSectionHeader::new(t!(
+                    "settings_ui.sandbox_settings.file_system"
+                )).no_padding(true))
                 .child(
                     SwitchField::new(
                         "sandbox-allow-fs-write-all",
-                        Some("Allow All File System Writes"),
-                        Some(
-                            "Let sandboxed commands write anywhere except protected Git metadata without prompting."
-                                .into(),
-                        ),
+                        Some(t!("settings_ui.sandbox_settings.allow_all_fs_writes")),
+                        Some(t!("settings_ui.sandbox_settings.allow_all_fs_writes_description").into()),
                         permissions.allow_fs_write_all,
                         move |state, _window, cx| {
                             set_allow_fs_write_all(*state == ToggleState::Selected, cx);
@@ -157,8 +155,8 @@ pub(crate) fn render_sandbox_settings_page(
                     .tab_index(0),
                 )
                 .child(render_list_section(
-                    "Writable Paths",
-                    WRITE_PATHS_DESCRIPTION,
+                    t!("settings_ui.sandbox_settings.writable_paths"),
+                    t!("settings_ui.sandbox_settings.write_paths_description"),
                     path_rows,
                     add_path_input,
                     empty_border,
@@ -168,13 +166,15 @@ pub(crate) fn render_sandbox_settings_page(
         .child(
             v_flex()
                 .gap_4()
-                .child(SettingsSectionHeader::new("Escalation Prompts").no_padding(true))
+                .child(SettingsSectionHeader::new(t!(
+                    "settings_ui.sandbox_settings.escalation_prompts"
+                )).no_padding(true))
                 .child(
                     SwitchField::new(
                         "sandbox-warn-confusable-unicode",
-                        Some("Warn About Confusable Unicode"),
+                        Some(t!("settings_ui.sandbox_settings.warn_confusable_unicode")),
                         Some(
-                            "Warn when an approval prompt requests a domain or write path that contains potentially confusable Unicode characters, such as homoglyphs (i.e. two symbols that look similar, such as a Cyrillic `а`)"
+                            t!("settings_ui.sandbox_settings.warn_confusable_unicode_description")
                                 .into(),
                         ),
                         permissions.warn_confusable_unicode,
@@ -190,8 +190,8 @@ pub(crate) fn render_sandbox_settings_page(
 }
 
 fn render_list_section(
-    title: &'static str,
-    description: &'static str,
+    title: String,
+    description: String,
     rows: Vec<AnyElement>,
     add_input: AnyElement,
     empty_border: gpui::Hsla,
@@ -229,7 +229,7 @@ fn render_empty_state(border_color: gpui::Hsla) -> AnyElement {
         .border_dashed()
         .border_color(border_color)
         .child(
-            Label::new("Nothing configured")
+            Label::new(t!("settings_ui.sandbox_settings.nothing_configured"))
                 .size(LabelSize::Small)
                 .color(Color::Disabled),
         )
@@ -250,7 +250,7 @@ fn render_host_row(index: usize, host: String, cx: &mut Context<SettingsWindow>)
             IconButton::new(format!("sandbox-host-delete-{}", index), IconName::Trash)
                 .icon_size(IconSize::Small)
                 .icon_color(Color::Muted)
-                .tooltip(Tooltip::text("Remove Domain"))
+                .tooltip(Tooltip::text(t!("settings_ui.sandbox_settings.remove_domain")))
                 .on_click(cx.listener(move |_, _, _, cx| {
                     remove_network_host(host_for_delete.clone(), cx);
                 })),
@@ -333,7 +333,7 @@ fn render_path_row(index: usize, path: PathBuf, cx: &mut Context<SettingsWindow>
             IconButton::new(format!("sandbox-path-delete-{}", index), IconName::Trash)
                 .icon_size(IconSize::Small)
                 .icon_color(Color::Muted)
-                .tooltip(Tooltip::text("Remove Path"))
+                .tooltip(Tooltip::text(t!("settings_ui.sandbox_settings.remove_path")))
                 .on_click(cx.listener(move |_, _, _, cx| {
                     remove_write_path(path_for_delete.clone(), cx);
                 })),
@@ -409,16 +409,15 @@ fn canonicalize_host(host: &str) -> Result<String, String> {
     HostPattern::parse(host)
         .map(|pattern| pattern.to_string())
         .map_err(|error| match error {
-            HostPatternError::Empty => "Domain cannot be empty.".to_string(),
+            HostPatternError::Empty => t!("settings_ui.sandbox_settings.error_domain_empty"),
             HostPatternError::IpLiteral(_) => {
-                "IP addresses and local domains aren't allowed; enter a domain like github.com."
-                    .to_string()
+                t!("settings_ui.sandbox_settings.error_ip_not_allowed")
             }
             HostPatternError::InvalidWildcard(_) => {
-                "Wildcards are only allowed as a leading label, e.g. *.github.com.".to_string()
+                t!("settings_ui.sandbox_settings.error_invalid_wildcard")
             }
             HostPatternError::Invalid { .. } => {
-                "Not a valid domain. Use a domain like github.com or *.npmjs.org.".to_string()
+                t!("settings_ui.sandbox_settings.error_invalid_domain")
             }
         })
 }

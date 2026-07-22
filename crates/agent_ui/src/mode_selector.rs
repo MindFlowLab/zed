@@ -12,6 +12,7 @@ use ui::{
 };
 
 use crate::{CycleModeSelector, ToggleProfileSelector, ui::documentation_aside_side};
+use zed_i18n::t;
 
 pub struct ModeSelector {
     connection: Rc<dyn AgentSessionModes>,
@@ -138,7 +139,7 @@ impl Render for ModeSelector {
             .iter()
             .find(|mode| mode.id == current_mode_id)
             .map(|mode| mode.name.clone())
-            .unwrap_or_else(|| "Unknown".into());
+            .unwrap_or_else(|| t!("agent_ui.mode_selector.unknown").into());
 
         let this = cx.weak_entity();
 
@@ -165,7 +166,7 @@ impl Render for ModeSelector {
                                 h_flex()
                                     .gap_2()
                                     .justify_between()
-                                    .child(Label::new("Change Mode"))
+                                    .child(Label::new(t!("agent_ui.mode_selector.change_mode")))
                                     .child(KeyBinding::for_action(&ToggleProfileSelector, cx)),
                             )
                             .child(
@@ -175,7 +176,9 @@ impl Render for ModeSelector {
                                     .border_t_1()
                                     .border_color(cx.theme().colors().border_variant)
                                     .justify_between()
-                                    .child(Label::new("Cycle Through Modes"))
+                                    .child(Label::new(t!(
+                                        "agent_ui.mode_selector.cycle_through_modes"
+                                    )))
                                     .child(KeyBinding::for_action(&CycleModeSelector, cx)),
                             )
                             .into_any()

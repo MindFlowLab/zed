@@ -5,6 +5,7 @@ use gpui::{AnyElement, App, Context, DismissEvent, SharedString, Task, Window};
 use picker::{Picker, PickerDelegate};
 use theme::FontFamilyCache;
 use ui::{ListItem, ListItemSpacing, prelude::*};
+use zed_i18n::t;
 
 type FontPicker = Picker<FontPickerDelegate>;
 
@@ -74,7 +75,7 @@ impl PickerDelegate for FontPickerDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search fonts…".into()
+        t!("settings_ui.components.font_picker.search_placeholder").into()
     }
 
     fn update_matches(

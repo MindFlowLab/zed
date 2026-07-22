@@ -36,6 +36,7 @@ use workspace::{
     searchable::SearchableItemHandle,
 };
 use zed_actions::git as git_actions;
+use zed_i18n::t;
 
 actions!(
     git,
@@ -212,7 +213,7 @@ impl ProjectDiff {
             DiffMultibuffer::new(
                 branch_diff,
                 Capability::ReadWrite,
-                "No uncommitted changes",
+                t!("git_ui.project_diff.no_uncommitted_changes"),
                 move |editor, cx| {
                     editor.set_diff_hunk_delegate(Some(Arc::new(UncommittedDiffHunkDelegate)), cx);
                     editor.rhs_editor().update(cx, |rhs_editor, _cx| {
@@ -420,7 +421,7 @@ impl Item for ProjectDiff {
     }
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        "Uncommitted Changes".into()
+        t!("git_ui.project_diff.uncommitted_changes").into()
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {
@@ -824,7 +825,7 @@ impl Render for ProjectDiffToolbar {
                             .icon_size(IconSize::Small)
                             .disabled(!button_states.prev_next)
                             .tooltip(Tooltip::for_action_title_in(
-                                "Go to Previous Hunk",
+                                t!("git_ui.common.go_to_previous_hunk"),
                                 &GoToPreviousHunk,
                                 &focus_handle,
                             ))
@@ -837,7 +838,7 @@ impl Render for ProjectDiffToolbar {
                             .icon_size(IconSize::Small)
                             .disabled(!button_states.prev_next)
                             .tooltip(Tooltip::for_action_title_in(
-                                "Go to Next Hunk",
+                                t!("git_ui.common.go_to_next_hunk"),
                                 &GoToHunk,
                                 &focus_handle,
                             ))
@@ -851,9 +852,9 @@ impl Render for ProjectDiffToolbar {
                 h_group_sm()
                     .when(button_states.selection, |this| {
                         this.child(
-                            Button::new("stage", "Toggle Staged")
+                            Button::new("stage", t!("git_ui.common.toggle_staged"))
                                 .tooltip(Tooltip::for_action_title_in(
-                                    "Toggle Staged",
+                                    t!("git_ui.common.toggle_staged"),
                                     &ToggleStaged,
                                     &focus_handle,
                                 ))
@@ -865,10 +866,10 @@ impl Render for ProjectDiffToolbar {
                     })
                     .when(!button_states.selection, |this| {
                         this.child(
-                            Button::new("stage", "Stage")
+                            Button::new("stage", t!("git_ui.common.stage"))
                                 .disabled(!button_states.stage)
                                 .tooltip(Tooltip::for_action_title_in(
-                                    "Stage and Go to Next Hunk",
+                                    t!("git_ui.common.stage_and_go_to_next_hunk"),
                                     &StageAndNext,
                                     &focus_handle,
                                 ))
@@ -877,10 +878,10 @@ impl Render for ProjectDiffToolbar {
                                 })),
                         )
                         .child(
-                            Button::new("unstage", "Unstage")
+                            Button::new("unstage", t!("git_ui.common.unstage"))
                                 .disabled(!button_states.unstage)
                                 .tooltip(Tooltip::for_action_title_in(
-                                    "Unstage and Go to Next Hunk",
+                                    t!("git_ui.common.unstage_and_go_to_next_hunk"),
                                     &UnstageAndNext,
                                     &focus_handle,
                                 ))
@@ -895,10 +896,10 @@ impl Render for ProjectDiffToolbar {
                 button_states.unstage_all && !button_states.stage_all,
                 |this| {
                     this.child(
-                        Button::new("unstage-all", "Unstage All")
+                        Button::new("unstage-all", t!("git_ui.common.unstage_all"))
                             .width(stage_all_button_width)
                             .tooltip(Tooltip::for_action_title_in(
-                                "Unstage All Changes",
+                                t!("git_ui.common.unstage_all_changes"),
                                 &UnstageAll,
                                 &focus_handle,
                             ))
@@ -912,11 +913,11 @@ impl Render for ProjectDiffToolbar {
                 !button_states.unstage_all || button_states.stage_all,
                 |this| {
                     this.child(
-                        Button::new("stage-all", "Stage All")
+                        Button::new("stage-all", t!("git_ui.common.stage_all"))
                             .width(stage_all_button_width)
                             .disabled(!button_states.stage_all)
                             .tooltip(Tooltip::for_action_title_in(
-                                "Stage All Changes",
+                                t!("git_ui.common.stage_all_changes"),
                                 &StageAll,
                                 &focus_handle,
                             ))
@@ -928,9 +929,9 @@ impl Render for ProjectDiffToolbar {
             )
             .child(Divider::vertical())
             .child(
-                Button::new("commit", "Commit")
+                Button::new("commit", t!("git_ui.common.commit"))
                     .tooltip(Tooltip::for_action_title_in(
-                        "Commit",
+                        t!("git_ui.common.commit"),
                         &Commit,
                         &focus_handle,
                     ))
@@ -956,7 +957,7 @@ pub(crate) fn render_send_review_to_agent_button(
 ) -> Button {
     Button::new(
         "send-review",
-        format!("Send Review to Agent ({})", review_count),
+        t!("git_ui.project_diff.send_review_to_agent", count = review_count),
     )
     .start_icon(
         Icon::new(IconName::ZedAssistant)
@@ -964,7 +965,7 @@ pub(crate) fn render_send_review_to_agent_button(
             .color(Color::Muted),
     )
     .tooltip(Tooltip::for_action_title_in(
-        "Send all review comments to the Agent panel",
+        t!("git_ui.project_diff.send_review_to_agent_tooltip"),
         &SendReviewToAgent,
         focus_handle,
     ))

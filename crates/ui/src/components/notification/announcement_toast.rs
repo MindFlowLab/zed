@@ -2,6 +2,7 @@ use crate::{ListBulletItem, prelude::*};
 use component::{Component, ComponentScope, example_group, single_example};
 use gpui::{AnyElement, ClickEvent, IntoElement, ParentElement, SharedString};
 use smallvec::SmallVec;
+use zed_i18n::t;
 
 #[derive(IntoElement, RegisterComponent)]
 pub struct AnnouncementToast {
@@ -23,9 +24,9 @@ impl AnnouncementToast {
             heading: None,
             description: None,
             bullet_items: SmallVec::new(),
-            primary_action_label: "Try Now".into(),
+            primary_action_label: t!("ui.announcement_toast.try_now").into(),
             primary_on_click: Box::new(|_, _, _| {}),
-            secondary_action_label: "Learn More".into(),
+            secondary_action_label: t!("ui.announcement_toast.learn_more").into(),
             secondary_on_click: Box::new(|_, _, _| {}),
             dismiss_on_click: Box::new(|_, _, _| {}),
         }

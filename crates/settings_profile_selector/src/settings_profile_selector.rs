@@ -6,6 +6,7 @@ use picker::{Picker, PickerDelegate};
 use settings::{ActiveSettingsProfileName, SettingsStore};
 use ui::{HighlightedLabel, ListItem, ListItemSpacing, prelude::*};
 use workspace::{ModalView, Workspace};
+use zed_i18n::t;
 
 pub fn init(cx: &mut App) {
     cx.on_action(|_: &zed_actions::settings_profile_selector::Toggle, cx| {
@@ -155,7 +156,7 @@ impl PickerDelegate for SettingsProfileSelectorDelegate {
     }
 
     fn placeholder_text(&self, _: &mut Window, _: &mut App) -> std::sync::Arc<str> {
-        "Select a settings profile...".into()
+        t!("settings_profile_selector.placeholder").into()
     }
 
     fn match_count(&self) -> usize {
@@ -279,7 +280,9 @@ impl PickerDelegate for SettingsProfileSelectorDelegate {
 }
 
 fn display_name(profile_name: &Option<String>) -> String {
-    profile_name.clone().unwrap_or("Disabled".into())
+    profile_name
+        .clone()
+        .unwrap_or_else(|| t!("settings_profile_selector.disabled"))
 }
 
 #[cfg(test)]

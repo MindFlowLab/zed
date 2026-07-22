@@ -37,6 +37,7 @@ use workspace::{
     searchable::SearchableItemHandle,
 };
 use zed_actions::assistant::ToggleFocus;
+use zed_i18n::t;
 
 pub struct AgentDiffPane {
     multibuffer: Entity<MultiBuffer>,
@@ -545,10 +546,11 @@ impl Item for AgentDiffPane {
             move |_, _| {
                 v_flex()
                     .child(Label::new(
-                        title.clone().unwrap_or_else(|| "Review".to_string()),
+                        title.clone()
+                            .unwrap_or_else(|| t!("agent_ui.agent_diff.review")),
                     ))
                     .child(
-                        Label::new("Agent Diff")
+                        Label::new(t!("agent_ui.agent_diff.agent_diff"))
                             .color(Color::Muted)
                             .size(LabelSize::Small),
                     )
@@ -709,9 +711,12 @@ impl Render for AgentDiffPane {
                     v_flex()
                         .items_center()
                         .gap_2()
-                        .child("No changes to review")
+                        .child(t!("agent_ui.agent_diff.no_changes_to_review"))
                         .child(
-                            Button::new("continue-iterating", "Continue Iterating")
+                            Button::new(
+                                "continue-iterating",
+                                t!("agent_ui.agent_diff.continue_iterating"),
+                            )
                                 .style(ButtonStyle::Filled)
                                 .start_icon(
                                     Icon::new(IconName::ForwardArrow)
@@ -1089,7 +1094,7 @@ impl Render for AgentDiffToolbar {
         let spinner_icon = div()
             .px_0p5()
             .id("generating")
-            .tooltip(Tooltip::text("Generating Changes…"))
+            .tooltip(Tooltip::text(t!("agent_ui.agent_diff.generating_changes")))
             .child(
                 Icon::new(IconName::LoadCircle)
                     .size(IconSize::Small)
@@ -1154,7 +1159,7 @@ impl Render for AgentDiffToolbar {
                         h_flex()
                             .gap_0p5()
                             .child(
-                                Button::new("reject-all", "Reject All")
+                                Button::new("reject-all", t!("agent_ui.agent_diff.reject_all"))
                                     .key_binding({
                                         KeyBinding::for_action_in(
                                             &RejectAll,
@@ -1168,7 +1173,7 @@ impl Render for AgentDiffToolbar {
                                     })),
                             )
                             .child(
-                                Button::new("keep-all", "Keep All")
+                                Button::new("keep-all", t!("agent_ui.agent_diff.keep_all"))
                                     .key_binding({
                                         KeyBinding::for_action_in(
                                             &KeepAll,
@@ -1198,7 +1203,7 @@ impl Render for AgentDiffToolbar {
                             IconButton::new("review", IconName::ListTodo)
                                 .icon_size(IconSize::Small)
                                 .tooltip(Tooltip::for_action_title_in(
-                                    "Review All Files",
+                                    t!("agent_ui.agent_diff.review_all_files"),
                                     &OpenAgentDiff,
                                     &editor_focus_handle,
                                 ))
@@ -1250,7 +1255,7 @@ impl Render for AgentDiffToolbar {
                     .child(
                         h_group_sm()
                             .child(
-                                Button::new("reject-all", "Reject All")
+                                Button::new("reject-all", t!("agent_ui.agent_diff.reject_all"))
                                     .key_binding({
                                         KeyBinding::for_action_in(&RejectAll, &focus_handle, cx)
                                             .map(|kb| kb.size(rems_from_px(12.)))
@@ -1260,7 +1265,7 @@ impl Render for AgentDiffToolbar {
                                     })),
                             )
                             .child(
-                                Button::new("keep-all", "Keep All")
+                                Button::new("keep-all", t!("agent_ui.agent_diff.keep_all"))
                                     .key_binding({
                                         KeyBinding::for_action_in(&KeepAll, &focus_handle, cx)
                                             .map(|kb| kb.size(rems_from_px(12.)))

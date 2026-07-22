@@ -9,6 +9,7 @@ use ui::{
 };
 use util::ResultExt as _;
 use workspace::{ModalView, MultiWorkspace};
+use zed_i18n::t;
 
 use crate::open_remote_project;
 
@@ -98,7 +99,7 @@ impl picker::PickerDelegate for WslPickerDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        Arc::from("Enter WSL distro name")
+        t!("recent_projects.wsl.enter_distro_name").into()
     }
 
     fn update_matches(

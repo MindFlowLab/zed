@@ -2,6 +2,7 @@ use crate::types::TableCell;
 use gpui::{AnyElement, Entity};
 use std::ops::Range;
 use ui::{ColumnWidthConfig, ResizableColumnsState, Table, UncheckedTableRow, div, prelude::*};
+use zed_i18n::t;
 
 use crate::{
     CsvPreviewView,
@@ -40,7 +41,7 @@ impl CsvPreviewView {
                 .headers
                 .get(AnyColumn(i))
                 .and_then(|h| h.display_value().cloned())
-                .unwrap_or_else(|| format!("Col {}", i + 1).into());
+                .unwrap_or_else(|| t!("csv_preview.table.column_fallback", index = i + 1).into());
 
             headers.push(self.create_header_element_with_sort_button(
                 header_text,

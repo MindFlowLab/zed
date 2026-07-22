@@ -26,6 +26,7 @@ use util::{
     paths::{PathStyle, compare_paths},
 };
 use workspace::Workspace;
+use zed_i18n::t;
 
 pub struct OpenPathPrompt;
 
@@ -696,12 +697,15 @@ impl PickerDelegate for OpenPathDelegate {
                         };
                     if user_input.exists {
                         self.should_dismiss = false;
+                        let prompt_title = t!(
+                            "open_path_prompt.replace_prompt_title",
+                            path = format!("{prompted_path:?}")
+                        );
+                        let prompt_detail = t!("open_path_prompt.replace_prompt_detail");
                         let answer = window.prompt(
                             gpui::PromptLevel::Critical,
-                            &format!("{prompted_path:?} already exists. Do you want to replace it?"),
-                            Some(
-                                "A file or folder with the same name already exists. Replacing it will overwrite its current contents.",
-                            ),
+                            &prompt_title,
+                            Some(&prompt_detail),
                             &["Replace", "Cancel"],
                             cx
                         );
@@ -805,7 +809,7 @@ impl PickerDelegate for OpenPathDelegate {
         match &self.directory_state {
             DirectoryState::List { parent_path, .. } => {
                 let (label, indices) = if is_current_dir_candidate {
-                    ("open this directory".to_string(), vec![])
+                    (t!("open_path_prompt.open_this_directory"), vec![])
                 } else if *parent_path == self.prompt_root {
                     match_positions.iter_mut().for_each(|position| {
                         *position += self.prompt_root.len();
@@ -851,7 +855,7 @@ impl PickerDelegate for OpenPathDelegate {
                                 let label = if user_input.is_dir {
                                     label
                                 } else {
-                                    format!("{label} (replace)")
+                                    t!("open_path_prompt.label_replace", label = label)
                                 };
                                 StyledText::new(label)
                                     .with_default_highlights(
@@ -863,7 +867,7 @@ impl PickerDelegate for OpenPathDelegate {
                                     )
                                     .into_any_element()
                             } else {
-                                StyledText::new(format!("{label} (create)"))
+                                StyledText::new(t!("open_path_prompt.label_create", label = label))
                                     .with_default_highlights(
                                         &window.text_style(),
                                         vec![(
@@ -903,24 +907,22 @@ impl PickerDelegate for OpenPathDelegate {
 
     fn no_matches_text(&self, _window: &mut Window, _cx: &mut App) -> Option<SharedString> {
         Some(match &self.directory_state {
-            DirectoryState::Create { .. } => SharedString::from("Type a path…"),
+            DirectoryState::Create { .. } => t!("open_path_prompt.type_a_path").into(),
             DirectoryState::List {
                 error: Some(error), ..
             } => error.clone(),
             DirectoryState::List { .. } | DirectoryState::None { .. } => {
-                SharedString::from("No such file or directory")
+                t!("open_path_prompt.no_such_file_or_directory").into()
             }
         })
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        Arc::from(
-            format!(
-                "[directory{}]filename.ext",
-                self.path_style.primary_separator()
-            )
-            .as_str(),
+        t!(
+            "open_path_prompt.placeholder",
+            separator = self.path_style.primary_separator()
         )
+        .into()
     }
 
     fn separators_after_indices(&self) -> Vec<usize> {

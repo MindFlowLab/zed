@@ -4,6 +4,7 @@ use gpui::{DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, IntoEleme
 use ui::{Tooltip, prelude::*};
 use workspace::{ToastAction, ToastView};
 use zed_actions::toast;
+use zed_i18n::t;
 
 #[derive(RegisterComponent)]
 pub struct StatusToast {
@@ -116,7 +117,7 @@ impl Render for StatusToast {
                         .shape(ui::IconButtonShape::Square)
                         .icon_size(IconSize::Small)
                         .icon_color(Color::Muted)
-                        .tooltip(Tooltip::text("Dismiss"))
+                        .tooltip(Tooltip::text(t!("notifications.status_toast.dismiss")))
                         .on_click(move |_click_event, _window, cx| {
                             handle.update(cx, |_, cx| {
                                 cx.emit(DismissEvent);

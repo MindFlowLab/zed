@@ -15,6 +15,7 @@ use settings::Settings as _;
 use ui::{CommonAnimationExt, IconButtonShape, prelude::*};
 use util::ResultExt;
 use zed_actions::notebook::InterruptKernel;
+use zed_i18n::t;
 
 use crate::{
     notebook::{CODE_BLOCK_INSET, GUTTER_WIDTH},
@@ -1177,7 +1178,7 @@ impl Render for CodeCell {
                                                                 .text_color(
                                                                     cx.theme().colors().text_muted,
                                                                 )
-                                                                .child("Running..."),
+                                                                .child(t!("repl.cell.running")),
                                                         )
                                                         .into_any_element()
                                                 } else if let Some(duration_text) =

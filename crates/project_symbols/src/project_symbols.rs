@@ -16,6 +16,7 @@ use workspace::{
     Workspace,
     ui::{LabelLike, ListItem, ListItemSpacing, prelude::*},
 };
+use zed_i18n::t;
 
 pub fn init(cx: &mut App) {
     cx.observe_new(
@@ -114,7 +115,7 @@ impl PickerDelegate for ProjectSymbolsDelegate {
         "project symbols"
     }
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search project symbols...".into()
+        t!("project_symbols.placeholder").into()
     }
 
     fn confirm(&mut self, secondary: bool, window: &mut Window, cx: &mut Context<Picker<Self>>) {

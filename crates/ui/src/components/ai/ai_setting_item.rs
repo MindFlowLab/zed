@@ -1,6 +1,7 @@
 use crate::{IconDecoration, IconDecorationKind, Tooltip, prelude::*};
 use gpui::{Animation, AnimationExt, SharedString, pulsating_between};
 use std::time::Duration;
+use zed_i18n::t;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum AiSettingItemStatus {
@@ -15,15 +16,15 @@ pub enum AiSettingItemStatus {
 }
 
 impl AiSettingItemStatus {
-    fn tooltip_text(&self) -> &'static str {
+    fn tooltip_text(&self) -> String {
         match self {
-            Self::Stopped => "Server is stopped.",
-            Self::Starting => "Server is starting.",
-            Self::Running => "Server is active.",
-            Self::Error => "Server has an error.",
-            Self::AuthRequired => "Authentication Required.",
-            Self::ClientSecretRequired => "Client Secret Required.",
-            Self::Authenticating => "Waiting for Authorization…",
+            Self::Stopped => t!("ui.ai_setting_item.status_stopped"),
+            Self::Starting => t!("ui.ai_setting_item.status_starting"),
+            Self::Running => t!("ui.ai_setting_item.status_running"),
+            Self::Error => t!("ui.ai_setting_item.status_error"),
+            Self::AuthRequired => t!("ui.ai_setting_item.status_auth_required"),
+            Self::ClientSecretRequired => t!("ui.ai_setting_item.status_client_secret_required"),
+            Self::Authenticating => t!("ui.ai_setting_item.status_authenticating"),
         }
     }
 
@@ -60,9 +61,9 @@ impl AiSettingItemSource {
 
     fn tooltip_text(&self, label: &str) -> String {
         match self {
-            Self::Extension => format!("{label} was installed from an extension."),
-            Self::Registry => format!("{label} was installed from the ACP registry."),
-            Self::Custom => format!("{label} was configured manually."),
+            Self::Extension => t!("ui.ai_setting_item.source_extension", label = label),
+            Self::Registry => t!("ui.ai_setting_item.source_registry", label = label),
+            Self::Custom => t!("ui.ai_setting_item.source_custom", label = label),
         }
     }
 }

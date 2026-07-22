@@ -3,6 +3,7 @@ use ui::{
     ElementId, IntoElement as _, ParentElement as _, Styled as _, ToggleState, Tooltip, Window,
     div, h_flex,
 };
+use zed_i18n::t;
 
 use crate::{
     CsvPreviewView,
@@ -18,18 +19,18 @@ impl CsvPreviewView {
         cx: &mut Context<Self>,
     ) -> AnyElement {
         let current_alignment_text = match self.settings.vertical_alignment {
-            VerticalAlignment::Top => "Top",
-            VerticalAlignment::Center => "Center",
+            VerticalAlignment::Top => t!("csv_preview.settings.alignment_top"),
+            VerticalAlignment::Center => t!("csv_preview.settings.alignment_center"),
         };
 
         let current_filter_sort_text = match self.settings.filter_sort_order {
-            FilterSortOrder::AlphaThenCount => "A-Z, then Count",
-            FilterSortOrder::CountThenAlpha => "Count, then A-Z",
+            FilterSortOrder::AlphaThenCount => t!("csv_preview.settings.filter_sort_alpha_then_count"),
+            FilterSortOrder::CountThenAlpha => t!("csv_preview.settings.filter_sort_count_then_alpha"),
         };
 
         let view = cx.entity();
         let alignment_dropdown_menu = ContextMenu::build(window, cx, |menu, _window, _cx| {
-            menu.entry("Top", None, {
+            menu.entry(t!("csv_preview.settings.alignment_top"), None, {
                 let view = view.clone();
                 move |_window, cx| {
                     view.update(cx, |this, cx| {
@@ -38,7 +39,7 @@ impl CsvPreviewView {
                     });
                 }
             })
-            .entry("Center", None, {
+            .entry(t!("csv_preview.settings.alignment_center"), None, {
                 let view = view.clone();
                 move |_window, cx| {
                     view.update(cx, |this, cx| {
@@ -50,7 +51,7 @@ impl CsvPreviewView {
         });
 
         let filter_sort_dropdown_menu = ContextMenu::build(window, cx, |menu, _window, _cx| {
-            menu.entry("A-Z, then Count", None, {
+            menu.entry(t!("csv_preview.settings.filter_sort_alpha_then_count"), None, {
                 let view = view.clone();
                 move |_window, cx| {
                     view.update(cx, |this, cx| {
@@ -59,7 +60,7 @@ impl CsvPreviewView {
                     });
                 }
             })
-            .entry("Count, then A-Z", None, {
+            .entry(t!("csv_preview.settings.filter_sort_count_then_alpha"), None, {
                 let view = view.clone();
                 move |_window, cx| {
                     view.update(cx, |this, cx| {
@@ -85,7 +86,7 @@ impl CsvPreviewView {
                         div()
                             .text_sm()
                             .text_color(cx.theme().colors().text_muted)
-                            .child("Text Alignment:"),
+                            .child(t!("csv_preview.settings.text_alignment_label")),
                     )
                     .child(
                         DropdownMenu::new(
@@ -94,9 +95,9 @@ impl CsvPreviewView {
                             alignment_dropdown_menu,
                         )
                         .trigger_size(ButtonSize::Compact)
-                        .trigger_tooltip(Tooltip::text(
-                            "Choose vertical text alignment within cells",
-                        )),
+                        .trigger_tooltip(Tooltip::text(t!(
+                            "csv_preview.settings.text_alignment_tooltip"
+                        ))),
                     ),
             )
             .child(
@@ -107,7 +108,7 @@ impl CsvPreviewView {
                         div()
                             .text_sm()
                             .text_color(cx.theme().colors().text_muted)
-                            .child("Filter Sort:"),
+                            .child(t!("csv_preview.settings.filter_sort_label")),
                     )
                     .child(
                         DropdownMenu::new(
@@ -116,9 +117,9 @@ impl CsvPreviewView {
                             filter_sort_dropdown_menu,
                         )
                         .trigger_size(ButtonSize::Compact)
-                        .trigger_tooltip(Tooltip::text(
-                            "Choose how filter values are sorted in the filter menu",
-                        )),
+                        .trigger_tooltip(Tooltip::text(t!(
+                            "csv_preview.settings.filter_sort_tooltip"
+                        ))),
                     ),
             );
 
@@ -133,11 +134,8 @@ impl CsvPreviewView {
                     ToggleState::Unselected
                 },
             )
-            .label("Display multiline rows")
-            .tooltip(Tooltip::text(
-                "When enabled, row height grows to show all content. \
-                 When disabled, only the first line is visible — hover a cell to see the rest.",
-            ))
+            .label(t!("csv_preview.settings.multiline_label"))
+            .tooltip(Tooltip::text(t!("csv_preview.settings.multiline_tooltip")))
             .on_click(move |_state, _window, cx| {
                 view.update(cx, |this, cx| {
                     this.settings.multiline_cells_enabled = !this.settings.multiline_cells_enabled;

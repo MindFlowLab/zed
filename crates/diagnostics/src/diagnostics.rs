@@ -43,6 +43,7 @@ use theme::ActiveTheme;
 use toolbar_controls::DiagnosticsToolbarEditor;
 pub use toolbar_controls::ToolbarControls;
 use ui::{Icon, IconName, Label, h_flex, prelude::*};
+use zed_i18n::t;
 use util::ResultExt;
 use workspace::{
     ItemNavHistory, Workspace,
@@ -103,10 +104,10 @@ impl Render for ProjectDiagnosticsEditor {
 
         let child =
             if warning_count + self.summary.error_count == 0 && self.editor.read(cx).is_empty(cx) {
-                let label = if self.summary.warning_count == 0 {
-                    SharedString::new_static("No problems in workspace")
+                let label: SharedString = if self.summary.warning_count == 0 {
+                    t!("diagnostics.diagnostics.no_problems_in_workspace").into()
                 } else {
-                    SharedString::new_static("No errors in workspace")
+                    t!("diagnostics.diagnostics.no_errors_in_workspace").into()
                 };
                 v_flex()
                     .key_context("EmptyPane")
@@ -118,15 +119,14 @@ impl Render for ProjectDiagnosticsEditor {
                     .bg(cx.theme().colors().editor_background)
                     .child(Label::new(label).color(Color::Muted))
                     .when(self.summary.warning_count > 0, |this| {
-                        let plural_suffix = if self.summary.warning_count > 1 {
-                            "s"
+                        let label = if self.summary.warning_count == 1 {
+                            t!("diagnostics.common.show_one_warning")
                         } else {
-                            ""
+                            t!(
+                                "diagnostics.common.show_warnings",
+                                count = self.summary.warning_count
+                            )
                         };
-                        let label = format!(
-                            "Show {} warning{}",
-                            self.summary.warning_count, plural_suffix
-                        );
                         this.child(
                             Button::new("diagnostics-show-warning-label", label).on_click(
                                 cx.listener(|this, _, window, cx| {
@@ -749,11 +749,11 @@ impl Item for ProjectDiagnosticsEditor {
     }
 
     fn tab_tooltip_text(&self, _: &App) -> Option<SharedString> {
-        Some("Project Diagnostics".into())
+        Some(t!("diagnostics.diagnostics.tab_tooltip").into())
     }
 
     fn tab_content_text(&self, _detail: usize, _: &App) -> SharedString {
-        "Diagnostics".into()
+        t!("diagnostics.diagnostics.tab_title").into()
     }
 
     fn tab_content(&self, params: TabContentParams, _window: &Window, _: &App) -> AnyElement {
@@ -766,7 +766,7 @@ impl Item for ProjectDiagnosticsEditor {
                         h_flex()
                             .gap_1()
                             .child(Icon::new(IconName::Check).color(Color::Success))
-                            .child(Label::new("No problems").color(params.text_color())),
+                            .child(Label::new(t!("diagnostics.diagnostics.no_problems")).color(params.text_color())),
                     )
                 },
             )

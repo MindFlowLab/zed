@@ -2,6 +2,7 @@ use component::{example_group, single_example};
 
 use gpui::{App, FocusHandle, Focusable, Hsla, Length};
 use std::sync::Arc;
+use zed_i18n::t;
 
 use ui::Tooltip;
 use ui::prelude::*;
@@ -215,7 +216,11 @@ impl Render for InputField {
                             )
                             .icon_size(IconSize::Small)
                             .icon_color(Color::Muted)
-                            .tooltip(Tooltip::text(if is_masked { "Show" } else { "Hide" }))
+                            .tooltip(Tooltip::text(if is_masked {
+                                t!("ui_input.input_field.show")
+                            } else {
+                                t!("ui_input.input_field.hide")
+                            }))
                             .on_click(cx.listener(
                                 |this, _, window, cx| {
                                     if let Some(ref mut masked) = this.masked {
