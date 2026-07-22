@@ -1,0 +1,85 @@
+# extensions_ui English locale (fallback).
+# Keys follow `<crate>.<module>.<item>` and must stay in sync with zh-CN/extensions_ui.toml.
+_version = 1
+
+[extensions_ui.page]
+title = "Extensions"
+
+[extensions_ui.search]
+placeholder = "Search extensions..."
+
+[extensions_ui.filter]
+all = "All"
+installed = "Installed"
+not_installed = "Not Installed"
+
+[extensions_ui.button]
+install = "Install"
+uninstall = "Uninstall"
+upgrade = "Upgrade"
+rebuild = "Rebuild"
+configure = "Configure"
+install_dev_extension = "Install Dev Extension"
+
+[extensions_ui.card]
+author = "Author"
+authors = "Authors"
+author_label = "%{label}: %{names}"
+installed_version = "(v%{version} installed)"
+downloads = "Downloads: %{count}"
+visit_repository = "Visit Extension Repository"
+version_incompatible = "v%{version} is not compatible with this version of Zed."
+overridden_by_dev_extension = "Overridden by dev extension."
+
+[extensions_ui.menu]
+install_another_version = "Install Another Version..."
+copy_extension_id = "Copy Extension ID"
+copy_author_info = "Copy Author Info"
+
+[extensions_ui.empty_state]
+loading = "Loading extensions…"
+fetch_failed = "Failed to load extensions. Please check your connection and try again."
+no_extensions = "No extensions."
+no_match_all = "No extensions that match your search."
+no_installed = "No installed extensions."
+no_match_installed = "No installed extensions that match your search."
+no_not_installed = "No not installed extensions."
+no_match_not_installed = "No not installed extensions that match your search."
+
+[extensions_ui.dev_extension]
+not_installed = "No dev extensions are installed."
+not_installed_with_id = "Dev extension '%{extension_id}' is not installed."
+install_action = "Install Dev Extension"
+rebuild_placeholder = "Rebuild dev extension…"
+no_matches = "No dev extensions found"
+
+[extensions_ui.suggest]
+install_prompt = "Do you want to install the recommended '%{extension_id}' extension for '%{file_name}' files?"
+install_yes = "Yes, install extension"
+install_no = "No, don't install it"
+
+[extensions_ui.version_selector]
+placeholder = "Select extension version..."
+incompatible = "Incompatible"
+
+[extensions_ui.upsell]
+view_documentation = "View Documentation"
+enable_vim_mode = "Enable Vim mode"
+agent_claude = "Claude Agent support is built-in to Zed!"
+agent_codex = "Codex CLI support is built-in to Zed!"
+agent_gemini = "Gemini CLI support is built-in to Zed!"
+basedpyright = "Basedpyright (Python language server) support is built-in to Zed!"
+ruff = "Ruff (linter for Python) support is built-in to Zed!"
+tailwind = "Tailwind CSS support is built-in to Zed!"
+ty = "Ty (Python language server) support is built-in to Zed!"
+git = "Zed comes with basic Git support—more features are coming in the future."
+language_bash = "Shell support is built-in to Zed!"
+language_c = "C support is built-in to Zed!"
+language_cpp = "C++ support is built-in to Zed!"
+language_go = "Go support is built-in to Zed!"
+language_python = "Python support is built-in to Zed!"
+language_react = "React support is built-in to Zed!"
+language_rust = "Rust support is built-in to Zed!"
+language_typescript = "Typescript support is built-in to Zed!"
+open_in = "Zed supports linking to a source line on GitHub and others."
+vim = "Vim support is built-in to Zed!"

@@ -1,0 +1,29 @@
+_version = 1
+
+# inspector_ui: GPUI inspector labels and tooltips (debug builds)
+# GPUI 检查器标签与工具提示（调试构建）
+
+[inspector_ui.toolbar]
+pick_mode_tooltip = "开始检查器选取模式"
+title = "GPUI 检查器"
+
+[inspector_ui.element_id]
+label = "元素 ID"
+instance = "实例 %{id}"
+instance_tooltip = "用于区分来自同一源码位置的元素"
+source_location_tooltip = "单击以通过 Zed CLI 打开"
+global_id_tooltip = "最近的带 ID 祖先元素的 GlobalElementId"
+
+[inspector_ui.layout]
+label = "布局"
+loading = "加载中……"
+bounds = "边界：⌜%{origin} - %{bottom_right}⌟"
+size = "尺寸：%{size}"
+content_size = "内容尺寸：%{size}"
+content_size_tooltip = "该元素子内容的尺寸"
+
+[inspector_ui.style]
+rust_label = "Rust 样式"
+json_label = "JSON 样式"
+reset_tooltip = "重置样式"
+load_buffers_failed = "无法创建用于样式编辑的缓冲区：%{err}"

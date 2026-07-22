@@ -1,0 +1,6 @@
+_version = 1
+
+# 反馈对话框 / feedback dialogs
+[feedback.copy]
+copied_into_clipboard = "已复制到剪贴板"
+ok = "确定"

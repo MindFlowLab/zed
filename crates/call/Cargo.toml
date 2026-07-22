@@ -43,6 +43,7 @@ settings.workspace = true
 telemetry.workspace = true
 util.workspace = true
 workspace.workspace = true
+zed_i18n.workspace = true
 
 [dev-dependencies]
 client = { workspace = true, features = ["test-support"] }

@@ -1,0 +1,10 @@
+_version = 1
+
+# svg_preview: empty and error states of the SVG preview
+# SVG 预览器空状态与错误状态
+
+[svg_preview.empty_state]
+no_file = "未选择 SVG 文件"
+
+[svg_preview.error]
+load_failed = "无法加载 SVG 图像"

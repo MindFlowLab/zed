@@ -1,0 +1,5 @@
+_version = 1
+
+[settings_profile_selector]
+placeholder = "Select a settings profile..."
+disabled = "Disabled"

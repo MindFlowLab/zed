@@ -1,0 +1,5 @@
+_version = 1
+
+[line_ending_selector]
+placeholder = "选择行尾符…"
+select_line_ending = "选择行尾符"

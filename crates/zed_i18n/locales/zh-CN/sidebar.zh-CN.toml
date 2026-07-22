@@ -1,0 +1,58 @@
+# sidebar 简体中文 locale(默认语言)
+# key 规范:sidebar.<模块>.<条目>,与 en/sidebar.toml 一一对应
+# Simplified Chinese locale for the sidebar crate (default).
+_version = 1
+
+sidebar.filter.placeholder = "搜索会话…"
+sidebar.filter.clear = "清除搜索"
+
+sidebar.project_header.remote_project = "远程项目"
+sidebar.project_header.waiting_singular = "1 个会话正在等待确认"
+sidebar.project_header.waiting_plural = "%{count} 个会话正在等待确认"
+sidebar.project_header.no_threads_yet = "暂无会话"
+
+sidebar.new_thread.tooltip = "开始新的智能体会话"
+sidebar.new_thread.menu_header = "新建会话于…"
+sidebar.new_thread.create_worktree_submenu = "创建新工作树…"
+sidebar.new_thread.based_on = "基于 %{branch}"
+
+sidebar.project_menu.open_in_new_window = "在新窗口中打开项目"
+sidebar.project_menu.modifier_click = "-点击"
+sidebar.project_menu.focus_last_project = "聚焦上一个项目"
+sidebar.project_menu.focus_project = "聚焦项目"
+sidebar.project_menu.open_worktrees = "打开的工作树"
+sidebar.project_menu.close_worktree = "关闭工作树"
+sidebar.project_menu.move_up = "上移"
+sidebar.project_menu.move_down = "下移"
+sidebar.project_menu.remove = "移除"
+
+sidebar.thread.rename_tooltip = "重命名会话"
+sidebar.thread.stop_generation = "停止生成"
+sidebar.thread.discard_draft = "丢弃草稿"
+sidebar.thread.archive = "归档会话"
+sidebar.thread.rename_title = "重命名标题"
+sidebar.thread.regenerate_title = "重新生成会话标题"
+sidebar.thread.open_as_markdown = "以 Markdown 打开会话"
+
+sidebar.terminal.close = "关闭终端"
+
+sidebar.add_project = "添加项目"
+
+sidebar.toggle.toggle_sidebar = "切换侧边栏"
+sidebar.toggle.focus_sidebar = "聚焦侧边栏"
+
+sidebar.history.hide = "隐藏会话历史"
+sidebar.history.show = "显示会话历史"
+
+sidebar.no_results.no_match = "没有符合搜索条件的会话。"
+
+sidebar.empty_state.title = "会话侧边栏"
+
+sidebar.import.acp_title = "在找外部智能体的会话?"
+sidebar.import.acp_description = "导入来自 Claude Agent、Codex 等智能体的会话,无论在 Zed 还是其他客户端中启动。"
+sidebar.import.acp_button_verbose = "导入外部智能体的会话"
+sidebar.import.button = "导入会话"
+sidebar.import.channel_title = "发现来自其他发布渠道的会话"
+sidebar.import.channel_description = "导入来自 %{channels} 的会话,从上次中断的地方继续。"
+sidebar.import.channel_button_verbose = "导入其他渠道的会话"
+sidebar.import.channels_separator = "、"

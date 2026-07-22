@@ -1,0 +1,33 @@
+# outline_panel 中文 locale,与 en/outline_panel.toml 键一一对应
+# Chinese locale for outline_panel. Keys must stay in sync with en/outline_panel.toml.
+_version = 1
+
+# 右键上下文菜单 / context menu
+[outline_panel.context_menu]
+open_in_terminal = "在终端中打开"
+unfold_directory = "展开目录"
+fold_directory = "折叠目录"
+copy_path = "复制路径"
+copy_relative_path = "复制相对路径"
+
+# 过滤框与底部工具栏 / filter editor and footer
+[outline_panel.filter]
+placeholder = "搜索缓冲区符号…"
+clear = "清除筛选"
+searching = "搜索："
+
+# 空状态提示 / empty state
+[outline_panel.empty_state]
+no_matches = "没有与查询匹配的项"
+no_outlines = "无可用大纲"
+toggle_panel_with = "面板切换快捷键"
+
+# 底部按钮 tooltip / footer button tooltips
+[outline_panel.footer]
+unpin = "取消固定大纲"
+pin = "固定当前大纲"
+
+# 条目占位名称 / entry placeholder names
+[outline_panel.entry]
+untitled = "未命名"
+unknown_buffer = "未知缓冲区"

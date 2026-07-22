@@ -25,3 +25,4 @@ smallvec.workspace = true
 telemetry.workspace = true
 ui.workspace = true
 zed_actions.workspace = true
+zed_i18n.workspace = true

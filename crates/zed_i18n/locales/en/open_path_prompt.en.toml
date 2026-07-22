@@ -1,0 +1,11 @@
+_version = 1
+
+[open_path_prompt]
+placeholder = "[directory%{separator}]filename.ext"
+replace_prompt_title = "%{path} already exists. Do you want to replace it?"
+replace_prompt_detail = "A file or folder with the same name already exists. Replacing it will overwrite its current contents."
+open_this_directory = "open this directory"
+label_replace = "%{label} (replace)"
+label_create = "%{label} (create)"
+type_a_path = "Type a path…"
+no_such_file_or_directory = "No such file or directory"

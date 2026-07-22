@@ -1,0 +1,11 @@
+_version = 1
+
+[open_path_prompt]
+placeholder = "[目录%{separator}]文件名.扩展名"
+replace_prompt_title = "%{path} 已存在。要替换它吗？"
+replace_prompt_detail = "同名的文件或文件夹已存在。替换将覆盖其当前内容。"
+open_this_directory = "打开此目录"
+label_replace = "%{label}（替换）"
+label_create = "%{label}（创建）"
+type_a_path = "输入路径…"
+no_such_file_or_directory = "没有此文件或目录"

@@ -1,0 +1,9 @@
+# platform_title_bar 英文 locale(回退语言)
+# key 规范:platform_title_bar.<模块>.<条目>,与 zh-CN/platform_title_bar.toml 一一对应
+# English locale for the platform_title_bar crate (fallback).
+_version = 1
+
+platform_title_bar.window_tabs.close_tab = "Close Tab"
+platform_title_bar.window_tabs.close_other_tabs = "Close Other Tabs"
+platform_title_bar.window_tabs.move_tab_to_new_window = "Move Tab to New Window"
+platform_title_bar.window_tabs.show_all_tabs = "Show All Tabs"

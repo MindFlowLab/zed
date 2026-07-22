@@ -1,0 +1,17 @@
+_version = 1
+
+[file_finder]
+placeholder = "搜索项目文件…"
+channel_notes = "频道笔记"
+create_file_label = "创建文件：%{path}"
+create_file_prefix = "创建文件 "
+create_file_suffix = "?"
+exclude_ignored = "排除已忽略文件"
+include_ignored = "包含已忽略文件"
+open_multiple = "打开多个"
+open_file = "打开文件"
+split_header = "拆分…"
+split_left = "向左"
+split_right = "向右"
+split_up = "向上"
+split_down = "向下"

@@ -1,0 +1,9 @@
+_version = 1
+
+[encoding_selector]
+save_to_change = "保存文件后才能更改编码"
+cannot_change_collaboration = "协作期间无法更改编码"
+cannot_change_remote = "无法更改远程服务器文件的编码"
+current = "%{name}（当前）"
+placeholder = "选择编码重新打开…"
+reopen_with_encoding = "选择编码重新打开"

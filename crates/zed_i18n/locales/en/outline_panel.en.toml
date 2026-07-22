@@ -1,0 +1,33 @@
+# outline_panel English locale (fallback).
+# Keys follow `<crate>.<module>.<item>` and must stay in sync with zh-CN/outline_panel.toml.
+_version = 1
+
+# 右键上下文菜单 / context menu
+[outline_panel.context_menu]
+open_in_terminal = "Open in Terminal"
+unfold_directory = "Unfold Directory"
+fold_directory = "Fold Directory"
+copy_path = "Copy Path"
+copy_relative_path = "Copy Relative Path"
+
+# 过滤框与底部工具栏 / filter editor and footer
+[outline_panel.filter]
+placeholder = "Search buffer symbols…"
+clear = "Clear Filter"
+searching = "Searching:"
+
+# 空状态提示 / empty state
+[outline_panel.empty_state]
+no_matches = "No matches for query"
+no_outlines = "No outlines available"
+toggle_panel_with = "Toggle Panel With"
+
+# 底部按钮 tooltip / footer button tooltips
+[outline_panel.footer]
+unpin = "Unpin Outline"
+pin = "Pin Active Outline"
+
+# 条目占位名称 / entry placeholder names
+[outline_panel.entry]
+untitled = "Untitled"
+unknown_buffer = "Unknown buffer"

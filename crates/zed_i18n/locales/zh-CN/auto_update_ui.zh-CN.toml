@@ -1,0 +1,21 @@
+_version = 1
+
+# auto_update_ui: update notifications, release notes and announcements
+# 更新提示、发行说明与功能公告文案
+
+[auto_update_ui.release_notes]
+load_failed = "无法加载发行说明"
+view_in_browser = "在浏览器中查看"
+
+[auto_update_ui.announcement]
+skills_heading = "技能（Skills）支持现已推出"
+skills_description = "使用聚焦的指令与领域知识扩展智能体。"
+skills_bullet_location = "技能存放于 %{dir}/<name>/SKILL.md"
+skills_bullet_invoke = "输入 / 可手动调用技能"
+skills_bullet_migration = "规则库正在为技能让路：你的默认规则已存入全局 AGENTS.md，其余规则已转换为技能"
+try_now = "立即体验"
+read_documentation = "阅读文档"
+
+[auto_update_ui.notification]
+updated_to = "已更新至 %{app} %{version}"
+view_release_notes = "查看发行说明"

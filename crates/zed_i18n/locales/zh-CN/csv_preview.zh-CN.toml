@@ -1,0 +1,37 @@
+_version = 1
+
+# csv_preview: empty/loading states, header tooltips, settings panel menus
+# CSV 预览器空状态、表头工具提示与设置面板菜单
+
+[csv_preview.empty_state]
+loading = "加载中…"
+no_content = "没有可显示的 CSV 内容"
+
+[csv_preview.table_header]
+sort_asc = "已按 A-Z 排序。单击改为 Z-A 排序"
+sort_desc = "已按 Z-A 排序。单击可取消排序"
+sort_none = "未排序。单击可按 A-Z 排序"
+filter_active = "该列已启用筛选。单击可管理"
+filter_none = "尚未应用筛选。单击可添加筛选"
+clear_all = "清除全部"
+hidden_by_other_filters = "已被其他筛选条件隐藏"
+
+[csv_preview.settings]
+alignment_top = "顶端"
+alignment_center = "居中"
+filter_sort_alpha_then_count = "先按 A-Z，再按数量"
+filter_sort_count_then_alpha = "先按数量，再按 A-Z"
+text_alignment_label = "文本对齐："
+text_alignment_tooltip = "选择单元格内的垂直文本对齐方式"
+filter_sort_label = "筛选排序："
+filter_sort_tooltip = "选择筛选菜单中筛选值的排序方式"
+multiline_label = "以多行显示行内容"
+multiline_tooltip = "启用后，行高将增大以显示全部内容。禁用时仅显示第一行——将鼠标悬停在单元格上可查看其余内容。"
+
+[csv_preview.row_identifier]
+lines = "行号"
+rows = "序号"
+toggle_tooltip = "在文件行号与顺序行序号之间切换"
+
+[csv_preview.table]
+column_fallback = "第 %{index} 列"

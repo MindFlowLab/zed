@@ -1,0 +1,9 @@
+_version = 1
+
+[go_to_line]
+current_line = "Current Line: %{line} of %{total} (column %{column})"
+go_to_line_relative = "Go to line %{line} (%{offset} from current)"
+go_to_line_character = "Go to line %{line}, character %{character}"
+go_to_line = "Go to line %{line}"
+line_column_aria = "Line %{line}, column %{column}"
+go_to_line_column_tooltip = "Go to Line/Column"

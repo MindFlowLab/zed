@@ -1,0 +1,9 @@
+# ui_input crate 简体中文 locale 文件(默认语言)
+# key 规范:<crate>.<模块>.<条目>,与 en/ui_input.toml 一一对应
+# Simplified Chinese locale for the `ui_input` crate (default). Keys follow
+# `<crate>.<module>.<item>` and must stay in sync with en/ui_input.toml.
+_version = 1
+
+[ui_input.input_field]
+show = "显示"
+hide = "隐藏"

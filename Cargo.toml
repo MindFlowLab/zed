@@ -235,6 +235,7 @@ members = [
     "crates/windows_resources",
     "crates/zed_credentials_provider",
     "crates/zed_env_vars",
+    "crates/zed_i18n",
     "crates/zeta_prompt",
     "crates/zlog",
     "crates/zlog_settings",
@@ -496,6 +497,7 @@ zed = { path = "crates/zed" }
 zed_actions = { path = "crates/zed_actions" }
 zed_credentials_provider = { path = "crates/zed_credentials_provider" }
 zed_env_vars = { path = "crates/zed_env_vars" }
+zed_i18n = { path = "crates/zed_i18n" }
 edit_prediction = { path = "crates/edit_prediction" }
 edit_prediction_metrics = { path = "crates/edit_prediction_metrics" }
 zeta_prompt = { path = "crates/zeta_prompt" }
@@ -775,6 +777,7 @@ runtimelib = { version = "1.4.0", default-features = false, features = [
     "async-dispatcher-runtime", "aws-lc-rs"
 ] }
 rust-embed = { version = "8.11", features = ["include-exclude"] }
+rust-i18n = "3.1"
 rustc-hash = "2.1.0"
 rustls = { version = "0.23.26" }
 rustls-platform-verifier = "0.5.0"

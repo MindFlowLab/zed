@@ -1,0 +1,9 @@
+# platform_title_bar 简体中文 locale(默认语言)
+# key 规范:platform_title_bar.<模块>.<条目>,与 en/platform_title_bar.toml 一一对应
+# Simplified Chinese locale for the platform_title_bar crate (default).
+_version = 1
+
+platform_title_bar.window_tabs.close_tab = "关闭标签页"
+platform_title_bar.window_tabs.close_other_tabs = "关闭其他标签页"
+platform_title_bar.window_tabs.move_tab_to_new_window = "将标签页移动到新窗口"
+platform_title_bar.window_tabs.show_all_tabs = "显示所有标签页"

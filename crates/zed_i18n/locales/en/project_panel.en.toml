@@ -1,0 +1,85 @@
+# project_panel English locale (fallback).
+# Keys follow `<crate>.<module>.<item>` and must stay in sync with zh-CN/project_panel.toml.
+_version = 1
+
+# 右键上下文菜单 / context menu
+[project_panel.context_menu]
+open_markdown_preview = "Open Markdown Preview"
+search_inside = "Search Inside"
+new_file = "New File"
+new_folder = "New Folder"
+open_in_default_app = "Open in Default App"
+open_in_terminal = "Open in Terminal"
+find_in_folder = "Find in Folder…"
+unfold_directory = "Unfold Directory"
+fold_directory = "Fold Directory"
+compare_marked_files = "Compare Marked Files"
+cut = "Cut"
+copy = "Copy"
+duplicate = "Duplicate"
+paste = "Paste"
+undo = "Undo"
+redo = "Redo"
+download = "Download..."
+copy_path = "Copy Path"
+copy_relative_path = "Copy Relative Path"
+restore_file = "Restore File"
+add_to_gitignore = "Add to .gitignore"
+add_to_git_info_exclude = "Add to .git/info/exclude"
+view_history = "View History"
+rename = "Rename"
+trash = "Trash"
+delete = "Delete"
+add_folders_to_project = "Add Folders to Project…"
+remove_from_project = "Remove from Project"
+expand_all = "Expand All"
+collapse_all = "Collapse All"
+
+# 新建/重命名校验提示 / entry name validation messages
+[project_panel.validation]
+empty_name = "File or directory name cannot be empty."
+whitespace = "File or directory name contains leading or trailing whitespace."
+already_exists = "File or directory '%{name}' already exists at location. Please choose a different name."
+
+# 对话框与按钮 / prompts and dialog buttons
+[project_panel.prompt]
+failed_to_open_file = "Failed to open file"
+disconnected_from_ssh = "Disconnected from SSH host"
+disconnected_from_remote = "Disconnected from remote project"
+not_shared_by_host = "%{path} is not shared by the host. This could be because it has been marked as `private`"
+discard_changes = "Discard changes to %{file}?"
+restore = "Restore"
+cancel = "Cancel"
+cannot_be_undone = "This cannot be undone."
+trash = "Trash"
+delete = "Delete"
+replace_file = "A file or folder with name %{name} already exists in the destination folder. Do you want to replace it?"
+replace = "Replace"
+download = "Download"
+
+# 通知 toast / toast notifications
+[project_panel.toast]
+failed_to_restore = "Failed to restore %{file}: %{error}"
+failed_to_add_gitignore = "Failed to add to .gitignore: %{error}"
+failed_to_add_git_info_exclude = "Failed to add to .git/info/exclude: %{error}"
+failed_to_trash_one = "Failed to trash %{failed} of %{total} file."
+failed_to_trash_many = "Failed to trash %{failed} of %{total} files."
+failed_to_delete_one = "Failed to delete %{failed} of %{total} file."
+failed_to_delete_many = "Failed to delete %{failed} of %{total} files."
+downloading = "Downloading %{done}/%{total} files..."
+downloaded = "Downloaded %{count} files"
+excluded_directory = "Created an excluded directory at %{path}.\nAlter `file_scan_exclusions` in the settings to show it in the panel"
+
+# 提示浮层 / tooltips
+[project_panel.tooltip]
+symbolic_link = "Symbolic Link"
+
+# 拖拽指示 / drag indicator
+[project_panel.drag]
+entries = "%{count} entries"
+
+# 撤销/重做失败通知标题 / undo-redo failure notification titles
+[project_panel.undo]
+bug_report = "this is a bug in the manage_undo_and_redo task please report"
+undo_failed = "Undo failed"
+redo_failed = "Redo failed"

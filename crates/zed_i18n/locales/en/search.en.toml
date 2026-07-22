@@ -1,0 +1,85 @@
+# search crate 英文 locale(回退语言)
+# English locale for the `search` crate (fallback language).
+# key 规范:<crate>.<模块>.<条目>,与 zh-CN/search.toml 一一对应
+# Keys follow `<crate>.<module>.<item>` and mirror zh-CN/search.toml.
+_version = 1
+
+[search.option]
+whole_word = "Match Whole Words"
+case_sensitive = "Match Case Sensitivity"
+include_ignored = "Also search files ignored by configuration"
+regex = "Use Regular Expressions"
+one_match_per_line = "One Match Per Line"
+backwards = "Search Backwards"
+
+[search.toast]
+no_more_matches = "No more matches"
+
+[search.placeholder]
+search_all_files = "Search all files…"
+replace = "Replace in project…"
+include = "Include: e.g. src/**/*.rs"
+exclude = "Exclude: e.g. vendor/*, *.lock"
+
+[search.search_bar]
+find_in_results = "Find in Results"
+
+[search.action]
+toggle_replace = "Toggle Replace"
+toggle_filters = "Toggle Filters"
+select_previous_match = "Select Previous Match"
+select_next_match = "Select Next Match"
+select_all_matches = "Select All Matches"
+close_search_bar = "Close Search Bar"
+replace_next_match = "Replace Next Match"
+replace_all_matches = "Replace All Matches"
+
+[search.buffer]
+search_placeholder = "Search…"
+replace_placeholder = "Replace with…"
+expand_all_files = "Expand All Files"
+collapse_all_files = "Collapse All Files"
+toggle_search_selection = "Toggle Search Selection"
+
+[search.status_button]
+project_search = "Project Search"
+
+[search.project_search]
+tab_title = "Project Search"
+heading_loading = "Loading project…"
+heading_searching = "Searching…"
+heading_no_results = "No Results"
+heading_search_all_files = "Search All Files"
+no_results_found = "No results found in this project for the provided query"
+landing_hint = "Hit enter to search. For more options:"
+search_limits_reached = "Search Limits Reached\nTry narrowing your search"
+expand_all_results = "Expand All Search Results"
+collapse_all_results = "Collapse All Search Results"
+only_search_open_files = "Only Search Open Files"
+save_prompt_message = "Project search buffer contains unsaved edits. Do you want to save it?"
+
+[search.project_search.save_prompt]
+save = "Save"
+dont_save = "Don't Save"
+cancel = "Cancel"
+
+[search.project_search.landing]
+include_exclude_paths = "Include/exclude specific paths"
+find_and_replace = "Find and replace"
+match_with_regex = "Match with regex"
+match_case = "Match case"
+match_whole_words = "Match whole words"
+
+[search.text_finder]
+split_header = "Split…"
+split_left = "Left"
+split_right = "Right"
+split_up = "Up"
+split_down = "Down"
+open_multiple = "Open Multiple"
+open_file = "Open File"
+open_as_tab = "Open as Tab"
+fold = "Fold"
+unfold = "Unfold"
+# %{key} 为按键组合(如 Alt-click)/ %{key} is the keystroke combo (e.g. Alt-click)
+toggle_all_meta = "%{key} to toggle all"

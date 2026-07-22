@@ -1,0 +1,41 @@
+_version = 1
+# English translations for the `terminal_view` crate (terminal panel / tab UI).
+# NOTE: filename carries the `.en` suffix so rust-i18n resolves the locale from
+# the file stem (`terminal_view.en` -> locale `en`); the subdirectory alone is
+# not used for locale detection. Mirrors zh-CN/terminal_view.zh-CN.toml.
+
+[terminal_view]
+rerun_task = "Rerun task"
+
+[terminal_view.tab]
+process_id = "Process ID (PID): %{pid}"
+rename = "Rename"
+
+[terminal_view.context_menu]
+new_terminal = "New Terminal"
+new_center_terminal = "New Center Terminal"
+copy = "Copy"
+paste = "Paste"
+paste_text = "Paste Text"
+select_all = "Select All"
+clear = "Clear"
+inline_assist = "Inline Assist"
+add_to_agent_thread = "Add to Agent Thread"
+close_terminal_tab = "Close Terminal Tab"
+
+[terminal_view.panel]
+new = "New…"
+new_terminal = "New Terminal"
+spawn_task = "Spawn Task"
+split_pane = "Split Pane"
+split_right = "Split Right"
+split_left = "Split Left"
+split_up = "Split Up"
+split_down = "Split Down"
+zoom_in = "Zoom In"
+zoom_out = "Zoom Out"
+inline_assist = "Inline Assist"
+open_settings = "Open Settings"
+edit_settings_json = "Edit settings.json"
+failed_to_spawn = "Failed to spawn terminal"
+edit_settings = "Edit Settings"

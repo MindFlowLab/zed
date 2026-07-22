@@ -1,0 +1,5 @@
+_version = 1
+
+[settings_profile_selector]
+placeholder = "选择设置方案…"
+disabled = "已禁用"

@@ -1,0 +1,37 @@
+_version = 1
+
+# csv_preview: empty/loading states, header tooltips, settings panel menus
+# CSV 预览器空状态、表头工具提示与设置面板菜单
+
+[csv_preview.empty_state]
+loading = "Loading…"
+no_content = "No CSV content to display"
+
+[csv_preview.table_header]
+sort_asc = "Sorted A-Z. Click to sort Z-A"
+sort_desc = "Sorted Z-A. Click to disable sorting"
+sort_none = "Not sorted. Click to sort A-Z"
+filter_active = "Column has active filters. Click to manage"
+filter_none = "No filters applied. Click to add filters"
+clear_all = "Clear all"
+hidden_by_other_filters = "Hidden by other filters"
+
+[csv_preview.settings]
+alignment_top = "Top"
+alignment_center = "Center"
+filter_sort_alpha_then_count = "A-Z, then Count"
+filter_sort_count_then_alpha = "Count, then A-Z"
+text_alignment_label = "Text Alignment:"
+text_alignment_tooltip = "Choose vertical text alignment within cells"
+filter_sort_label = "Filter Sort:"
+filter_sort_tooltip = "Choose how filter values are sorted in the filter menu"
+multiline_label = "Display multiline rows"
+multiline_tooltip = "When enabled, row height grows to show all content. When disabled, only the first line is visible — hover a cell to see the rest."
+
+[csv_preview.row_identifier]
+lines = "Lines"
+rows = "Rows"
+toggle_tooltip = "Toggle between: file line numbers or sequential row numbers"
+
+[csv_preview.table]
+column_fallback = "Col %{index}"

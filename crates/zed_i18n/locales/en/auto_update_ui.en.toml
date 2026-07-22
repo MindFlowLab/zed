@@ -1,0 +1,21 @@
+_version = 1
+
+# auto_update_ui: update notifications, release notes and announcements
+# 更新提示、发行说明与功能公告文案
+
+[auto_update_ui.release_notes]
+load_failed = "Couldn't load release notes"
+view_in_browser = "View in Browser"
+
+[auto_update_ui.announcement]
+skills_heading = "Introducing Skills Support"
+skills_description = "Extend the agent with focused instructions and domain knowledge."
+skills_bullet_location = "Skills live in %{dir}/<name>/SKILL.md"
+skills_bullet_invoke = "Type / to manually invoke a skill"
+skills_bullet_migration = "The Rules Library is making way for skills: your default rules are now in a global AGENTS.md, and your other rules have been converted to skills"
+try_now = "Try Now"
+read_documentation = "Read Documentation"
+
+[auto_update_ui.notification]
+updated_to = "Updated to %{app} %{version}"
+view_release_notes = "View Release Notes"

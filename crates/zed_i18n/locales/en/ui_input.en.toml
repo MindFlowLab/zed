@@ -1,0 +1,9 @@
+# ui_input crate 英文 locale 文件(回退语言)
+# key 规范:<crate>.<模块>.<条目>,与 zh-CN/ui_input.toml 一一对应
+# English locale for the `ui_input` crate (fallback). Keys follow
+# `<crate>.<module>.<item>` and must stay in sync with zh-CN/ui_input.toml.
+_version = 1
+
+[ui_input.input_field]
+show = "Show"
+hide = "Hide"

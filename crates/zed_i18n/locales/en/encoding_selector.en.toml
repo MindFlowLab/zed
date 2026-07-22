@@ -1,0 +1,9 @@
+_version = 1
+
+[encoding_selector]
+save_to_change = "Save file to change encoding"
+cannot_change_collaboration = "Cannot change encoding during collaboration"
+cannot_change_remote = "Cannot change encoding of remote server file"
+current = "%{name} (current)"
+placeholder = "Reopen with encoding..."
+reopen_with_encoding = "Reopen with Encoding"

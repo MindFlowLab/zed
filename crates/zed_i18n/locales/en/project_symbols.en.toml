@@ -1,0 +1,4 @@
+_version = 1
+
+[project_symbols]
+placeholder = "Search project symbols..."

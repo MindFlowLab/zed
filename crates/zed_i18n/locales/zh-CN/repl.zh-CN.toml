@@ -1,0 +1,77 @@
+_version = 1
+# repl crate 简体中文翻译（Jupyter REPL / notebook UI）。
+# 注意：文件名带 `.zh-CN` 后缀，rust-i18n 依据文件主干解析 locale
+# （`repl.zh-CN` -> locale `zh-CN`）；仅靠子目录名不会生效。
+# 与 en/repl.en.toml 的 key 一一对应。
+
+[repl.kernel_options]
+recommended = "推荐"
+python_environments = "Python 环境"
+jupyter_kernels = "Jupyter 内核"
+wsl_kernels = "WSL 内核"
+remote_servers = "远程服务器"
+select_kernel_placeholder = "选择内核…"
+ipykernel_not_installed = "未安装 ipykernel"
+kernel_docs = "内核文档"
+
+[repl.outputs]
+copy_output = "复制输出"
+open_in_buffer = "在缓冲区中打开"
+copy_full_error = "复制完整错误"
+open_full_error_in_buffer = "在缓冲区中打开完整错误"
+repl_output_title = "REPL 输出"
+full_error_title = "完整错误"
+failed_to_parse_json = "解析 JSON 失败"
+failed_to_load_image = "加载图像失败: %{error}"
+unsupported_media_type = "不支持的媒体类型"
+connecting_to_kernel = "正在连接到内核…"
+executing = "执行中…"
+unknown_status = "未知状态"
+kernel_shutting_down = "内核正在关闭…"
+kernel_restarting = "内核正在重启…"
+kernel_shutdown = "内核已关闭"
+queued = "排队中…"
+kernel_error = "内核错误: %{error}"
+type_here = "在此输入并按回车"
+input = "输入:"
+
+[repl.session]
+close_output_area = "关闭输出区域"
+interrupt = "中断"
+shutdown = "关闭"
+status_starting = "启动中"
+status_shutting_down = "正在关闭"
+status_shutdown = "已关闭"
+status_restarting = "重启中"
+status_error = "错误: %{err}"
+
+[repl.sessions]
+tab_title = "REPL 会话"
+no_kernels_title = "无可用 Jupyter 内核"
+no_kernels_instructions = "要在编辑器中交互式运行代码，需要先安装并配置 Jupyter 内核。"
+install_kernels = "安装内核"
+no_sessions_title = "无 Jupyter 内核会话"
+no_sessions_instructions = "要在 Jupyter 内核中运行代码，请选中一段代码并使用 'repl::Run' 命令。"
+sessions_title = "Jupyter 内核会话"
+
+[repl.notebook]
+execute_all_cells = "执行所有单元格"
+clear_all_outputs = "清除所有输出"
+move_cell_up = "上移单元格"
+move_cell_down = "下移单元格"
+add_markdown_block = "添加 Markdown 块"
+add_code_block = "添加代码块"
+more_options = "更多选项"
+select_kernel = "选择内核"
+kernel_change_tooltip = "%{name}（%{status}）。点击以更改内核。"
+kernel_status_tooltip = "内核: %{name}（%{status}）。点击以更改。"
+restart_kernel = "重启内核"
+interrupt_kernel = "中断内核"
+
+[repl.repl_editor]
+installing_ipykernel = "正在为 %{name} 安装 ipykernel…"
+ipykernel_installed = "已为 %{name} 安装 ipykernel"
+failed_to_install_ipykernel = "为 %{name} 安装 ipykernel 失败: %{error}"
+
+[repl.cell]
+running = "运行中…"

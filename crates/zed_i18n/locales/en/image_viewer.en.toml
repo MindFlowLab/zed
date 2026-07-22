@@ -1,0 +1,11 @@
+_version = 1
+
+# image_viewer: toolbar tooltips for the image preview
+# 图像预览器工具栏工具提示
+
+[image_viewer.toolbar]
+zoom_out = "Zoom Out"
+zoom_in = "Zoom In"
+fit_to_view = "Fit to View"
+edit_zoom = "Edit Zoom"
+edit_zoom_meta = "Right-click to reset to 100%."

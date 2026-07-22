@@ -1,0 +1,73 @@
+# workspace crate English locale (fallback language)
+# Keys follow `<crate>.<module>.<item>`; must stay in sync with zh-CN/workspace.toml.
+_version = 1
+
+# pane.rs — save / close confirmation dialogs & tooltips
+workspace.pane.conflict_message = "This file has changed on disk since you started editing it. Do you want to overwrite it?"
+workspace.pane.deleted_message = "This file has been deleted on disk since you started editing it. Do you want to recreate it?"
+workspace.pane.save = "Save"
+workspace.pane.close = "Close"
+workspace.pane.cancel = "Cancel"
+workspace.pane.overwrite = "Overwrite"
+workspace.pane.discard_edits = "Discard Edits"
+workspace.pane.dont_save = "Don't Save"
+workspace.pane.save_changes_multiple = "Do you want to save changes to the following files?"
+workspace.pane.save_all = "Save all"
+workspace.pane.discard_all = "Discard all"
+workspace.pane.unable_to_save_file = "Unable to save file: %{error}"
+workspace.pane.close_without_saving = "Close Without Saving"
+workspace.pane.dirty_message_with_path = "%{path} contains unsaved edits. Do you want to save it?"
+workspace.pane.dirty_message_no_path = "This buffer contains unsaved edits. Do you want to save it?"
+workspace.pane.unlock_file = "Unlock File"
+workspace.pane.unlock_file_meta = "This will make this file editable"
+workspace.pane.locked_file = "Locked File"
+workspace.pane.locked_file_meta = "This file is read-only"
+workspace.pane.read_only_file = "Read-Only File"
+workspace.pane.go_back = "Go Back"
+workspace.pane.go_forward = "Go Forward"
+
+# workspace.rs — confirmation dialogs & channel-join errors
+workspace.workspace.leave_call_message = "Do you want to leave the current call?"
+workspace.workspace.close_window_hang_up = "Close window and hang up"
+workspace.workspace.cancel = "Cancel"
+workspace.workspace.save_all_changes_message = "Do you want to save all changes in the following files?"
+workspace.workspace.switch_channels_message = "Do you want to switch channels?"
+workspace.workspace.switch_channels_detail = "Leaving this call will unshare your current project."
+workspace.workspace.yes_join_channel = "Yes, Join Channel"
+workspace.workspace.join_channel_signed_out = "Please sign in to continue."
+workspace.workspace.join_channel_upgrade_required = "Your are running an unsupported version of Zed. Please update to continue."
+workspace.workspace.join_channel_no_such_channel = "No matching channel was found. Please check the link and try again."
+workspace.workspace.join_channel_forbidden = "This channel is private, and you do not have access. Please ask someone to add you and try again."
+workspace.workspace.join_channel_disconnected = "Please check your internet connection and try again."
+workspace.workspace.join_channel_error_retry = "%{error}\n\nPlease try again."
+workspace.workspace.join_channel_failed = "Failed to join channel"
+workspace.workspace.ok = "OK"
+workspace.workspace.restart_confirm_message = "Are you sure you want to restart?"
+workspace.workspace.restart = "Restart"
+
+# notifications.rs — notification tooltips & buttons
+workspace.notifications.suppress = "Suppress"
+workspace.notifications.click_to_close = "Click to close"
+workspace.notifications.close = "Close"
+workspace.notifications.suppress_shift_click = "Suppress with shift-click"
+workspace.notifications.copy_description = "Copy Description"
+workspace.notifications.click_to_close_caps = "Click to Close"
+workspace.notifications.shift_click_to_suppress = "Shift-click to Suppress"
+workspace.notifications.ok = "OK"
+
+# status_bar.rs — sidebar toggle tooltip
+workspace.status_bar.open_threads_sidebar = "Open Threads Sidebar"
+workspace.status_bar.open_threads_sidebar_aria = "Open threads sidebar"
+
+# tasks.rs — toast
+workspace.tasks.task_spawn_failed = "Task spawn failed: %{error}"
+
+# invalid_item_view.rs — empty state when an item fails to open
+workspace.invalid_item.could_not_open_file = "Could not open file"
+workspace.invalid_item.open_in_default_app = "Open in Default App"
+
+# dock.rs — dock panel button tooltip
+workspace.dock.close_dock = "Close %{position} Dock"
+workspace.dock.position_left = "Left"
+workspace.dock.position_right = "Right"
+workspace.dock.position_bottom = "Bottom"

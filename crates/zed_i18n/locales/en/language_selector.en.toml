@@ -1,0 +1,8 @@
+_version = 1
+
+[language_selector]
+placeholder = "Select a language…"
+language_current = "%{name} (current)"
+unknown_language = "Unknown"
+language_aria = "Language: %{language}"
+select_language = "Select Language"

@@ -1,0 +1,8 @@
+# language_onboarding crate — 简体中文 locale
+# 语言相关引导横幅文案。key 规范:<crate>.<模块>.<条目>
+_version = 1
+
+[language_onboarding.python]
+banner_title = "Basedpyright 现已成为 Python 唯一默认的语言服务器"
+banner_body = "我们已默认禁用 PyRight 和 pylsp。你可以在设置中重新启用它们。"
+learn_more = "了解更多"

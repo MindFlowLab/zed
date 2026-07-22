@@ -1,0 +1,52 @@
+# ai_onboarding crate — 简体中文 locale
+# AI / 智能体引导文案。key 规范:<crate>.<模块>.<条目>
+_version = 1
+
+[ai_onboarding.onboarding]
+dismiss_tooltip = "关闭"
+welcome_zed_ai = "欢迎使用 Zed AI"
+sign_in_trial_hint = "登录即可免费试用 Zed Pro 14 天。"
+try_pro_free = "免费试用 Zed Pro"
+pro_label = "Pro"
+get_started = "开始使用"
+free_label = "免费版"
+current_plan = "（当前套餐）"
+pro_trial_label = "Pro 试用"
+start_free_trial = "开始免费试用"
+welcome_pro_trial = "欢迎试用 Zed Pro"
+trial_what_you_get = "以下是你在未来 14 天内可享有的权益："
+welcome_zed_pro = "欢迎使用 Zed Pro"
+what_you_get = "以下是你将享有的权益："
+welcome_zed_business = "欢迎使用 Zed Business"
+welcome_zed_vip = "欢迎使用 Zed VIP"
+welcome_zed_student = "欢迎使用 Zed Student"
+
+[ai_onboarding.young_account_banner]
+disclaimer = "为防止服务被滥用，注册不足 30 天的 GitHub 账号无法试用 Pro。你可以联系 billing-support@zed.dev 申请例外。"
+
+[ai_onboarding.edit_prediction]
+copilot_configured_label = "此外，你也可以继续使用已配置好的 GitHub Copilot。"
+copilot_not_configured_label = "此外，你也可以使用 GitHub Copilot 作为编辑预测提供方。"
+use_copilot = "使用 Copilot"
+configure_copilot = "配置 Copilot"
+
+[ai_onboarding.api_keys]
+start_now = "现在即可使用你环境中的 API 密钥，适用于以下提供方："
+title = "API 密钥"
+add_own_keys = "添加你自己的密钥，无需登录即可使用 AI。"
+configure_providers = "配置提供方"
+
+[ai_onboarding.plan_definitions]
+free_edit_predictions = "2,000 次已采纳的编辑预测"
+free_unlimited_prompts_api_keys = "使用你的 AI API 密钥无限次提问"
+free_unlimited_external_agents = "无限次使用外部智能体"
+unlimited_edit_predictions = "无限次编辑预测"
+tokens_20 = "Zed 智能体中 20 美元的 tokens"
+no_credit_card = "无需信用卡"
+trial_14_days = "试用 14 天，无需信用卡"
+tokens_5 = "Zed 智能体中 5 美元的 tokens"
+usage_billing_beyond_5 = "超出 5 美元后按用量计费"
+usage_billing = "按用量计费"
+tokens_in_agent = "Zed 智能体中的 tokens"
+tokens_10 = "Zed 智能体中 10 美元的 tokens"
+optional_credit_packs = "可选额度包，用于额外用量"

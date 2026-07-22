@@ -1,0 +1,85 @@
+# search crate 简体中文 locale(默认语言)
+# Simplified Chinese locale for the `search` crate (default language).
+# key 规范:<crate>.<模块>.<条目>,与 en/search.toml 一一对应
+# Keys follow `<crate>.<module>.<item>` and mirror en/search.toml.
+_version = 1
+
+[search.option]
+whole_word = "全词匹配"
+case_sensitive = "区分大小写"
+include_ignored = "同时搜索被配置忽略的文件"
+regex = "使用正则表达式"
+one_match_per_line = "每行一个匹配"
+backwards = "反向搜索"
+
+[search.toast]
+no_more_matches = "没有更多匹配项"
+
+[search.placeholder]
+search_all_files = "搜索所有文件…"
+replace = "在项目中替换…"
+include = "包含：例如 src/**/*.rs"
+exclude = "排除：例如 vendor/*, *.lock"
+
+[search.search_bar]
+find_in_results = "在结果中查找"
+
+[search.action]
+toggle_replace = "切换替换"
+toggle_filters = "切换筛选器"
+select_previous_match = "选择上一个匹配"
+select_next_match = "选择下一个匹配"
+select_all_matches = "选择所有匹配"
+close_search_bar = "关闭搜索栏"
+replace_next_match = "替换下一个匹配"
+replace_all_matches = "替换所有匹配"
+
+[search.buffer]
+search_placeholder = "搜索…"
+replace_placeholder = "替换为…"
+expand_all_files = "展开全部文件"
+collapse_all_files = "折叠全部文件"
+toggle_search_selection = "切换在选区中搜索"
+
+[search.status_button]
+project_search = "项目搜索"
+
+[search.project_search]
+tab_title = "项目搜索"
+heading_loading = "正在加载项目…"
+heading_searching = "正在搜索…"
+heading_no_results = "无结果"
+heading_search_all_files = "搜索所有文件"
+no_results_found = "在该项目中未找到与此查询匹配的结果"
+landing_hint = "按回车开始搜索。更多选项："
+search_limits_reached = "已达到搜索上限\n请尝试缩小搜索范围"
+expand_all_results = "展开全部搜索结果"
+collapse_all_results = "折叠全部搜索结果"
+only_search_open_files = "仅搜索已打开的文件"
+save_prompt_message = "项目搜索缓冲区包含未保存的修改。是否保存？"
+
+[search.project_search.save_prompt]
+save = "保存"
+dont_save = "不保存"
+cancel = "取消"
+
+[search.project_search.landing]
+include_exclude_paths = "包含/排除特定路径"
+find_and_replace = "查找与替换"
+match_with_regex = "使用正则匹配"
+match_case = "区分大小写"
+match_whole_words = "全词匹配"
+
+[search.text_finder]
+split_header = "拆分…"
+split_left = "向左"
+split_right = "向右"
+split_up = "向上"
+split_down = "向下"
+open_multiple = "打开多个文件"
+open_file = "打开文件"
+open_as_tab = "以标签页打开"
+fold = "折叠"
+unfold = "展开"
+# %{key} 为按键组合(如 Alt-click)/ %{key} is the keystroke combo (e.g. Alt-click)
+toggle_all_meta = "%{key} 可切换全部"

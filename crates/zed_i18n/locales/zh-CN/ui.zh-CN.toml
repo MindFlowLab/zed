@@ -1,0 +1,55 @@
+# ui crate 简体中文 locale 文件(默认语言)
+# key 规范:<crate>.<模块>.<条目>,与 en/ui.toml 一一对应
+# Simplified Chinese locale for the `ui` crate (default). Keys follow
+# `<crate>.<module>.<item>` and must stay in sync with en/ui.toml.
+_version = 1
+
+[ui.copy_button]
+copy = "复制"
+copied = "已复制！"
+
+[ui.disclosure]
+collapse = "折叠"
+expand = "展开"
+
+[ui.announcement_toast]
+try_now = "立即试用"
+learn_more = "了解更多"
+
+[ui.update_button]
+checking = "正在检查 Zed 更新…"
+downloading = "正在下载 Zed 更新…"
+installing = "正在安装 Zed 更新…"
+restart_to_update = "重启以更新"
+failed_to_update = "更新失败"
+update_to_version = "更新到版本：%{version}"
+percent_downloaded = "%{message}（已下载 %{percent}%）"
+dismiss = "关闭"
+
+[ui.alert_modal]
+ok = "确定"
+cancel = "取消"
+
+[ui.project_empty_state]
+choose_option = "选择以下选项之一以使用%{label}"
+open_project = "打开项目"
+or = "或"
+clone_repository = "克隆仓库"
+
+[ui.configured_api_card]
+reset_key = "重置密钥"
+
+[ui.list]
+no_items = "暂无条目"
+
+[ui.ai_setting_item]
+status_stopped = "服务器已停止。"
+status_starting = "服务器正在启动。"
+status_running = "服务器运行中。"
+status_error = "服务器出现错误。"
+status_auth_required = "需要身份验证。"
+status_client_secret_required = "需要客户端密钥。"
+status_authenticating = "正在等待授权…"
+source_extension = "%{label} 已通过扩展安装。"
+source_registry = "%{label} 已通过 ACP 注册表安装。"
+source_custom = "%{label} 为手动配置。"

@@ -1,0 +1,4 @@
+_version = 1
+
+[snippets_ui]
+placeholder = "选择代码片段作用域…"

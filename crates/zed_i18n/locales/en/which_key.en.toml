@@ -1,0 +1,4 @@
+_version = 1
+
+[which_key]
+keybinds_count = "+%{count} keybinds"

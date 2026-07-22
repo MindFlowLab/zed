@@ -1,0 +1,42 @@
+# diagnostics crate 英文 locale(回退语言)
+# English locale for the `diagnostics` crate (fallback language).
+# key 规范:<crate>.<模块>.<条目>,与 zh-CN/diagnostics.toml 一一对应
+# Keys follow `<crate>.<module>.<item>` and mirror zh-CN/diagnostics.toml.
+_version = 1
+
+[diagnostics.common]
+show_one_warning = "Show 1 warning"
+# %{count} 为警告数量 / %{count} is the warning count
+show_warnings = "Show %{count} warnings"
+open_file = "Open File"
+
+[diagnostics.diagnostics]
+tab_title = "Diagnostics"
+tab_tooltip = "Project Diagnostics"
+no_problems_in_workspace = "No problems in workspace"
+no_errors_in_workspace = "No errors in workspace"
+no_problems = "No problems"
+
+[diagnostics.buffer_diagnostics]
+tab_title = "Buffer Diagnostics"
+# %{path} 为文件路径 / %{path} is the file path
+tab_tooltip = "Buffer Diagnostics - %{path}"
+no_problems_in = "No problems in"
+no_errors_in = "No errors in"
+
+[diagnostics.toolbar]
+exclude_warnings = "Exclude Warnings"
+include_warnings = "Include Warnings"
+buffer_search = "Buffer Search"
+inline_assist = "Inline Assist"
+stop_update = "Stop Diagnostics Update"
+refresh = "Refresh Diagnostics"
+
+[diagnostics.indicator]
+expand_diagnostics = "Expand Diagnostics"
+next_diagnostic = "Next Diagnostic"
+no_problems = "Project diagnostics: no problems"
+project_diagnostics = "Project Diagnostics"
+
+[diagnostics.renderer]
+copy_diagnostic = "Copy Diagnostic"

@@ -1,0 +1,77 @@
+_version = 1
+# English translations for the `repl` crate (Jupyter REPL / notebook UI).
+# NOTE: filename carries the `.en` suffix so rust-i18n resolves the locale from
+# the file stem (`repl.en` -> locale `en`); the subdirectory alone is not used
+# for locale detection. Mirrors zh-CN/repl.zh-CN.toml.
+
+[repl.kernel_options]
+recommended = "Recommended"
+python_environments = "Python Environments"
+jupyter_kernels = "Jupyter Kernels"
+wsl_kernels = "WSL Kernels"
+remote_servers = "Remote Servers"
+select_kernel_placeholder = "Select a kernel..."
+ipykernel_not_installed = "ipykernel not installed"
+kernel_docs = "Kernel Docs"
+
+[repl.outputs]
+copy_output = "Copy Output"
+open_in_buffer = "Open in Buffer"
+copy_full_error = "Copy Full Error"
+open_full_error_in_buffer = "Open Full Error in Buffer"
+repl_output_title = "REPL Output"
+full_error_title = "Full Error"
+failed_to_parse_json = "Failed to parse JSON"
+failed_to_load_image = "Failed to load image: %{error}"
+unsupported_media_type = "Unsupported media type"
+connecting_to_kernel = "Connecting to kernel..."
+executing = "Executing..."
+unknown_status = "Unknown status"
+kernel_shutting_down = "Kernel shutting down..."
+kernel_restarting = "Kernel restarting..."
+kernel_shutdown = "Kernel shutdown"
+queued = "Queued..."
+kernel_error = "Kernel error: %{error}"
+type_here = "Type here and press Enter"
+input = "Input:"
+
+[repl.session]
+close_output_area = "Close output area"
+interrupt = "Interrupt"
+shutdown = "Shutdown"
+status_starting = "Starting"
+status_shutting_down = "Shutting Down"
+status_shutdown = "Shutdown"
+status_restarting = "Restarting"
+status_error = "Error: %{err}"
+
+[repl.sessions]
+tab_title = "REPL Sessions"
+no_kernels_title = "No Jupyter Kernels Available"
+no_kernels_instructions = "To start interactively running code in your editor, you need to install and configure Jupyter kernels."
+install_kernels = "Install Kernels"
+no_sessions_title = "No Jupyter Kernel Sessions"
+no_sessions_instructions = "To run code in a Jupyter kernel, select some code and use the 'repl::Run' command."
+sessions_title = "Jupyter Kernel Sessions"
+
+[repl.notebook]
+execute_all_cells = "Execute all cells"
+clear_all_outputs = "Clear all outputs"
+move_cell_up = "Move cell up"
+move_cell_down = "Move cell down"
+add_markdown_block = "Add markdown block"
+add_code_block = "Add code block"
+more_options = "More options"
+select_kernel = "Select Kernel"
+kernel_change_tooltip = "%{name} (%{status}). Click to change kernel."
+kernel_status_tooltip = "Kernel: %{name} (%{status}). Click to change."
+restart_kernel = "Restart Kernel"
+interrupt_kernel = "Interrupt Kernel"
+
+[repl.repl_editor]
+installing_ipykernel = "Installing ipykernel in %{name}..."
+ipykernel_installed = "ipykernel installed in %{name}"
+failed_to_install_ipykernel = "Failed to install ipykernel in %{name}: %{error}"
+
+[repl.cell]
+running = "Running..."

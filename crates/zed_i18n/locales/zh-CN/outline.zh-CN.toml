@@ -1,0 +1,4 @@
+_version = 1
+
+[outline]
+placeholder = "搜索缓冲区符号…"

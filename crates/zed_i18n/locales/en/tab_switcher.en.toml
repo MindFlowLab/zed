@@ -1,0 +1,6 @@
+_version = 1
+
+[tab_switcher]
+placeholder = "Search all tabs…"
+no_tabs = "No tabs"
+close = "Close"

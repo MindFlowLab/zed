@@ -1,0 +1,9 @@
+_version = 1
+
+[theme_selector]
+placeholder = "Select Theme..."
+view_theme_docs = "View Theme Docs"
+install_themes = "Install Themes"
+icon_theme_placeholder = "Select Icon Theme..."
+view_icon_theme_docs = "View Icon Theme Docs"
+install_icon_themes = "Install Icon Themes"

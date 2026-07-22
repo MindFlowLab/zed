@@ -1,0 +1,85 @@
+# extensions_ui 简体中文 locale(默认语言)。
+# key 规范:`<crate>.<模块>.<条目>`,与 en/extensions_ui.toml 一一对应。
+_version = 1
+
+[extensions_ui.page]
+title = "扩展"
+
+[extensions_ui.search]
+placeholder = "搜索扩展…"
+
+[extensions_ui.filter]
+all = "全部"
+installed = "已安装"
+not_installed = "未安装"
+
+[extensions_ui.button]
+install = "安装"
+uninstall = "卸载"
+upgrade = "更新"
+rebuild = "重新构建"
+configure = "配置"
+install_dev_extension = "安装开发扩展"
+
+[extensions_ui.card]
+author = "作者"
+authors = "作者"
+author_label = "%{label}:%{names}"
+installed_version = "(已安装 v%{version})"
+downloads = "下载量:%{count}"
+visit_repository = "访问扩展仓库"
+version_incompatible = "v%{version} 与当前版本的 Zed 不兼容。"
+overridden_by_dev_extension = "已被开发扩展覆盖。"
+
+[extensions_ui.menu]
+install_another_version = "安装其他版本…"
+copy_extension_id = "复制扩展 ID"
+copy_author_info = "复制作者信息"
+
+[extensions_ui.empty_state]
+loading = "正在加载扩展…"
+fetch_failed = "加载扩展失败。请检查网络连接后重试。"
+no_extensions = "暂无扩展。"
+no_match_all = "没有符合搜索条件的扩展。"
+no_installed = "没有已安装的扩展。"
+no_match_installed = "没有符合搜索条件的已安装扩展。"
+no_not_installed = "没有未安装的扩展。"
+no_match_not_installed = "没有符合搜索条件的未安装扩展。"
+
+[extensions_ui.dev_extension]
+not_installed = "未安装任何开发扩展。"
+not_installed_with_id = "开发扩展 '%{extension_id}' 尚未安装。"
+install_action = "安装开发扩展"
+rebuild_placeholder = "重新构建开发扩展…"
+no_matches = "未找到开发扩展"
+
+[extensions_ui.suggest]
+install_prompt = "是否要为 '%{file_name}' 文件安装推荐的 '%{extension_id}' 扩展?"
+install_yes = "是,安装扩展"
+install_no = "否,不安装"
+
+[extensions_ui.version_selector]
+placeholder = "选择扩展版本…"
+incompatible = "不兼容"
+
+[extensions_ui.upsell]
+view_documentation = "查看文档"
+enable_vim_mode = "启用 Vim 模式"
+agent_claude = "Zed 已内置 Claude Agent 支持!"
+agent_codex = "Zed 已内置 Codex CLI 支持!"
+agent_gemini = "Zed 已内置 Gemini CLI 支持!"
+basedpyright = "Zed 已内置 Basedpyright(Python 语言服务器)支持!"
+ruff = "Zed 已内置 Ruff(Python 代码检查工具)支持!"
+tailwind = "Zed 已内置 Tailwind CSS 支持!"
+ty = "Zed 已内置 Ty(Python 语言服务器)支持!"
+git = "Zed 已具备基础 Git 支持——更多功能即将到来。"
+language_bash = "Zed 已内置 Shell 支持!"
+language_c = "Zed 已内置 C 语言支持!"
+language_cpp = "Zed 已内置 C++ 支持!"
+language_go = "Zed 已内置 Go 语言支持!"
+language_python = "Zed 已内置 Python 支持!"
+language_react = "Zed 已内置 React 支持!"
+language_rust = "Zed 已内置 Rust 支持!"
+language_typescript = "Zed 已内置 TypeScript 支持!"
+open_in = "Zed 支持链接到 GitHub 等平台的源码行。"
+vim = "Zed 已内置 Vim 支持!"

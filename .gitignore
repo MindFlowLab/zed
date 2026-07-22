@@ -11,6 +11,7 @@
 .blob_store
 .build
 .claude/settings.local.json
+.claude/*.local.md
 .envrc
 .flatpak-builder
 .idea
@@ -60,3 +61,5 @@ crates/docs_preprocessor/actions.json
 .nixos-test-history
 
 .local*
+.codegraph
+~/

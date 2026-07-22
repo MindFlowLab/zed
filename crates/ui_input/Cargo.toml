@@ -15,6 +15,7 @@ path = "src/ui_input.rs"
 component.workspace = true
 gpui.workspace = true
 ui.workspace = true
+zed_i18n.workspace = true
 
 [features]
 default = []

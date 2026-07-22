@@ -1,0 +1,14 @@
+_version = 1
+
+[toolchain_selector]
+select_toolchain_path = "选择工具链路径"
+scope = "作用域"
+add = "添加"
+add_term = "添加%{term}"
+worktree_root = "工作树根目录"
+select_term_for_path = "为 %{path} 选择%{term}…"
+select_toolchain = "选择工具链…"
+add_toolchain = "添加工具链"
+select = "选择"
+toolchain_term = "工具链"
+select_term = "选择%{term}"

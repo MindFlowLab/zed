@@ -1,0 +1,9 @@
+_version = 1
+
+[theme_selector]
+placeholder = "选择主题…"
+view_theme_docs = "查看主题文档"
+install_themes = "安装主题"
+icon_theme_placeholder = "选择图标主题…"
+view_icon_theme_docs = "查看图标主题文档"
+install_icon_themes = "安装图标主题"

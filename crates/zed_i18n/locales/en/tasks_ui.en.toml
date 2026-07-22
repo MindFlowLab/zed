@@ -1,0 +1,13 @@
+_version = 1
+
+[tasks_ui]
+placeholder_center = "Find a task, or run a command in the central pane"
+placeholder = "Find a task, or run a command"
+delete_from_recent = "Delete from Recent Tasks"
+rerun_last_task = "Rerun Last Task"
+spawn_oneshot_without_history = "Spawn Oneshot Without History"
+spawn_oneshot = "Spawn Oneshot"
+rerun_without_history = "Rerun Without History"
+spawn_without_history = "Spawn Without History"
+rerun = "Rerun"
+spawn = "Spawn"

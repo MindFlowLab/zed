@@ -59,6 +59,7 @@ uuid.workspace = true
 workspace.workspace = true
 picker.workspace = true
 zed_actions.workspace = true
+zed_i18n.workspace = true
 
 [dev-dependencies]
 async-trait.workspace = true

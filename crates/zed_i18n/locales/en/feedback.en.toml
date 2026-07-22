@@ -1,0 +1,6 @@
+_version = 1
+
+# 反馈对话框 / feedback dialogs
+[feedback.copy]
+copied_into_clipboard = "Copied into clipboard"
+ok = "OK"

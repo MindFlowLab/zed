@@ -1,0 +1,5 @@
+_version = 1
+
+[line_ending_selector]
+placeholder = "Select a line ending…"
+select_line_ending = "Select Line Ending"

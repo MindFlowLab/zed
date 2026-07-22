@@ -16,6 +16,7 @@ ui.workspace = true
 workspace.workspace = true
 log.workspace = true
 text.workspace = true
+zed_i18n.workspace = true
 
 [features]
 dev-tools = []

@@ -1,0 +1,5 @@
+_version = 1
+
+# 通知弹窗 / notification toasts
+[notifications.status_toast]
+dismiss = "关闭"

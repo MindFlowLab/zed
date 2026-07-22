@@ -1,0 +1,22 @@
+# activity_indicator 简体中文 locale(默认语言)
+# key 规范:activity_indicator.<模块>.<条目>,与 en/activity_indicator.toml 一一对应
+# Simplified Chinese locale for the activity_indicator crate (default).
+_version = 1
+
+activity_indicator.status.language_server_error = "语言服务器 %{server_name}:\n\n%{status}"
+activity_indicator.status.more_work = " (另有 %{count} 项)"
+activity_indicator.status.debug = "调试: %{adapter}"
+activity_indicator.status.downloading = "正在下载 %{names}…"
+activity_indicator.status.checking_for_updates = "正在检查 %{names} 的更新…"
+activity_indicator.status.failed_to_run = "运行 %{names} 失败,点击显示错误。"
+activity_indicator.status.formatting_failed = "格式化失败: %{failure}。点击查看日志。"
+
+activity_indicator.health.ok = "(%{server_name}) "
+activity_indicator.health.warning = "(%{server_name}) 警告: "
+activity_indicator.health.error = "(%{server_name}) 错误: "
+
+activity_indicator.extension.installing = "正在安装扩展 %{extension_id}…"
+activity_indicator.extension.upgrading = "正在更新扩展 %{extension_id}…"
+activity_indicator.extension.removing = "正在移除扩展 %{extension_id}…"
+
+activity_indicator.menu.cancel = "取消%{title}"

@@ -22,4 +22,5 @@ urlencoding.workspace = true
 util.workspace = true
 workspace.workspace = true
 zed_actions.workspace = true
+zed_i18n.workspace = true
 client.workspace = true

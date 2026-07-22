@@ -1,0 +1,6 @@
+_version = 1
+
+[tab_switcher]
+placeholder = "搜索所有标签页…"
+no_tabs = "无标签页"
+close = "关闭"

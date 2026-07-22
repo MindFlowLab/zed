@@ -74,6 +74,7 @@ unindent = { workspace = true, optional = true }
 util.workspace = true
 workspace.workspace = true
 zed_actions.workspace = true
+zed_i18n.workspace = true
 
 [dev-dependencies]
 dap = { workspace = true, features = ["test-support"] }

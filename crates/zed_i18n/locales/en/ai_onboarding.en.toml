@@ -1,0 +1,52 @@
+# ai_onboarding crate — English locale (fallback)
+# AI / 智能体引导文案。key 规范:<crate>.<模块>.<条目>
+_version = 1
+
+[ai_onboarding.onboarding]
+dismiss_tooltip = "Dismiss"
+welcome_zed_ai = "Welcome to Zed AI"
+sign_in_trial_hint = "Sign in to try Zed Pro free for 14 days."
+try_pro_free = "Try Zed Pro for Free"
+pro_label = "Pro"
+get_started = "Get Started"
+free_label = "Free"
+current_plan = "(Current Plan)"
+pro_trial_label = "Pro Trial"
+start_free_trial = "Start Free Trial"
+welcome_pro_trial = "Welcome to the Zed Pro Trial"
+trial_what_you_get = "Here's what you get for the next 14 days:"
+welcome_zed_pro = "Welcome to Zed Pro"
+what_you_get = "Here's what you get:"
+welcome_zed_business = "Welcome to Zed Business"
+welcome_zed_vip = "Welcome to Zed VIP"
+welcome_zed_student = "Welcome to Zed Student"
+
+[ai_onboarding.young_account_banner]
+disclaimer = "To prevent abuse of our service, GitHub accounts created fewer than 30 days ago are not eligible for the Pro trial. You can request an exception by reaching out to billing-support@zed.dev"
+
+[ai_onboarding.edit_prediction]
+copilot_configured_label = "Alternatively, you can continue to use GitHub Copilot as that's already set up."
+copilot_not_configured_label = "Alternatively, you can use GitHub Copilot as your edit prediction provider."
+use_copilot = "Use Copilot"
+configure_copilot = "Configure Copilot"
+
+[ai_onboarding.api_keys]
+start_now = "Start now using API keys from your environment for the following providers:"
+title = "API Keys"
+add_own_keys = "Add your own keys to use AI without signing in."
+configure_providers = "Configure Providers"
+
+[ai_onboarding.plan_definitions]
+free_edit_predictions = "2,000 accepted edit predictions"
+free_unlimited_prompts_api_keys = "Unlimited prompts with your AI API keys"
+free_unlimited_external_agents = "Unlimited use of external agents"
+unlimited_edit_predictions = "Unlimited edit predictions"
+tokens_20 = "$20 of tokens in Zed agent"
+no_credit_card = "No credit card required"
+trial_14_days = "Try it out for 14 days, no credit card required"
+tokens_5 = "$5 of tokens in Zed agent"
+usage_billing_beyond_5 = "Usage-based billing beyond $5"
+usage_billing = "Usage-based billing"
+tokens_in_agent = "Tokens in the Zed agent"
+tokens_10 = "$10 of tokens in Zed agent"
+optional_credit_packs = "Optional credit packs for additional usage"

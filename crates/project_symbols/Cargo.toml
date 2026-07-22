@@ -27,6 +27,7 @@ theme.workspace = true
 theme_settings.workspace = true
 util.workspace = true
 workspace.workspace = true
+zed_i18n.workspace = true
 
 [dev-dependencies]
 editor = { workspace = true, features = ["test-support"] }

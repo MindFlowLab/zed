@@ -1,0 +1,42 @@
+# diagnostics crate 简体中文 locale(默认语言)
+# Simplified Chinese locale for the `diagnostics` crate (default language).
+# key 规范:<crate>.<模块>.<条目>,与 en/diagnostics.toml 一一对应
+# Keys follow `<crate>.<module>.<item>` and mirror en/diagnostics.toml.
+_version = 1
+
+[diagnostics.common]
+show_one_warning = "显示 1 个警告"
+# %{count} 为警告数量 / %{count} is the warning count
+show_warnings = "显示 %{count} 个警告"
+open_file = "打开文件"
+
+[diagnostics.diagnostics]
+tab_title = "诊断"
+tab_tooltip = "项目诊断"
+no_problems_in_workspace = "工作区无问题"
+no_errors_in_workspace = "工作区无错误"
+no_problems = "无问题"
+
+[diagnostics.buffer_diagnostics]
+tab_title = "缓冲区诊断"
+# %{path} 为文件路径 / %{path} is the file path
+tab_tooltip = "缓冲区诊断 - %{path}"
+no_problems_in = "以下文件无问题："
+no_errors_in = "以下文件无错误："
+
+[diagnostics.toolbar]
+exclude_warnings = "排除警告"
+include_warnings = "包含警告"
+buffer_search = "缓冲区搜索"
+inline_assist = "内联辅助"
+stop_update = "停止诊断更新"
+refresh = "刷新诊断"
+
+[diagnostics.indicator]
+expand_diagnostics = "展开诊断"
+next_diagnostic = "下一个诊断"
+no_problems = "项目诊断：无问题"
+project_diagnostics = "项目诊断"
+
+[diagnostics.renderer]
+copy_diagnostic = "复制诊断"

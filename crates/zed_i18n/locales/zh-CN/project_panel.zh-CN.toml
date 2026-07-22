@@ -1,0 +1,85 @@
+# project_panel 中文 locale,与 en/project_panel.toml 键一一对应
+# Chinese locale for project_panel. Keys must stay in sync with en/project_panel.toml.
+_version = 1
+
+# 右键上下文菜单 / context menu
+[project_panel.context_menu]
+open_markdown_preview = "打开 Markdown 预览"
+search_inside = "在目录内搜索"
+new_file = "新建文件"
+new_folder = "新建文件夹"
+open_in_default_app = "在默认应用中打开"
+open_in_terminal = "在终端中打开"
+find_in_folder = "在文件夹中查找…"
+unfold_directory = "展开目录"
+fold_directory = "折叠目录"
+compare_marked_files = "比较标记的文件"
+cut = "剪切"
+copy = "复制"
+duplicate = "创建副本"
+paste = "粘贴"
+undo = "撤销"
+redo = "重做"
+download = "下载..."
+copy_path = "复制路径"
+copy_relative_path = "复制相对路径"
+restore_file = "还原文件"
+add_to_gitignore = "添加到 .gitignore"
+add_to_git_info_exclude = "添加到 .git/info/exclude"
+view_history = "查看历史"
+rename = "重命名"
+trash = "移到回收站"
+delete = "删除"
+add_folders_to_project = "添加文件夹到项目…"
+remove_from_project = "从项目中移除"
+expand_all = "全部展开"
+collapse_all = "全部折叠"
+
+# 新建/重命名校验提示 / entry name validation messages
+[project_panel.validation]
+empty_name = "文件或目录名不能为空。"
+whitespace = "文件或目录名包含前导或尾随空格。"
+already_exists = "文件或目录“%{name}”已存在于该位置。请选择其他名称。"
+
+# 对话框与按钮 / prompts and dialog buttons
+[project_panel.prompt]
+failed_to_open_file = "打开文件失败"
+disconnected_from_ssh = "已与 SSH 主机断开连接"
+disconnected_from_remote = "已与远程项目断开连接"
+not_shared_by_host = "%{path} 未被主机共享。这可能是因为其被标记为 `private`"
+discard_changes = "丢弃对 %{file} 的更改？"
+restore = "还原"
+cancel = "取消"
+cannot_be_undone = "此操作无法撤销。"
+trash = "移到回收站"
+delete = "删除"
+replace_file = "名为 %{name} 的文件或文件夹已存在于目标文件夹中。是否替换？"
+replace = "替换"
+download = "下载"
+
+# 通知 toast / toast notifications
+[project_panel.toast]
+failed_to_restore = "还原 %{file} 失败：%{error}"
+failed_to_add_gitignore = "添加到 .gitignore 失败：%{error}"
+failed_to_add_git_info_exclude = "添加到 .git/info/exclude 失败：%{error}"
+failed_to_trash_one = "%{total} 个文件中有 %{failed} 个未能移到回收站。"
+failed_to_trash_many = "%{total} 个文件中有 %{failed} 个未能移到回收站。"
+failed_to_delete_one = "%{total} 个文件中有 %{failed} 个未能删除。"
+failed_to_delete_many = "%{total} 个文件中有 %{failed} 个未能删除。"
+downloading = "正在下载文件（%{done}/%{total}）…"
+downloaded = "已下载 %{count} 个文件"
+excluded_directory = "已在 %{path} 创建被排除的目录。\n请修改设置中的 `file_scan_exclusions` 以在面板中显示它"
+
+# 提示浮层 / tooltips
+[project_panel.tooltip]
+symbolic_link = "符号链接"
+
+# 拖拽指示 / drag indicator
+[project_panel.drag]
+entries = "%{count} 个条目"
+
+# 撤销/重做失败通知标题 / undo-redo failure notification titles
+[project_panel.undo]
+bug_report = "这是 manage_undo_and_redo 任务中的错误，请提交报告"
+undo_failed = "撤销失败"
+redo_failed = "重做失败"

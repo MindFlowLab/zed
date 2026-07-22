@@ -1,0 +1,9 @@
+_version = 1
+
+# markdown_preview: right-click context menu of the markdown preview
+# Markdown 预览器右键菜单
+
+[markdown_preview.context_menu]
+copy = "Copy"
+copy_as_markdown = "Copy as Markdown"
+copy_link = "Copy Link"

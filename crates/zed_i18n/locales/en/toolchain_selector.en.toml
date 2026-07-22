@@ -1,0 +1,14 @@
+_version = 1
+
+[toolchain_selector]
+select_toolchain_path = "Select Toolchain Path"
+scope = "Scope"
+add = "Add"
+add_term = "Add %{term}"
+worktree_root = "worktree root"
+select_term_for_path = "Select a %{term} for %{path}…"
+select_toolchain = "Select a toolchain…"
+add_toolchain = "Add Toolchain"
+select = "Select"
+toolchain_term = "Toolchain"
+select_term = "Select %{term}"

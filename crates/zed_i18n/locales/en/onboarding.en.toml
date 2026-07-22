@@ -1,0 +1,44 @@
+# onboarding crate — English locale (fallback)
+# 欢迎/引导页文案。key 规范:<crate>.<模块>.<条目>
+_version = 1
+
+[onboarding.onboarding]
+welcome_to_zed = "Welcome to Zed"
+tagline = "The editor for what's next"
+finish_setup = "Finish Setup"
+tab_title = "Onboarding"
+import_not_found = "Could not find or load a %{source} settings file"
+import_warning = "Importing %{source} settings may overwrite your existing settings. Will import settings from %{path}"
+import_success = "Your %{source} settings were successfully imported."
+import_failed = "Failed to import settings. See log for details"
+open_log = "Open Log"
+
+[onboarding.basics_page]
+theme = "Theme"
+mode_light = "Light"
+mode_dark = "Dark"
+mode_system = "System"
+telemetry_metrics = "Help improve Zed by sending anonymous usage data"
+telemetry_crash = "Help fix Zed by sending crash reports so we can fix critical issues fast"
+base_keymap = "Base Keymap"
+vim_mode_title = "Vim Mode"
+vim_mode_description = "Coming from Neovim? Use our first-class implementation of Vim Mode"
+auto_trust_title = "Trust All Projects By Default"
+auto_trust_description = "Automatically mark all new projects as trusted to unlock all Zed's features"
+auto_trust_tooltip = "Zed can only allow services like language servers, project settings, and MCP servers to run after you mark a new project as trusted."
+import_settings = "Import Settings"
+import_settings_description = "Automatically pull your settings from other editors"
+install = "Install"
+sign_in = "Sign In"
+signing_in = "Signing In…"
+start_free_trial = "Start Free Trial"
+agent_setup = "Agent Setup"
+agent_setup_description = "Install your favorite agents and start your first thread."
+
+[onboarding.multibuffer_hint]
+hint = "Edit and save files directly in the results multibuffer!"
+learn_more = "Learn More"
+dismiss_tooltip = "Dismiss Hint"
+
+[onboarding.base_keymap_picker]
+placeholder = "Select a base keymap..."

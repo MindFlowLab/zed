@@ -1,0 +1,13 @@
+_version = 1
+# English translations for the `debugger_tools` crate (DAP log view / toolbar).
+# Key convention: debugger_tools.<module>.<item>; mirrors zh-CN/debugger_tools.zh-CN.toml.
+
+[debugger_tools.dap_log]
+no_adapter_selected = "No adapter selected"
+clear = "Clear"
+tab_title = "DAP Logs"
+adapter_logs = "Adapter Logs"
+rpc_messages = "RPC Messages"
+initialization_sequence = "Initialization Sequence"
+menu_header = "%{adapter} - %{session} - %{view}"
+child_session_label = "Session %{id} (child)"

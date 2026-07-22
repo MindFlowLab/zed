@@ -1,0 +1,73 @@
+# workspace crate 中文 locale
+# key 规范 `<crate>.<模块>.<条目>`,与 en/workspace.toml 一一对应
+_version = 1
+
+# pane.rs — 保存 / 关闭确认对话框与 tooltip
+workspace.pane.conflict_message = "此文件自你开始编辑后已在磁盘上被更改。要覆盖它吗？"
+workspace.pane.deleted_message = "此文件自你开始编辑后已在磁盘上被删除。要重新创建它吗？"
+workspace.pane.save = "保存"
+workspace.pane.close = "关闭"
+workspace.pane.cancel = "取消"
+workspace.pane.overwrite = "覆盖"
+workspace.pane.discard_edits = "放弃编辑"
+workspace.pane.dont_save = "不保存"
+workspace.pane.save_changes_multiple = "是否要保存对以下文件的更改？"
+workspace.pane.save_all = "全部保存"
+workspace.pane.discard_all = "全部放弃"
+workspace.pane.unable_to_save_file = "无法保存文件：%{error}"
+workspace.pane.close_without_saving = "不保存并关闭"
+workspace.pane.dirty_message_with_path = "%{path} 包含未保存的编辑。是否要保存？"
+workspace.pane.dirty_message_no_path = "此缓冲区包含未保存的编辑。是否要保存？"
+workspace.pane.unlock_file = "解锁文件"
+workspace.pane.unlock_file_meta = "这将使此文件可编辑"
+workspace.pane.locked_file = "已锁定文件"
+workspace.pane.locked_file_meta = "此文件为只读"
+workspace.pane.read_only_file = "只读文件"
+workspace.pane.go_back = "后退"
+workspace.pane.go_forward = "前进"
+
+# workspace.rs — 确认对话框与加入频道错误
+workspace.workspace.leave_call_message = "要离开当前通话吗？"
+workspace.workspace.close_window_hang_up = "关闭窗口并挂断"
+workspace.workspace.cancel = "取消"
+workspace.workspace.save_all_changes_message = "是否要保存以下文件中的所有更改？"
+workspace.workspace.switch_channels_message = "要切换频道吗？"
+workspace.workspace.switch_channels_detail = "离开此通话将停止共享你当前的项目。"
+workspace.workspace.yes_join_channel = "是的，加入频道"
+workspace.workspace.join_channel_signed_out = "请登录后继续。"
+workspace.workspace.join_channel_upgrade_required = "你正在运行不受支持的 Zed 版本。请更新后继续。"
+workspace.workspace.join_channel_no_such_channel = "未找到匹配的频道。请检查链接后重试。"
+workspace.workspace.join_channel_forbidden = "此频道为私有频道，你没有访问权限。请让他人将你加入后重试。"
+workspace.workspace.join_channel_disconnected = "请检查你的网络连接后重试。"
+workspace.workspace.join_channel_error_retry = "%{error}\n\n请重试。"
+workspace.workspace.join_channel_failed = "加入频道失败"
+workspace.workspace.ok = "确定"
+workspace.workspace.restart_confirm_message = "确定要重启吗？"
+workspace.workspace.restart = "重启"
+
+# notifications.rs — 通知 tooltip 与按钮
+workspace.notifications.suppress = "抑制"
+workspace.notifications.click_to_close = "点击关闭"
+workspace.notifications.close = "关闭"
+workspace.notifications.suppress_shift_click = "按住 Shift 点击以抑制"
+workspace.notifications.copy_description = "复制描述"
+workspace.notifications.click_to_close_caps = "点击关闭"
+workspace.notifications.shift_click_to_suppress = "按住 Shift 点击以抑制"
+workspace.notifications.ok = "确定"
+
+# status_bar.rs — 侧边栏切换 tooltip
+workspace.status_bar.open_threads_sidebar = "打开线程侧边栏"
+workspace.status_bar.open_threads_sidebar_aria = "打开线程侧边栏"
+
+# tasks.rs — Toast 通知
+workspace.tasks.task_spawn_failed = "任务启动失败：%{error}"
+
+# invalid_item_view.rs — 条目打开失败时的空状态
+workspace.invalid_item.could_not_open_file = "无法打开文件"
+workspace.invalid_item.open_in_default_app = "在默认应用中打开"
+
+# dock.rs — 停靠栏面板按钮 tooltip
+workspace.dock.close_dock = "关闭%{position}停靠栏"
+workspace.dock.position_left = "左侧"
+workspace.dock.position_right = "右侧"
+workspace.dock.position_bottom = "底部"

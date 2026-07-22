@@ -1,0 +1,41 @@
+_version = 1
+# terminal_view crate 简体中文翻译（终端面板 / 标签页 UI）。
+# 注意：文件名带 `.zh-CN` 后缀，rust-i18n 依据文件主干解析 locale
+# （`terminal_view.zh-CN` -> locale `zh-CN`）；仅靠子目录名不会生效。
+# 与 en/terminal_view.en.toml 的 key 一一对应。
+
+[terminal_view]
+rerun_task = "重新运行任务"
+
+[terminal_view.tab]
+process_id = "进程 ID (PID): %{pid}"
+rename = "重命名"
+
+[terminal_view.context_menu]
+new_terminal = "新建终端"
+new_center_terminal = "新建居中终端"
+copy = "复制"
+paste = "粘贴"
+paste_text = "粘贴文本"
+select_all = "全选"
+clear = "清空"
+inline_assist = "内联辅助"
+add_to_agent_thread = "添加到智能体会话"
+close_terminal_tab = "关闭终端标签页"
+
+[terminal_view.panel]
+new = "新建…"
+new_terminal = "新建终端"
+spawn_task = "生成任务"
+split_pane = "拆分窗格"
+split_right = "向右拆分"
+split_left = "向左拆分"
+split_up = "向上拆分"
+split_down = "向下拆分"
+zoom_in = "放大"
+zoom_out = "缩小"
+inline_assist = "内联辅助"
+open_settings = "打开设置"
+edit_settings_json = "编辑 settings.json"
+failed_to_spawn = "终端启动失败"
+edit_settings = "编辑设置"

@@ -1,0 +1,86 @@
+_version = 1
+
+# zed 主 crate 英文 locale(回退语言)
+# zed main-crate English locale (fallback).
+# Keys follow `<crate>.<module>.<item>` and must stay in sync with zh-CN/zed.toml.
+
+[zed.startup]
+inotify_title = "Could not start inotify"
+inotify_message = "inotify_init returned %{error}\n\nThis may be due to system-wide limits on inotify instances. For troubleshooting see: https://zed.dev/docs/linux"
+rdcw_title = "Could not start ReadDirectoryChangesW"
+rdcw_message = "ReadDirectoryChangesW initialization failed: %{error}\n\nThis may occur on network filesystems and WSL paths. For troubleshooting see: https://zed.dev/docs/windows"
+gpu_title = "Unsupported GPU"
+gpu_message = """
+Zed uses %{graphics_api} for rendering and requires a compatible GPU.
+
+Currently you are using a software emulated GPU (%{device_name}) which
+will result in awful performance.
+
+For troubleshooting see: %{docs_url}
+Set ZED_ALLOW_EMULATED_GPU=1 env var to permanently override."""
+gpu_skip = "Skip"
+troubleshoot_and_quit = "Troubleshoot and Quit"
+launch_failed = "Zed failed to launch"
+linux_launch_failed_body = "%{error}. See https://zed.dev/docs/linux for troubleshooting steps."
+
+[zed.quit]
+message = "Are you sure you want to quit?"
+quit = "Quit"
+
+[zed.common]
+ok = "OK"
+cancel = "Cancel"
+exit = "Exit"
+
+[zed.toast]
+zed_scheme_registered = "zed:// links will now open in %{app_name}."
+register_zed_scheme_error = "Error registering zed:// scheme"
+restore_failed_one = "Failed to restore 1 workspace. Check logs for details."
+restore_failed_many = "Failed to restore %{count} workspaces. Check logs for details."
+
+[zed.browser]
+invalid_url = "Opening this URL in a browser failed because the URL is invalid: %{url}\n\nError was: %{error}"
+
+[zed.about]
+window_title = "About Zed"
+commit_label = "Commit"
+version_label = "Version"
+copy_button = "Copy"
+
+[zed.notification]
+invalid_user_settings = "Invalid user settings file\n%{error}"
+open_settings_file = "Open Settings File"
+migrate_settings_failed = "Failed to migrate settings\n%{error}"
+agents_md_load_failed = "Failed to load %{path}\n%{message}"
+keymap_json_error = "JSON parse error in keymap file. Bindings not reloaded.\n\n%{error}"
+open_keymap_file = "Open Keymap File"
+log_file_open_failed = "Unable to access/open log file at path %{path}: %{error}"
+no_open_folders = "This project has no folders open."
+
+[zed.open_log]
+title = "Log"
+breadcrumb_header = "Last %{count} lines in %{path}"
+
+[zed.dock_menu]
+new_window = "New Window"
+
+[zed.move_to_applications]
+prompt_title = "Move Zed to Applications?"
+prompt_message = "Zed is running from a temporary location. Move it to Applications to finish installing it."
+yes = "Yes"
+no = "No"
+dont_ask_again = "Don't ask me again"
+failed_title = "Failed to move Zed to Applications"
+installing_title = "Installing Zed…"
+moving_label = "Moving Zed to Applications"
+reopen_when_done = "Zed will reopen when installation is complete."
+
+[zed.open_url]
+hint = "Paste a URL to open."
+invalid_url = "Invalid URL: %{error}"
+
+[zed.migrate]
+file_type_keymap = "keymap"
+file_type_settings = "settings"
+banner_text = "Your %{file_type} file uses deprecated settings which can be automatically updated. A backup will be saved to `%{backup_file}`"
+backup_and_update = "Backup and Update"

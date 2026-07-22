@@ -1,0 +1,22 @@
+# activity_indicator 英文 locale(回退语言)
+# key 规范:activity_indicator.<模块>.<条目>,与 zh-CN/activity_indicator.toml 一一对应
+# English locale for the activity_indicator crate (fallback).
+_version = 1
+
+activity_indicator.status.language_server_error = "Language server %{server_name}:\n\n%{status}"
+activity_indicator.status.more_work = " + %{count} more"
+activity_indicator.status.debug = "Debug: %{adapter}"
+activity_indicator.status.downloading = "Downloading %{names}..."
+activity_indicator.status.checking_for_updates = "Checking for updates to %{names}..."
+activity_indicator.status.failed_to_run = "Failed to run %{names}. Click to show error."
+activity_indicator.status.formatting_failed = "Formatting failed: %{failure}. Click to see logs."
+
+activity_indicator.health.ok = "(%{server_name}) "
+activity_indicator.health.warning = "(%{server_name}) Warning: "
+activity_indicator.health.error = "(%{server_name}) Error: "
+
+activity_indicator.extension.installing = "Installing %{extension_id} extension…"
+activity_indicator.extension.upgrading = "Updating %{extension_id} extension…"
+activity_indicator.extension.removing = "Removing %{extension_id} extension…"
+
+activity_indicator.menu.cancel = "Cancel %{title}"

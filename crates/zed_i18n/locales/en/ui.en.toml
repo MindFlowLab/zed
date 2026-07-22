@@ -1,0 +1,55 @@
+# ui crate 英文 locale 文件(回退语言)
+# key 规范:<crate>.<模块>.<条目>,与 zh-CN/ui.toml 一一对应
+# English locale for the `ui` crate (fallback). Keys follow
+# `<crate>.<module>.<item>` and must stay in sync with zh-CN/ui.toml.
+_version = 1
+
+[ui.copy_button]
+copy = "Copy"
+copied = "Copied!"
+
+[ui.disclosure]
+collapse = "Collapse"
+expand = "Expand"
+
+[ui.announcement_toast]
+try_now = "Try Now"
+learn_more = "Learn More"
+
+[ui.update_button]
+checking = "Checking for Zed Updates…"
+downloading = "Downloading Zed Update…"
+installing = "Installing Zed Update…"
+restart_to_update = "Restart to Update"
+failed_to_update = "Failed to Update"
+update_to_version = "Update to Version: %{version}"
+percent_downloaded = "%{message} (%{percent}% downloaded)"
+dismiss = "Dismiss"
+
+[ui.alert_modal]
+ok = "OK"
+cancel = "Cancel"
+
+[ui.project_empty_state]
+choose_option = "Choose one of the options below to use the %{label}"
+open_project = "Open Project"
+or = "or"
+clone_repository = "Clone Repository"
+
+[ui.configured_api_card]
+reset_key = "Reset Key"
+
+[ui.list]
+no_items = "No items"
+
+[ui.ai_setting_item]
+status_stopped = "Server is stopped."
+status_starting = "Server is starting."
+status_running = "Server is active."
+status_error = "Server has an error."
+status_auth_required = "Authentication Required."
+status_client_secret_required = "Client Secret Required."
+status_authenticating = "Waiting for Authorization…"
+source_extension = "%{label} was installed from an extension."
+source_registry = "%{label} was installed from the ACP registry."
+source_custom = "%{label} was configured manually."

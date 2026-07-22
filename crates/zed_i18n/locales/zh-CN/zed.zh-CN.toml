@@ -1,0 +1,86 @@
+_version = 1
+
+# zed 主 crate 简体中文 locale(默认语言)
+# zed main-crate Simplified Chinese locale (default).
+# key 与 en/zed.toml 一一对应 / Keys must stay in sync with en/zed.toml.
+
+[zed.startup]
+inotify_title = "无法启动 inotify"
+inotify_message = "inotify_init 返回 %{error}\n\n这可能是由于系统范围内对 inotify 实例数量的限制所致。故障排查请参阅：https://zed.dev/docs/linux"
+rdcw_title = "无法启动 ReadDirectoryChangesW"
+rdcw_message = "ReadDirectoryChangesW 初始化失败：%{error}\n\n这可能发生在网络文件系统或 WSL 路径上。故障排查请参阅：https://zed.dev/docs/windows"
+gpu_title = "不支持的 GPU"
+gpu_message = """
+Zed 使用 %{graphics_api} 进行渲染，需要兼容的 GPU。
+
+当前正在使用软件模拟的 GPU（%{device_name}），
+这将导致极差的性能。
+
+故障排查请参阅：%{docs_url}
+设置环境变量 ZED_ALLOW_EMULATED_GPU=1 可永久覆盖此限制。"""
+gpu_skip = "跳过"
+troubleshoot_and_quit = "排查问题并退出"
+launch_failed = "Zed 启动失败"
+linux_launch_failed_body = "%{error}。故障排查步骤请参阅 https://zed.dev/docs/linux。"
+
+[zed.quit]
+message = "确定要退出吗？"
+quit = "退出"
+
+[zed.common]
+ok = "确定"
+cancel = "取消"
+exit = "退出"
+
+[zed.toast]
+zed_scheme_registered = "zed:// 链接现在将在 %{app_name} 中打开。"
+register_zed_scheme_error = "注册 zed:// 协议时出错"
+restore_failed_one = "1 个工作区恢复失败。详细信息请查看日志。"
+restore_failed_many = "%{count} 个工作区恢复失败。详细信息请查看日志。"
+
+[zed.browser]
+invalid_url = "无法在浏览器中打开此 URL，因为该 URL 无效：%{url}\n\n错误信息：%{error}"
+
+[zed.about]
+window_title = "关于 Zed"
+commit_label = "提交"
+version_label = "版本"
+copy_button = "复制"
+
+[zed.notification]
+invalid_user_settings = "用户设置文件无效\n%{error}"
+open_settings_file = "打开设置文件"
+migrate_settings_failed = "设置迁移失败\n%{error}"
+agents_md_load_failed = "加载 %{path} 失败\n%{message}"
+keymap_json_error = "键位映射文件中存在 JSON 解析错误，快捷键绑定未重新加载。\n\n%{error}"
+open_keymap_file = "打开键位映射文件"
+log_file_open_failed = "无法访问/打开路径 %{path} 处的日志文件：%{error}"
+no_open_folders = "此项目没有打开任何文件夹。"
+
+[zed.open_log]
+title = "日志"
+breadcrumb_header = "%{path} 中的最后 %{count} 行"
+
+[zed.dock_menu]
+new_window = "新建窗口"
+
+[zed.move_to_applications]
+prompt_title = "将 Zed 移至“应用程序”？"
+prompt_message = "Zed 正在从临时位置运行。将其移至“应用程序”以完成安装。"
+yes = "是"
+no = "否"
+dont_ask_again = "不再询问"
+failed_title = "将 Zed 移至“应用程序”失败"
+installing_title = "正在安装 Zed…"
+moving_label = "正在将 Zed 移至“应用程序”"
+reopen_when_done = "安装完成后 Zed 将重新打开。"
+
+[zed.open_url]
+hint = "粘贴要打开的 URL。"
+invalid_url = "URL 无效：%{error}"
+
+[zed.migrate]
+file_type_keymap = "键位映射"
+file_type_settings = "设置"
+banner_text = "您的%{file_type}文件使用了已弃用的设置，这些设置可以自动更新。备份将保存到 `%{backup_file}`"
+backup_and_update = "备份并更新"

@@ -1,0 +1,17 @@
+_version = 1
+
+[file_finder]
+placeholder = "Search project files..."
+channel_notes = "Channel Notes"
+create_file_label = "Create File: %{path}"
+create_file_prefix = "Create file "
+create_file_suffix = "?"
+exclude_ignored = "Exclude Ignored Files"
+include_ignored = "Include Ignored Files"
+open_multiple = "Open multiple"
+open_file = "Open File"
+split_header = "Split…"
+split_left = "Left"
+split_right = "Right"
+split_up = "Up"
+split_down = "Down"

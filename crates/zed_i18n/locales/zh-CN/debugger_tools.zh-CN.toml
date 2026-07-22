@@ -1,0 +1,13 @@
+_version = 1
+# `debugger_tools` crate 的中文翻译(DAP 日志视图 / 工具栏)。
+# key 规范:debugger_tools.<模块>.<条目>;与 en/debugger_tools.en.toml 一一对应。
+
+[debugger_tools.dap_log]
+no_adapter_selected = "未选择适配器"
+clear = "清空"
+tab_title = "DAP 日志"
+adapter_logs = "适配器日志"
+rpc_messages = "RPC 消息"
+initialization_sequence = "初始化序列"
+menu_header = "%{adapter} - %{session} - %{view}"
+child_session_label = "会话 %{id}(子会话)"

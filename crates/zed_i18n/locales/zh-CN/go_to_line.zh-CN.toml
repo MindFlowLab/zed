@@ -1,0 +1,9 @@
+_version = 1
+
+[go_to_line]
+current_line = "当前行：第 %{line} 行，共 %{total} 行（第 %{column} 列）"
+go_to_line_relative = "跳转到第 %{line} 行（相对当前行 %{offset}）"
+go_to_line_character = "跳转到第 %{line} 行，第 %{character} 个字符"
+go_to_line = "跳转到第 %{line} 行"
+line_column_aria = "第 %{line} 行，第 %{column} 列"
+go_to_line_column_tooltip = "跳转到行/列"

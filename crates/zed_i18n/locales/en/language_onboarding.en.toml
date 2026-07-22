@@ -1,0 +1,8 @@
+# language_onboarding crate — English locale (fallback)
+# 语言相关引导横幅文案。key 规范:<crate>.<模块>.<条目>
+_version = 1
+
+[language_onboarding.python]
+banner_title = "Basedpyright is now the only default language server for Python"
+banner_body = "We have disabled PyRight and pylsp by default. They can be re-enabled in your settings."
+learn_more = "Learn More"

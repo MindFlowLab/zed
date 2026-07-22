@@ -1,0 +1,7 @@
+_version = 1
+
+[command_palette]
+placeholder = "执行命令…"
+change_keybinding = "更改快捷键…"
+add_keybinding = "添加快捷键…"
+run = "运行"

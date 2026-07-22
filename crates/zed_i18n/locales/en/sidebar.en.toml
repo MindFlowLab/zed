@@ -1,0 +1,58 @@
+# sidebar 英文 locale(回退语言)
+# key 规范:sidebar.<模块>.<条目>,与 zh-CN/sidebar.toml 一一对应
+# English locale for the sidebar crate (fallback).
+_version = 1
+
+sidebar.filter.placeholder = "Search threads…"
+sidebar.filter.clear = "Clear Search"
+
+sidebar.project_header.remote_project = "Remote Project"
+sidebar.project_header.waiting_singular = "1 thread is waiting for confirmation"
+sidebar.project_header.waiting_plural = "%{count} threads are waiting for confirmation"
+sidebar.project_header.no_threads_yet = "No threads yet"
+
+sidebar.new_thread.tooltip = "Start New Agent Thread"
+sidebar.new_thread.menu_header = "New Thread In…"
+sidebar.new_thread.create_worktree_submenu = "Create New Worktree…"
+sidebar.new_thread.based_on = "Based on %{branch}"
+
+sidebar.project_menu.open_in_new_window = "Open Project in New Window"
+sidebar.project_menu.modifier_click = "-click"
+sidebar.project_menu.focus_last_project = "Focus Last Project"
+sidebar.project_menu.focus_project = "Focus Project"
+sidebar.project_menu.open_worktrees = "Open Worktrees"
+sidebar.project_menu.close_worktree = "Close Worktree"
+sidebar.project_menu.move_up = "Move Up"
+sidebar.project_menu.move_down = "Move Down"
+sidebar.project_menu.remove = "Remove"
+
+sidebar.thread.rename_tooltip = "Rename Thread"
+sidebar.thread.stop_generation = "Stop Generation"
+sidebar.thread.discard_draft = "Discard Draft"
+sidebar.thread.archive = "Archive Thread"
+sidebar.thread.rename_title = "Rename Title"
+sidebar.thread.regenerate_title = "Regenerate Thread Title"
+sidebar.thread.open_as_markdown = "Open Thread as Markdown"
+
+sidebar.terminal.close = "Close Terminal"
+
+sidebar.add_project = "Add Project"
+
+sidebar.toggle.toggle_sidebar = "Toggle Sidebar"
+sidebar.toggle.focus_sidebar = "Focus Sidebar"
+
+sidebar.history.hide = "Hide Thread History"
+sidebar.history.show = "Show Thread History"
+
+sidebar.no_results.no_match = "No threads match your search."
+
+sidebar.empty_state.title = "Threads Sidebar"
+
+sidebar.import.acp_title = "Looking for threads from external agents?"
+sidebar.import.acp_description = "Import threads from agents like Claude Agent, Codex, and more, whether started in Zed or another client."
+sidebar.import.acp_button_verbose = "Import Threads from External Agents"
+sidebar.import.button = "Import Threads"
+sidebar.import.channel_title = "Threads found from other channels"
+sidebar.import.channel_description = "Import threads from %{channels} to continue where you left off."
+sidebar.import.channel_button_verbose = "Import Threads from Other Channels"
+sidebar.import.channels_separator = " and "
