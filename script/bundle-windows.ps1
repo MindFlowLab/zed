@@ -40,8 +40,17 @@ function Get-VSArch {
     }
 }
 
+# 动态定位 Visual Studio 安装路径（兼容 BuildTools / Enterprise / Professional / Community，
+# 官方脚本硬编码 BuildTools 路径，在 GitHub 公共 runner 上不存在）
+$vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+$vsInstallPath = & $vswhere -latest -products * -property installationPath
+if (-not $vsInstallPath) {
+    throw "未找到 Visual Studio 安装"
+}
+$launchVsDevShell = Join-Path $vsInstallPath "Common7\Tools\Launch-VsDevShell.ps1"
+
 Push-Location
-& "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\Launch-VsDevShell.ps1" -Arch (Get-VSArch -Arch $Architecture) -HostArch (Get-VSArch -Arch $OSArchitecture)
+& $launchVsDevShell -Arch (Get-VSArch -Arch $Architecture) -HostArch (Get-VSArch -Arch $OSArchitecture)
 Pop-Location
 
 $target = "$Architecture-pc-windows-msvc"
@@ -207,9 +216,15 @@ function MakeAppx {
         }
     }
     Copy-Item -Path "$manifestFile" -Destination "$innoDir\make_appx\AppxManifest.xml"
-    # Add makeAppx.exe to Path
-    $sdk = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64"
-    $env:Path += ';' + $sdk
+    # 动态定位 makeAppx.exe（官方脚本硬编码 SDK 版本 10.0.26100.0，
+    # GitHub 公共 runner 的 Windows SDK 版本不同，需取已安装的最新版本）
+    $makeAppxExe = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\makeAppx.exe" -ErrorAction SilentlyContinue |
+        Sort-Object { [version]($_.Directory.Parent.Name) } -Descending |
+        Select-Object -First 1 -ExpandProperty FullName
+    if (-not $makeAppxExe) {
+        throw "未找到 Windows SDK 中的 makeAppx.exe"
+    }
+    $env:Path += ';' + (Split-Path $makeAppxExe)
     makeAppx.exe pack /d "$innoDir\make_appx" /p "$innoDir\zed_explorer_command_injector.appx" /nv
 }
 
