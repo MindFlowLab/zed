@@ -1,0 +1,33 @@
+# GitHub 自动发布说明配置
+# 由 release.yml 中 generate-notes 调用时读取，用于对变更列表分类。
+# 分类依据 PR 标签；未匹配标签的 PR 归入"其他变更"。
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+      - dependencies
+    authors:
+      - dependabot
+      - dependabot[bot]
+  categories:
+    - title: 国际化 / 汉化
+      labels:
+        - i18n
+        - translation
+        - 汉化
+        - localization
+    - title: 新功能
+      labels:
+        - enhancement
+        - feature
+    - title: 问题修复
+      labels:
+        - bug
+        - fix
+    - title: 性能 / 重构
+      labels:
+        - performance
+        - refactor
+    - title: 其他变更
+      labels:
+        - "*"
