@@ -73,10 +73,10 @@ fn render_flag_row(
                         SharedString::from(format!("reset-{}", name)),
                         t!("settings_ui.feature_flags.reset"),
                     )
-                        .label_size(LabelSize::Small)
-                        .on_click(cx.listener(move |_, _, _, cx| {
-                            FeatureFlagStore::clear_override(name, <dyn Fs>::global(cx), cx);
-                        })),
+                    .label_size(LabelSize::Small)
+                    .on_click(cx.listener(move |_, _, _, cx| {
+                        FeatureFlagStore::clear_override(name, <dyn Fs>::global(cx), cx);
+                    })),
                 )
             });
 

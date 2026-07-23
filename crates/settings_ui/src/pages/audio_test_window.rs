@@ -220,7 +220,9 @@ impl Render for AudioTestWindow {
             .child(
                 v_flex()
                     .gap_1()
-                    .child(Label::new(t!("settings_ui.audio_test_window.output_device")))
+                    .child(Label::new(t!(
+                        "settings_ui.audio_test_window.output_device"
+                    )))
                     .child(output_dropdown),
             )
             .child(

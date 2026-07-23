@@ -463,8 +463,11 @@ impl SkillCreatorPage {
             Ok(imported) => self.apply_imported_skill(imported, window, cx),
             Err(err) => {
                 self.save_error = Some(
-                    t!("settings_ui.skill_creator.could_not_read_shared_skill", err = err)
-                        .into(),
+                    t!(
+                        "settings_ui.skill_creator.could_not_read_shared_skill",
+                        err = err
+                    )
+                    .into(),
                 );
                 cx.notify();
             }
@@ -711,16 +714,17 @@ impl SkillCreatorPage {
                     .gap_1()
                     .child(Label::new(t!("settings_ui.skill_creator.import_from_url")))
                     .child(
-                        Label::new(t!("settings_ui.skill_creator.optional"))
-                            .color(Color::Muted),
+                        Label::new(t!("settings_ui.skill_creator.optional")).color(Color::Muted),
                     ),
             )
             .child(self.url_editor.clone())
             .child(match &self.url_import_status {
-                UrlImportStatus::Idle => Label::new(t!("settings_ui.skill_creator.import_idle_hint"))
-                    .size(LabelSize::Small)
-                    .color(Color::Muted)
-                    .into_any_element(),
+                UrlImportStatus::Idle => {
+                    Label::new(t!("settings_ui.skill_creator.import_idle_hint"))
+                        .size(LabelSize::Small)
+                        .color(Color::Muted)
+                        .into_any_element()
+                }
                 UrlImportStatus::Fetching => {
                     LoadingLabel::new(t!("settings_ui.skill_creator.fetching_and_parsing"))
                         .into_any_element()

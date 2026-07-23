@@ -281,25 +281,25 @@ fn render_tool_list_item(
                 format!("configure-{}", tool.id),
                 t!("settings_ui.tool_permissions_setup.configure"),
             )
-                .tab_index(tool_index as isize)
-                .style(ButtonStyle::OutlinedGhost)
-                .size(ButtonSize::Medium)
-                .end_icon(
-                    Icon::new(IconName::ChevronRight)
-                        .size(IconSize::Small)
-                        .color(Color::Muted),
-                )
-                .on_click(cx.listener(move |this, _, window, cx| {
-                    this.push_dynamic_sub_page(
-                        tool_name,
-                        t!("settings_ui.tool_permissions_setup.tool_permissions"),
-                        None,
-                        true,
-                        render_fn,
-                        window,
-                        cx,
-                    );
-                }))
+            .tab_index(tool_index as isize)
+            .style(ButtonStyle::OutlinedGhost)
+            .size(ButtonSize::Medium)
+            .end_icon(
+                Icon::new(IconName::ChevronRight)
+                    .size(IconSize::Small)
+                    .color(Color::Muted),
+            )
+            .on_click(cx.listener(move |this, _, window, cx| {
+                this.push_dynamic_sub_page(
+                    tool_name,
+                    t!("settings_ui.tool_permissions_setup.tool_permissions"),
+                    None,
+                    true,
+                    render_fn,
+                    window,
+                    cx,
+                );
+            }))
         })
         .into_any_element()
 }
@@ -331,7 +331,10 @@ pub(crate) fn render_tool_config_page(
     cx: &mut Context<SettingsWindow>,
 ) -> AnyElement {
     let rules = get_tool_rules(tool.id, cx);
-    let page_title = t!("settings_ui.tool_permissions_setup.tool_page_title", name = tool.name);
+    let page_title = t!(
+        "settings_ui.tool_permissions_setup.tool_page_title",
+        name = tool.name
+    );
     let scroll_step = px(80.);
 
     v_flex()
@@ -385,11 +388,11 @@ pub(crate) fn render_tool_config_page(
                                 "dismiss-regex-error",
                                 t!("settings_ui.tool_permissions_setup.dismiss"),
                             )
-                                .style(ButtonStyle::Tinted(ui::TintColor::Warning))
-                                .on_click(cx.listener(|this, _, _, cx| {
-                                    this.regex_validation_error = None;
-                                    cx.notify();
-                                })),
+                            .style(ButtonStyle::Tinted(ui::TintColor::Warning))
+                            .on_click(cx.listener(|this, _, _, cx| {
+                                this.regex_validation_error = None;
+                                cx.notify();
+                            })),
                         ),
                 )
             },
@@ -594,9 +597,9 @@ fn render_verification_section(
                             )
                         } else {
                             this.child(
-                                Label::new(
-                                    t!("settings_ui.tool_permissions_setup.pattern_preview_differs"),
-                                )
+                                Label::new(t!(
+                                    "settings_ui.tool_permissions_setup.pattern_preview_differs"
+                                ))
                                 .size(LabelSize::XSmall)
                                 .color(Color::Warning),
                             )
@@ -849,7 +852,10 @@ fn render_invalid_patterns_section(
                         .size(IconSize::Small)
                         .color(Color::Error),
                 )
-                .child(Label::new(t!("settings_ui.tool_permissions_setup.invalid_patterns")).color(Color::Error)),
+                .child(
+                    Label::new(t!("settings_ui.tool_permissions_setup.invalid_patterns"))
+                        .color(Color::Error),
+                ),
         )
         .child(
             Label::new(t!(
@@ -884,56 +890,56 @@ fn render_invalid_patterns_section(
                         format!("{}-invalid-delete-{}", tool_id, invalid.pattern.clone());
 
                     v_flex()
-                        .p_2()
-                        .rounded_md()
-                        .border_1()
-                        .border_color(theme_colors.border_variant)
-                        .bg(theme_colors.surface_background.opacity(0.15))
-                        .gap_1()
-                        .child(
-                            h_flex()
-                                .justify_between()
-                                .child(
-                                    h_flex()
-                                        .gap_1p5()
-                                        .min_w_0()
-                                        .child(
-                                            Label::new(invalid.pattern.clone())
-                                                .size(LabelSize::Small)
-                                                .color(Color::Error)
-                                                .buffer_font(cx),
-                                        )
-                                        .child(
-                                            Label::new(format!("({})", rule_type_label))
-                                                .size(LabelSize::XSmall)
-                                                .color(Color::Muted),
-                                        ),
-                                )
-                                .child(
-                                    IconButton::new(delete_id, IconName::Trash)
-                                        .icon_size(IconSize::Small)
-                                        .icon_color(Color::Muted)
-                                        .tooltip(Tooltip::text(t!(
-                                            "settings_ui.tool_permissions_setup.delete_invalid_pattern"
-                                        )))
-                                        .on_click(cx.listener(move |_, _, _, cx| {
-                                            delete_pattern(
-                                                &tool_id_for_delete,
-                                                rule_type,
-                                                &pattern_for_delete,
-                                                cx,
-                                            );
-                                        })),
-                                ),
-                        )
-                        .child(
-                            Label::new(t!(
-                                "settings_ui.tool_permissions_setup.error_prefix",
-                                error = invalid.error
-                            ))
-                            .size(LabelSize::XSmall)
-                            .color(Color::Muted),
-                        )
+                    .p_2()
+                    .rounded_md()
+                    .border_1()
+                    .border_color(theme_colors.border_variant)
+                    .bg(theme_colors.surface_background.opacity(0.15))
+                    .gap_1()
+                    .child(
+                        h_flex()
+                            .justify_between()
+                            .child(
+                                h_flex()
+                                    .gap_1p5()
+                                    .min_w_0()
+                                    .child(
+                                        Label::new(invalid.pattern.clone())
+                                            .size(LabelSize::Small)
+                                            .color(Color::Error)
+                                            .buffer_font(cx),
+                                    )
+                                    .child(
+                                        Label::new(format!("({})", rule_type_label))
+                                            .size(LabelSize::XSmall)
+                                            .color(Color::Muted),
+                                    ),
+                            )
+                            .child(
+                                IconButton::new(delete_id, IconName::Trash)
+                                    .icon_size(IconSize::Small)
+                                    .icon_color(Color::Muted)
+                                    .tooltip(Tooltip::text(t!(
+                                        "settings_ui.tool_permissions_setup.delete_invalid_pattern"
+                                    )))
+                                    .on_click(cx.listener(move |_, _, _, cx| {
+                                        delete_pattern(
+                                            &tool_id_for_delete,
+                                            rule_type,
+                                            &pattern_for_delete,
+                                            cx,
+                                        );
+                                    })),
+                            ),
+                    )
+                    .child(
+                        Label::new(t!(
+                            "settings_ui.tool_permissions_setup.error_prefix",
+                            error = invalid.error
+                        ))
+                        .size(LabelSize::XSmall)
+                        .color(Color::Muted),
+                    )
                 })),
         )
         .into_any_element()
@@ -993,9 +999,11 @@ fn render_pattern_empty_state(cx: &mut Context<SettingsWindow>) -> AnyElement {
         .border_dashed()
         .border_color(cx.theme().colors().border_variant)
         .child(
-            Label::new(t!("settings_ui.tool_permissions_setup.no_patterns_configured"))
-                .size(LabelSize::Small)
-                .color(Color::Disabled),
+            Label::new(t!(
+                "settings_ui.tool_permissions_setup.no_patterns_configured"
+            ))
+            .size(LabelSize::Small)
+            .color(Color::Disabled),
         )
         .into_any_element()
 }

@@ -90,14 +90,14 @@ pub(crate) fn render_add_llm_provider_popover(
                 "add-llm-provider",
                 t!("settings_ui.llm_providers_page.add_provider"),
             )
-                .style(ButtonStyle::Outlined)
-                .track_focus(&focus_handle)
-                .label_size(LabelSize::Small)
-                .start_icon(
-                    Icon::new(IconName::Plus)
-                        .size(IconSize::Small)
-                        .color(Color::Muted),
-                ),
+            .style(ButtonStyle::Outlined)
+            .track_focus(&focus_handle)
+            .label_size(LabelSize::Small)
+            .start_icon(
+                Icon::new(IconName::Plus)
+                    .size(IconSize::Small)
+                    .color(Color::Muted),
+            ),
         )
         .anchor(gpui::Anchor::TopRight)
         .offset(gpui::Point {
@@ -401,17 +401,17 @@ fn render_subpage_item(
                 format!("configure-{}", provider_id.0),
                 t!("settings_ui.llm_providers_page.configure"),
             )
-                .style(ButtonStyle::OutlinedGhost)
-                .size(ButtonSize::Medium)
-                .end_icon(
-                    Icon::new(IconName::ChevronRight)
-                        .size(IconSize::Small)
-                        .color(Color::Muted),
-                )
-                .tab_index(0isize)
-                .on_click(cx.listener(move |this, _, window, cx| {
-                    open_provider_configuration(this, provider_id.clone(), window, cx);
-                })),
+            .style(ButtonStyle::OutlinedGhost)
+            .size(ButtonSize::Medium)
+            .end_icon(
+                Icon::new(IconName::ChevronRight)
+                    .size(IconSize::Small)
+                    .color(Color::Muted),
+            )
+            .tab_index(0isize)
+            .on_click(cx.listener(move |this, _, window, cx| {
+                open_provider_configuration(this, provider_id.clone(), window, cx);
+            })),
         )
         .into_any_element()
 }
@@ -796,10 +796,7 @@ fn render_models_section(
                 .justify_between()
                 .child(Label::new(t!("settings_ui.llm_providers_page.models")))
                 .child(
-                    Button::new(
-                        "add-model",
-                        t!("settings_ui.llm_providers_page.add_model"),
-                    )
+                    Button::new("add-model", t!("settings_ui.llm_providers_page.add_model"))
                         .start_icon(
                             Icon::new(IconName::Plus)
                                 .size(IconSize::XSmall)
@@ -869,22 +866,22 @@ fn render_model(
                     ("remove-model", index),
                     t!("settings_ui.llm_providers_page.remove_model"),
                 )
-                    .start_icon(
-                        Icon::new(IconName::Trash)
-                            .size(IconSize::XSmall)
-                            .color(Color::Muted),
-                    )
-                    .label_size(LabelSize::Small)
-                    .style(ButtonStyle::Outlined)
-                    .full_width()
-                    .on_click(cx.listener(move |this, _, _window, cx| {
-                        if let Some(form) = this.llm_provider_form.as_mut()
-                            && index < form.models.len()
-                        {
-                            form.models.remove(index);
-                        }
-                        cx.notify();
-                    })),
+                .start_icon(
+                    Icon::new(IconName::Trash)
+                        .size(IconSize::XSmall)
+                        .color(Color::Muted),
+                )
+                .label_size(LabelSize::Small)
+                .style(ButtonStyle::Outlined)
+                .full_width()
+                .on_click(cx.listener(move |this, _, _window, cx| {
+                    if let Some(form) = this.llm_provider_form.as_mut()
+                        && index < form.models.len()
+                    {
+                        form.models.remove(index);
+                    }
+                    cx.notify();
+                })),
             )
         })
         .into_any_element()
@@ -1032,7 +1029,12 @@ fn render_reasoning_effort_selector(
 
     v_flex()
         .gap_1()
-        .child(Label::new(t!("settings_ui.llm_providers_page.default_reasoning_effort")).size(LabelSize::Small))
+        .child(
+            Label::new(t!(
+                "settings_ui.llm_providers_page.default_reasoning_effort"
+            ))
+            .size(LabelSize::Small),
+        )
         .child(
             DropdownMenu::new(
                 ElementId::Name(format!("reasoning-effort-selector-{index}").into()),
@@ -1042,7 +1044,9 @@ fn render_reasoning_effort_selector(
             .style(DropdownStyle::Outlined)
             .trigger_size(ButtonSize::Compact)
             .full_width(true)
-            .aria_label(t!("settings_ui.llm_providers_page.default_reasoning_effort")),
+            .aria_label(t!(
+                "settings_ui.llm_providers_page.default_reasoning_effort"
+            )),
         )
 }
 
@@ -1068,22 +1072,20 @@ fn render_form_actions(cx: &mut Context<SettingsWindow>) -> impl IntoElement {
                 "llm-provider-form-cancel",
                 t!("settings_ui.llm_providers_page.cancel"),
             )
-            .on_click(cx.listener(
-                |this, _, window, cx| {
-                    this.llm_provider_form = None;
-                    this.pop_sub_page(window, cx);
-                },
-            )),
+            .on_click(cx.listener(|this, _, window, cx| {
+                this.llm_provider_form = None;
+                this.pop_sub_page(window, cx);
+            })),
         )
         .child(
             Button::new(
                 "llm-provider-form-save",
                 t!("settings_ui.llm_providers_page.save_provider"),
             )
-                .style(ButtonStyle::Filled)
-                .on_click(cx.listener(|this, _, window, cx| {
-                    save_llm_provider_form(this, window, cx);
-                })),
+            .style(ButtonStyle::Filled)
+            .on_click(cx.listener(|this, _, window, cx| {
+                save_llm_provider_form(this, window, cx);
+            })),
         )
 }
 
@@ -1370,6 +1372,10 @@ fn parse_anthropic_model(
 
 fn parse_u64_field(value: &str, name: &str) -> Result<u64, SharedString> {
     value.parse::<u64>().map_err(|_| {
-        t!("settings_ui.llm_providers_page.error_field_must_be_number", name = name).into()
+        t!(
+            "settings_ui.llm_providers_page.error_field_must_be_number",
+            name = name
+        )
+        .into()
     })
 }

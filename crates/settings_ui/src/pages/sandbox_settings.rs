@@ -250,7 +250,9 @@ fn render_host_row(index: usize, host: String, cx: &mut Context<SettingsWindow>)
             IconButton::new(format!("sandbox-host-delete-{}", index), IconName::Trash)
                 .icon_size(IconSize::Small)
                 .icon_color(Color::Muted)
-                .tooltip(Tooltip::text(t!("settings_ui.sandbox_settings.remove_domain")))
+                .tooltip(Tooltip::text(t!(
+                    "settings_ui.sandbox_settings.remove_domain"
+                )))
                 .on_click(cx.listener(move |_, _, _, cx| {
                     remove_network_host(host_for_delete.clone(), cx);
                 })),
@@ -333,7 +335,9 @@ fn render_path_row(index: usize, path: PathBuf, cx: &mut Context<SettingsWindow>
             IconButton::new(format!("sandbox-path-delete-{}", index), IconName::Trash)
                 .icon_size(IconSize::Small)
                 .icon_color(Color::Muted)
-                .tooltip(Tooltip::text(t!("settings_ui.sandbox_settings.remove_path")))
+                .tooltip(Tooltip::text(t!(
+                    "settings_ui.sandbox_settings.remove_path"
+                )))
                 .on_click(cx.listener(move |_, _, _, cx| {
                     remove_write_path(path_for_delete.clone(), cx);
                 })),

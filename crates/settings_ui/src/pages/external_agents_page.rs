@@ -279,15 +279,18 @@ pub(crate) fn render_add_agent_popover(
 
     let popover = PopoverMenu::new("add-agent-server-popover")
         .trigger(
-            Button::new("add-agent", t!("settings_ui.external_agents_page.add_agent"))
-                .style(ButtonStyle::Outlined)
-                .track_focus(&focus_handle)
-                .start_icon(
-                    Icon::new(IconName::Plus)
-                        .size(IconSize::Small)
-                        .color(Color::Muted),
-                )
-                .label_size(LabelSize::Small),
+            Button::new(
+                "add-agent",
+                t!("settings_ui.external_agents_page.add_agent"),
+            )
+            .style(ButtonStyle::Outlined)
+            .track_focus(&focus_handle)
+            .start_icon(
+                Icon::new(IconName::Plus)
+                    .size(IconSize::Small)
+                    .color(Color::Muted),
+            )
+            .label_size(LabelSize::Small),
         )
         .anchor(gpui::Anchor::TopRight)
         .menu(move |window, cx| {
@@ -471,7 +474,12 @@ fn new_kv_row(
     cx: &mut Context<SettingsWindow>,
 ) -> KeyValueRow {
     KeyValueRow {
-        key: new_input(&t!("settings_ui.external_agents_page.key_placeholder"), key, window, cx),
+        key: new_input(
+            &t!("settings_ui.external_agents_page.key_placeholder"),
+            key,
+            window,
+            cx,
+        ),
         value: new_input(
             &t!("settings_ui.external_agents_page.value_placeholder"),
             value,
@@ -635,26 +643,29 @@ fn render_env_section(
             )
         }))
         .child(
-            Button::new("custom-agent-env-add", t!("settings_ui.external_agents_page.add"))
-                .style(ButtonStyle::Outlined)
-                .label_size(LabelSize::Small)
-                .tab_index(0isize)
-                .start_icon(
-                    Icon::new(IconName::Plus)
-                        .size(IconSize::Small)
-                        .color(Color::Muted),
-                )
-                .on_click(cx.listener(move |this, _, window, cx| {
-                    let row = new_kv_row(None, None, window, cx);
-                    // Focus the new key so the user can type immediately and tab
-                    // through the new row (key -> value -> ... -> Add button).
-                    let key_handle = row.key.focus_handle(cx);
-                    if let Some(form) = this.custom_agent_form.as_mut() {
-                        form.env.push(row);
-                    }
-                    key_handle.focus(window, cx);
-                    cx.notify();
-                })),
+            Button::new(
+                "custom-agent-env-add",
+                t!("settings_ui.external_agents_page.add"),
+            )
+            .style(ButtonStyle::Outlined)
+            .label_size(LabelSize::Small)
+            .tab_index(0isize)
+            .start_icon(
+                Icon::new(IconName::Plus)
+                    .size(IconSize::Small)
+                    .color(Color::Muted),
+            )
+            .on_click(cx.listener(move |this, _, window, cx| {
+                let row = new_kv_row(None, None, window, cx);
+                // Focus the new key so the user can type immediately and tab
+                // through the new row (key -> value -> ... -> Add button).
+                let key_handle = row.key.focus_handle(cx);
+                if let Some(form) = this.custom_agent_form.as_mut() {
+                    form.env.push(row);
+                }
+                key_handle.focus(window, cx);
+                cx.notify();
+            })),
         )
         .into_any_element();
 
@@ -710,12 +721,12 @@ fn render_form_actions(
                         "custom-agent-form-cancel",
                         t!("settings_ui.external_agents_page.cancel"),
                     )
-                        .style(ButtonStyle::Subtle)
-                        .track_focus(&cancel_handle)
-                        .on_click(cx.listener(|this, _, window, cx| {
-                            this.custom_agent_form = None;
-                            this.pop_sub_page(window, cx);
-                        })),
+                    .style(ButtonStyle::Subtle)
+                    .track_focus(&cancel_handle)
+                    .on_click(cx.listener(|this, _, window, cx| {
+                        this.custom_agent_form = None;
+                        this.pop_sub_page(window, cx);
+                    })),
                 ),
         )
         .child(
@@ -728,11 +739,11 @@ fn render_form_actions(
                         "custom-agent-form-save",
                         t!("settings_ui.external_agents_page.save"),
                     )
-                        .style(ButtonStyle::Filled)
-                        .track_focus(&save_handle)
-                        .on_click(cx.listener(|this, _, window, cx| {
-                            save_custom_agent_form(this, window, cx);
-                        })),
+                    .style(ButtonStyle::Filled)
+                    .track_focus(&save_handle)
+                    .on_click(cx.listener(|this, _, window, cx| {
+                        save_custom_agent_form(this, window, cx);
+                    })),
                 ),
         )
 }

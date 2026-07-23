@@ -74,20 +74,22 @@ pub(crate) fn render_skills_setup_page(
                                 "open-skill-creator-empty",
                                 t!("settings_ui.skills_setup.create_a_skill"),
                             )
-                                .tab_index(0_isize)
-                                .style(ButtonStyle::Outlined)
-                                .start_icon(
-                                    Icon::new(IconName::Plus)
-                                        .size(IconSize::Small)
-                                        .color(Color::Muted),
-                                )
-                                .on_click(cx.listener(move |this, _event, window, cx| {
+                            .tab_index(0_isize)
+                            .style(ButtonStyle::Outlined)
+                            .start_icon(
+                                Icon::new(IconName::Plus)
+                                    .size(IconSize::Small)
+                                    .color(Color::Muted),
+                            )
+                            .on_click(cx.listener(
+                                move |this, _event, window, cx| {
                                     this.open_skill_creator_sub_page(
                                         SkillCreatorOpenMode::Form,
                                         window,
                                         cx,
                                     );
-                                })),
+                                },
+                            )),
                         ),
                 )
             } else {
@@ -159,7 +161,9 @@ fn render_skill_row(
             .shape(ui::IconButtonShape::Square)
             .icon_size(IconSize::Small)
             .icon_color(share_icon_color)
-            .tooltip(Tooltip::text(t!("settings_ui.skills_setup.copy_share_link")))
+            .tooltip(Tooltip::text(t!(
+                "settings_ui.skills_setup.copy_share_link"
+            )))
             .visible_on_hover(&group)
             .on_click(cx.listener(move |_settings_window, _event, _window, cx| {
                 let skill_file_path = share_skill_file_path.clone();
@@ -315,15 +319,16 @@ fn render_skill_row(
                         SharedString::from(format!("open-{}", skill.name)),
                         t!("settings_ui.skills_setup.open"),
                     )
-                        .tab_index(0_isize)
-                        .style(ButtonStyle::OutlinedGhost)
-                        .size(ButtonSize::Medium)
-                        .end_icon(
-                            Icon::new(IconName::ArrowUpRight)
-                                .size(IconSize::Small)
-                                .color(Color::Muted),
-                        )
-                        .on_click(cx.listener(move |settings_window, _event, window, cx| {
+                    .tab_index(0_isize)
+                    .style(ButtonStyle::OutlinedGhost)
+                    .size(ButtonSize::Medium)
+                    .end_icon(
+                        Icon::new(IconName::ArrowUpRight)
+                            .size(IconSize::Small)
+                            .color(Color::Muted),
+                    )
+                    .on_click(cx.listener(
+                        move |settings_window, _event, window, cx| {
                             let skill_file_path = skill_file_path.clone();
                             let Some(original_window) = settings_window.original_window else {
                                 return;
@@ -344,7 +349,8 @@ fn render_skill_row(
                                 })
                                 .log_err();
                             window.remove_window();
-                        })),
+                        },
+                    )),
                 ),
         )
         .into_any_element()
