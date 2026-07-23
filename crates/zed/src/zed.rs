@@ -4544,7 +4544,7 @@ mod tests {
             .unwrap();
 
         cx.update(|window, cx| {
-            window.draw(cx).clear();
+            window.draw(cx).clear(cx);
         });
 
         // mouse_wheel_zoom is disabled by default — zoom should not work.
@@ -4576,7 +4576,7 @@ mod tests {
         });
 
         cx.update(|window, cx| {
-            window.draw(cx).clear();
+            window.draw(cx).clear(cx);
         });
 
         cx.simulate_event(gpui::ScrollWheelEvent {
@@ -4595,7 +4595,7 @@ mod tests {
         );
 
         cx.update(|window, cx| {
-            window.draw(cx).clear();
+            window.draw(cx).clear(cx);
         });
 
         cx.simulate_event(gpui::ScrollWheelEvent {
@@ -4626,7 +4626,7 @@ mod tests {
             cx.update(|_, cx| ThemeSettings::get_global(cx).buffer_font_size(cx).as_f32());
 
         cx.update(|window, cx| {
-            window.draw(cx).clear();
+            window.draw(cx).clear(cx);
         });
 
         cx.simulate_event(gpui::ScrollWheelEvent {

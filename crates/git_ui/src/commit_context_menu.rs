@@ -64,7 +64,7 @@ pub(crate) fn commit_context_menu(
             .context(focus_handle)
             .header(header)
             .entry(
-                t!("git_ui.commit_context_menu.view_commit"),
+                t!("git_ui.commit_context_menu.view_diff"),
                 Some(OpenCommitView.boxed_clone()),
                 {
                     let repository = repository.clone();

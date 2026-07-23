@@ -56,6 +56,10 @@ const FAVORITE_CHANNELS_KEY: &str = "favorite_channels";
 const COLLABORATION_PANEL_KEY: &str = "CollaborationPanel";
 const TOAST_DURATION: Duration = Duration::from_secs(5);
 
+fn panel_row_height() -> Rems {
+    rems_from_px(26.)
+}
+
 actions!(
     collab_panel,
     [
@@ -1249,7 +1253,7 @@ impl CollabPanel {
         .into();
 
         ListItem::new(project_id as usize)
-            .height(rems_from_px(24.))
+            .height(panel_row_height())
             .toggle_state(is_selected)
             .on_click(cx.listener(move |this, _, window, cx| {
                 this.workspace
@@ -1291,7 +1295,7 @@ impl CollabPanel {
         let id = peer_id.map_or(usize::MAX, |id| id.as_u64() as usize);
 
         ListItem::new(("screen", id))
-            .height(rems_from_px(24.))
+            .height(panel_row_height())
             .toggle_state(is_selected)
             .start_slot(
                 h_flex()
@@ -1340,7 +1344,7 @@ impl CollabPanel {
         let has_channel_buffer_changed = channel_store.has_channel_buffer_changed(channel_id);
 
         ListItem::new("channel-notes")
-            .height(rems_from_px(24.))
+            .height(panel_row_height())
             .toggle_state(is_selected)
             .on_click(cx.listener(move |this, _, window, cx| {
                 this.open_channel_notes(channel_id, window, cx);
@@ -3118,6 +3122,7 @@ impl CollabPanel {
 
         h_flex().group("section-header").w_full().child(
             ListHeader::new(text)
+                .height(panel_row_height())
                 .when(can_collapse, |header| {
                     header
                         .toggle(Some(!is_collapsed))
@@ -3450,7 +3455,7 @@ impl CollabPanel {
             (IconName::Star, Color::Default, "Add to Favorites")
         };
 
-        let height = rems_from_px(24.);
+        let height = panel_row_height();
 
         let icon_name = if is_public {
             IconName::Hash
@@ -3866,7 +3871,6 @@ fn render_tree_branch(
     cx: &mut App,
 ) -> impl IntoElement {
     let rem_size = window.rem_size();
-    let line_height = window.text_style().line_height_in_pixels(rem_size);
     let thickness = px(1.);
     let color = cx.theme().colors().icon_disabled;
 
@@ -3899,7 +3903,7 @@ fn render_tree_branch(
         },
     )
     .w(rem_size)
-    .h(line_height - px(2.))
+    .h(panel_row_height())
 }
 
 fn render_participant_name_and_handle(user: &User) -> impl IntoElement {
