@@ -57,7 +57,9 @@ pub(crate) fn render_mcp_servers_page(
                 .gap_2()
                 .child(
                     v_flex()
-                        .child(Label::new(t!("settings_ui.mcp_servers_page.configured_servers")))
+                        .child(Label::new(t!(
+                            "settings_ui.mcp_servers_page.configured_servers"
+                        )))
                         .child(
                             Label::new(t!(
                                 "settings_ui.mcp_servers_page.configured_servers_description"
@@ -79,8 +81,8 @@ fn render_context_server_timeout(
     cx: &mut Context<SettingsWindow>,
 ) -> AnyElement {
     let item = SettingsPageItem::SettingItem(SettingItem {
-        title: "MCP Server Timeout",
-        description: "Default timeout in seconds for MCP server tool calls.",
+        title: t!("settings_ui.mcp_servers_page.context_server_timeout_title").into(),
+        description: t!("settings_ui.mcp_servers_page.context_server_timeout_description").into(),
         field: Box::new(SettingField {
             organization_override: None,
             json_path: Some("context_server_timeout"),
@@ -207,7 +209,10 @@ fn render_context_server(
         Some(if tool_count == 1 {
             SharedString::from(t!("settings_ui.mcp_servers_page.tool_count_one"))
         } else {
-            SharedString::from(t!("settings_ui.mcp_servers_page.tool_count", n = tool_count))
+            SharedString::from(t!(
+                "settings_ui.mcp_servers_page.tool_count",
+                n = tool_count
+            ))
         })
     } else {
         None
@@ -420,10 +425,7 @@ fn render_status_details(
                     )
                     .when(should_show_logout, |this| {
                         this.child(
-                            Button::new(
-                                "error-logout",
-                                t!("settings_ui.mcp_servers_page.log_out"),
-                            )
+                            Button::new("error-logout", t!("settings_ui.mcp_servers_page.log_out"))
                                 .style(ButtonStyle::Outlined)
                                 .label_size(LabelSize::Small)
                                 .on_click({
@@ -456,9 +458,11 @@ fn render_status_details(
                                     .color(Color::Muted),
                             )
                             .child(
-                                Label::new(t!("settings_ui.mcp_servers_page.auth_required_message"))
-                                    .color(Color::Muted)
-                                    .size(LabelSize::Small),
+                                Label::new(t!(
+                                    "settings_ui.mcp_servers_page.auth_required_message"
+                                ))
+                                .color(Color::Muted)
+                                .size(LabelSize::Small),
                             ),
                     )
                     .child(
@@ -466,15 +470,15 @@ fn render_status_details(
                             "authenticate-server",
                             t!("settings_ui.mcp_servers_page.authenticate"),
                         )
-                            .style(ButtonStyle::Outlined)
-                            .label_size(LabelSize::Small)
-                            .on_click({
-                                move |_event, _window, cx| {
-                                    store.update(cx, |s, cx| {
-                                        s.authenticate_server(&context_server_id, cx).log_err();
-                                    });
-                                }
-                            }),
+                        .style(ButtonStyle::Outlined)
+                        .label_size(LabelSize::Small)
+                        .on_click({
+                            move |_event, _window, cx| {
+                                store.update(cx, |s, cx| {
+                                    s.authenticate_server(&context_server_id, cx).log_err();
+                                });
+                            }
+                        }),
                     )
                     .into_any_element(),
             )
@@ -524,10 +528,7 @@ fn render_status_details(
                     .w_full()
                     .justify_end()
                     .child(
-                        Button::new(
-                            "running-logout",
-                            t!("settings_ui.mcp_servers_page.log_out"),
-                        )
+                        Button::new("running-logout", t!("settings_ui.mcp_servers_page.log_out"))
                             .style(ButtonStyle::Outlined)
                             .label_size(LabelSize::Small)
                             .on_click(move |_event, _window, cx| {
@@ -567,41 +568,40 @@ pub(crate) fn render_add_server_popover(
 
     let popover = PopoverMenu::new("add-mcp-server-popover")
         .trigger(
-            Button::new("add-mcp-server", t!("settings_ui.mcp_servers_page.add_server"))
-                .style(ButtonStyle::Outlined)
-                .track_focus(&focus_handle)
-                .start_icon(
-                    Icon::new(IconName::Plus)
-                        .size(IconSize::Small)
-                        .color(Color::Muted),
-                )
-                .label_size(LabelSize::Small),
+            Button::new(
+                "add-mcp-server",
+                t!("settings_ui.mcp_servers_page.add_server"),
+            )
+            .style(ButtonStyle::Outlined)
+            .track_focus(&focus_handle)
+            .start_icon(
+                Icon::new(IconName::Plus)
+                    .size(IconSize::Small)
+                    .color(Color::Muted),
+            )
+            .label_size(LabelSize::Small),
         )
         .anchor(gpui::Anchor::TopRight)
         .menu({
             move |window, cx| {
                 let settings_window = settings_window.clone();
                 Some(ContextMenu::build(window, cx, move |menu, _window, _cx| {
-                    menu.entry(
-                        t!("settings_ui.mcp_servers_page.add_local_server"),
-                        None,
-                        {
-                            let settings_window = settings_window.clone();
-                            move |window, cx| {
-                                settings_window
-                                    .update(cx, |this, cx| {
-                                        open_mcp_server_form(
-                                            this,
-                                            McpTransport::Stdio,
-                                            None,
-                                            window,
-                                            cx,
-                                        );
-                                    })
-                                    .log_err();
-                            }
-                        },
-                    )
+                    menu.entry(t!("settings_ui.mcp_servers_page.add_local_server"), None, {
+                        let settings_window = settings_window.clone();
+                        move |window, cx| {
+                            settings_window
+                                .update(cx, |this, cx| {
+                                    open_mcp_server_form(
+                                        this,
+                                        McpTransport::Stdio,
+                                        None,
+                                        window,
+                                        cx,
+                                    );
+                                })
+                                .log_err();
+                        }
+                    })
                     .entry(
                         t!("settings_ui.mcp_servers_page.add_remote_server"),
                         None,
@@ -885,7 +885,12 @@ fn new_kv_row(
     cx: &mut Context<SettingsWindow>,
 ) -> KeyValueRow {
     KeyValueRow {
-        key: new_input(&t!("settings_ui.mcp_servers_page.key_placeholder"), key, window, cx),
+        key: new_input(
+            &t!("settings_ui.mcp_servers_page.key_placeholder"),
+            key,
+            window,
+            cx,
+        ),
         value: new_input(
             &t!("settings_ui.mcp_servers_page.value_placeholder"),
             value,
@@ -1047,8 +1052,8 @@ fn input_box(editor: &Entity<Editor>, cx: &App) -> impl IntoElement {
 
 fn render_form_field(
     settings_window: &SettingsWindow,
-    title: &'static str,
-    description: &'static str,
+    title: &str,
+    description: &str,
     editor: &Entity<Editor>,
     cx: &mut Context<SettingsWindow>,
 ) -> AnyElement {
@@ -1069,8 +1074,8 @@ fn render_form_field(
 
 fn render_kv_section(
     settings_window: &SettingsWindow,
-    title: &'static str,
-    description: &'static str,
+    title: &str,
+    description: &str,
     rows: &[KeyValueRow],
     kind: McpKvKind,
     cx: &mut Context<SettingsWindow>,
@@ -1206,7 +1211,11 @@ fn save_mcp_server_form(
     if collides_with_other_server {
         if let Some(form) = settings_window.mcp_server_form.as_mut() {
             form.error = Some(
-                t!("settings_ui.mcp_servers_page.server_already_exists", name = id.0).into(),
+                t!(
+                    "settings_ui.mcp_servers_page.server_already_exists",
+                    name = id.0
+                )
+                .into(),
             );
         }
         cx.notify();

@@ -149,10 +149,12 @@ fn render_provider_dropdown(window: &mut Window, cx: &mut App) -> AnyElement {
         .id("provider-selector")
         .min_w_0()
         .gap_1p5()
-        .child(SettingsSectionHeader::new(t!(
-            "settings_ui.edit_prediction_provider_setup.active_provider"
-        ))
-        .no_padding(true))
+        .child(
+            SettingsSectionHeader::new(t!(
+                "settings_ui.edit_prediction_provider_setup.active_provider"
+            ))
+            .no_padding(true),
+        )
         .child(
             h_flex()
                 .pt_2p5()
@@ -391,8 +393,8 @@ fn render_ollama_provider(
 fn ollama_settings() -> Box<[SettingsPageItem]> {
     Box::new([
         SettingsPageItem::SettingItem(SettingItem {
-            title: "API URL",
-            description: "The base URL of your Ollama server.",
+            title: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_ollama_api_url_title").into(),
+            description: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_ollama_api_url_description").into(),
             field: Box::new(SettingField {
                 organization_override: None,
                 pick: |settings| {
@@ -425,8 +427,8 @@ fn ollama_settings() -> Box<[SettingsPageItem]> {
             files: USER,
         }),
         SettingsPageItem::SettingItem(SettingItem {
-            title: "Model",
-            description: "The Ollama model to use for edit predictions.",
+            title: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_ollama_model_title").into(),
+            description: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_ollama_model_description").into(),
             field: Box::new(SettingField {
                 organization_override: None,
                 pick: |settings| {
@@ -459,8 +461,8 @@ fn ollama_settings() -> Box<[SettingsPageItem]> {
             files: USER,
         }),
         SettingsPageItem::SettingItem(SettingItem {
-            title: "Prompt Format",
-            description: "The prompt format to use when requesting predictions. Set to Infer to have the format inferred based on the model name.",
+            title: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_ollama_prompt_format_title").into(),
+            description: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_ollama_prompt_format_description").into(),
             field: Box::new(SettingField {
                 organization_override: None,
                 pick: |settings| {
@@ -490,8 +492,8 @@ fn ollama_settings() -> Box<[SettingsPageItem]> {
             metadata: None,
         }),
         SettingsPageItem::SettingItem(SettingItem {
-            title: "Max Output Tokens",
-            description: "The maximum number of tokens to generate.",
+            title: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_ollama_max_output_tokens_title").into(),
+            description: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_ollama_max_output_tokens_description").into(),
             field: Box::new(SettingField {
                 organization_override: None,
                 pick: |settings| {
@@ -526,8 +528,8 @@ fn ollama_settings() -> Box<[SettingsPageItem]> {
 fn open_ai_compatible_settings() -> Box<[SettingsPageItem]> {
     Box::new([
         SettingsPageItem::SettingItem(SettingItem {
-            title: "API URL",
-            description: "The URL of your OpenAI-compatible server's completions API.",
+            title: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_open_ai_compatible_api_api_url_title").into(),
+            description: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_open_ai_compatible_api_api_url_description").into(),
             field: Box::new(SettingField {
                 organization_override: None,
                 pick: |settings| {
@@ -560,8 +562,8 @@ fn open_ai_compatible_settings() -> Box<[SettingsPageItem]> {
             files: USER,
         }),
         SettingsPageItem::SettingItem(SettingItem {
-            title: "Model",
-            description: "The model string to pass to the OpenAI-compatible server.",
+            title: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_open_ai_compatible_api_model_title").into(),
+            description: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_open_ai_compatible_api_model_description").into(),
             field: Box::new(SettingField {
                 organization_override: None,
                 pick: |settings| {
@@ -594,8 +596,8 @@ fn open_ai_compatible_settings() -> Box<[SettingsPageItem]> {
             files: USER,
         }),
         SettingsPageItem::SettingItem(SettingItem {
-            title: "Prompt Format",
-            description: "The prompt format to use when requesting predictions. Set to Infer to have the format inferred based on the model name.",
+            title: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_open_ai_compatible_api_prompt_format_title").into(),
+            description: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_open_ai_compatible_api_prompt_format_description").into(),
             field: Box::new(SettingField {
                 organization_override: None,
                 pick: |settings| {
@@ -625,8 +627,8 @@ fn open_ai_compatible_settings() -> Box<[SettingsPageItem]> {
             metadata: None,
         }),
         SettingsPageItem::SettingItem(SettingItem {
-            title: "Max Output Tokens",
-            description: "The maximum number of tokens to generate.",
+            title: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_open_ai_compatible_api_max_output_tokens_title").into(),
+            description: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_open_ai_compatible_api_max_output_tokens_description").into(),
             field: Box::new(SettingField {
                 organization_override: None,
                 pick: |settings| {
@@ -661,8 +663,8 @@ fn open_ai_compatible_settings() -> Box<[SettingsPageItem]> {
 fn codestral_settings() -> Box<[SettingsPageItem]> {
     Box::new([
         SettingsPageItem::SettingItem(SettingItem {
-            title: "API URL",
-            description: "The API URL to use for Codestral.",
+            title: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_codestral_api_url_title").into(),
+            description: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_codestral_api_url_description").into(),
             field: Box::new(SettingField {
                 organization_override: None,
                 pick: |settings| {
@@ -695,8 +697,8 @@ fn codestral_settings() -> Box<[SettingsPageItem]> {
             files: USER,
         }),
         SettingsPageItem::SettingItem(SettingItem {
-            title: "Max Tokens",
-            description: "The maximum number of tokens to generate.",
+            title: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_codestral_max_tokens_title").into(),
+            description: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_codestral_max_tokens_description").into(),
             field: Box::new(SettingField {
                 organization_override: None,
                 pick: |settings| {
@@ -726,8 +728,8 @@ fn codestral_settings() -> Box<[SettingsPageItem]> {
             files: USER,
         }),
         SettingsPageItem::SettingItem(SettingItem {
-            title: "Model",
-            description: "The Codestral model id to use.",
+            title: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_codestral_model_title").into(),
+            description: t!("settings_ui.edit_prediction_provider_setup.edit_predictions_codestral_model_description").into(),
             field: Box::new(SettingField {
                 organization_override: None,
                 pick: |settings| {
