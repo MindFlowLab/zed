@@ -12467,6 +12467,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "calamine",
+ "db",
  "feature_flags",
  "file_icons",
  "gpui",
