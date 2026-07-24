@@ -5785,6 +5785,7 @@ impl ProjectPanel {
         let is_sticky = details.sticky.is_some();
         let sticky_index = details.sticky.as_ref().map(|this| this.sticky_index);
         let settings = ProjectPanelSettings::get_global(cx);
+        let entry_icon_size = IconSize::Custom(rems_from_px(settings.icon_size));
         let show_editor = details.is_editing && !details.is_processing;
 
         let selection = SelectedEntry {
@@ -6328,7 +6329,7 @@ impl ProjectPanel {
                                 .unwrap_or(false);
                             div().child(
                                 DecoratedIcon::new(
-                                    Icon::from_path(icon.clone()).color(Color::Muted),
+                                    Icon::from_path(icon.clone()).color(Color::Muted).size(entry_icon_size),
                                     Some(
                                         IconDecoration::new(
                                             if kind.is_file() {
@@ -6355,17 +6356,17 @@ impl ProjectPanel {
                                 .into_any_element(),
                             )
                         } else {
-                            h_flex().child(Icon::from_path(icon.to_string()).color(Color::Muted))
+                            h_flex().child(Icon::from_path(icon.to_string()).color(Color::Muted).size(entry_icon_size))
                         }
                     } else if let Some((icon_name, color)) =
                         entry_diagnostic_aware_icon_name_and_color(diagnostic_severity)
                     {
                         h_flex()
-                            .size(IconSize::default().rems())
-                            .child(Icon::new(icon_name).color(color).size(IconSize::Small))
+                            .size(entry_icon_size.rems())
+                            .child(Icon::new(icon_name).color(color).size(entry_icon_size))
                     } else {
                         h_flex()
-                            .size(IconSize::default().rems())
+                            .size(entry_icon_size.rems())
                             .invisible()
                             .flex_none()
                     })

@@ -824,6 +824,11 @@ pub struct ProjectPanelSettingsContent {
     ///
     /// Default: false
     pub git_status_indicator: Option<bool>,
+    /// Size of file and folder icons in the project panel (in pixels).
+    ///
+    /// Default: 14
+    #[serde(serialize_with = "serialize_optional_f32_with_two_decimal_places")]
+    pub icon_size: Option<f32>,
 }
 
 #[derive(
