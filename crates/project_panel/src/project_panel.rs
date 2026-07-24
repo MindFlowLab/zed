@@ -14,8 +14,8 @@ use editor::{
 };
 use feature_flags::{FeatureFlagAppExt, ProjectPanelUndoRedoFeatureFlag};
 use file_icons::FileIcons;
-use futures::StreamExt as _;
 use fs::TrashId;
+use futures::StreamExt as _;
 use git;
 use git::status::GitSummary;
 use git_ui;
@@ -1193,14 +1193,15 @@ impl ProjectPanel {
                                 )
                             })
                             .when(is_dir, |menu| {
-                                menu.separator().action(
-                                    t!("project_panel.context_menu.find_in_folder"),
-                                    Box::new(NewSearchInDirectory),
-                                )
-                                .action(
-                                    t!("project_panel.context_menu.refresh_directory"),
-                                    Box::new(RefreshDirectory),
-                                )
+                                menu.separator()
+                                    .action(
+                                        t!("project_panel.context_menu.find_in_folder"),
+                                        Box::new(NewSearchInDirectory),
+                                    )
+                                    .action(
+                                        t!("project_panel.context_menu.refresh_directory"),
+                                        Box::new(RefreshDirectory),
+                                    )
                             })
                             .when(is_unfoldable, |menu| {
                                 menu.action(
@@ -6329,7 +6330,9 @@ impl ProjectPanel {
                                 .unwrap_or(false);
                             div().child(
                                 DecoratedIcon::new(
-                                    Icon::from_path(icon.clone()).color(Color::Muted).size(entry_icon_size),
+                                    Icon::from_path(icon.clone())
+                                        .color(Color::Muted)
+                                        .size(entry_icon_size),
                                     Some(
                                         IconDecoration::new(
                                             if kind.is_file() {
@@ -6356,7 +6359,11 @@ impl ProjectPanel {
                                 .into_any_element(),
                             )
                         } else {
-                            h_flex().child(Icon::from_path(icon.to_string()).color(Color::Muted).size(entry_icon_size))
+                            h_flex().child(
+                                Icon::from_path(icon.to_string())
+                                    .color(Color::Muted)
+                                    .size(entry_icon_size),
+                            )
                         }
                     } else if let Some((icon_name, color)) =
                         entry_diagnostic_aware_icon_name_and_color(diagnostic_severity)
