@@ -34,6 +34,7 @@ add_folders_to_project = "Add Folders to Project…"
 remove_from_project = "Remove from Project"
 expand_all = "Expand All"
 collapse_all = "Collapse All"
+refresh_directory = "Refresh Directory"
 
 # 新建/重命名校验提示 / entry name validation messages
 [project_panel.validation]

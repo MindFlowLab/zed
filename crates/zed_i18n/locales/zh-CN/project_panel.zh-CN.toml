@@ -34,6 +34,7 @@ add_folders_to_project = "添加文件夹到项目…"
 remove_from_project = "从项目中移除"
 expand_all = "全部展开"
 collapse_all = "全部折叠"
+refresh_directory = "刷新目录"
 
 # 新建/重命名校验提示 / entry name validation messages
 [project_panel.validation]

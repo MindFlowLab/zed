@@ -14,6 +14,7 @@ use editor::{
 };
 use feature_flags::{FeatureFlagAppExt, ProjectPanelUndoRedoFeatureFlag};
 use file_icons::FileIcons;
+use futures::StreamExt as _;
 use fs::TrashId;
 use git;
 use git::status::GitSummary;
@@ -385,6 +386,8 @@ actions!(
         UnfoldDirectory,
         /// Folds the selected directory.
         FoldDirectory,
+        /// Rescans the selected directory to pick up new or changed files.
+        RefreshDirectory,
         /// Scroll half a page upwards
         ScrollUp,
         /// Scroll half a page downwards
@@ -1193,6 +1196,10 @@ impl ProjectPanel {
                                 menu.separator().action(
                                     t!("project_panel.context_menu.find_in_folder"),
                                     Box::new(NewSearchInDirectory),
+                                )
+                                .action(
+                                    t!("project_panel.context_menu.refresh_directory"),
+                                    Box::new(RefreshDirectory),
                                 )
                             })
                             .when(is_unfoldable, |menu| {
@@ -3044,6 +3051,37 @@ impl ProjectPanel {
             self.update_visible_entries(None, false, true, window, cx);
             cx.notify();
         }
+    }
+
+    fn refresh_directory(
+        &mut self,
+        _: &RefreshDirectory,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        let Some((worktree, entry)) = self.selected_sub_entry(cx) else {
+            return;
+        };
+        if !entry.is_dir() {
+            return;
+        }
+        let path = entry.path.clone();
+        let Some(done) = worktree
+            .read(cx)
+            .as_local()
+            .map(|local| local.add_path_prefix_to_scan(path))
+        else {
+            return;
+        };
+        cx.spawn_in(window, async move |this, cx| {
+            done.into_future().await;
+            this.update_in(cx, |this, window, cx| {
+                this.update_visible_entries(None, false, true, window, cx);
+                cx.notify();
+            })
+            .ok();
+        })
+        .detach();
     }
 
     fn scroll_up(&mut self, _: &ScrollUp, window: &mut Window, cx: &mut Context<Self>) {
@@ -7164,6 +7202,7 @@ impl Render for ProjectPanel {
                 .on_action(cx.listener(Self::new_search_in_directory))
                 .on_action(cx.listener(Self::unfold_directory))
                 .on_action(cx.listener(Self::fold_directory))
+                .on_action(cx.listener(Self::refresh_directory))
                 .on_action(cx.listener(Self::remove_from_project))
                 .on_action(cx.listener(Self::compare_marked_files))
                 .when(!project.is_read_only(cx), |el| {
