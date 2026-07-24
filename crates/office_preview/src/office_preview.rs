@@ -8,6 +8,7 @@ mod document;
 mod docx;
 mod markup;
 mod pdf;
+pub mod persistence;
 mod pptx;
 mod spreadsheet;
 mod view;
@@ -52,6 +53,7 @@ register_feature_flag!(OfficePreviewFeatureFlag);
 
 pub fn init(cx: &mut App) {
     workspace::register_project_item::<OfficePreviewView>(cx);
+    workspace::register_serializable_item::<OfficePreviewView>(cx);
 }
 
 /// 测试专用：在内存中构建 zip 压缩包（docx/xlsx 等 OOXML 夹具）

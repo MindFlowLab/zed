@@ -1,23 +1,28 @@
+use anyhow::Context as _;
 use file_icons::FileIcons;
 use gpui::{
     AnyElement, App, Context, Div, Entity, EntityId, EventEmitter, FocusHandle, Focusable,
     FontWeight, IntoElement, ParentElement, Pixels, Render, StatefulInteractiveElement, Styled,
-    Task, Window, div, img, px, uniform_list,
+    Task, WeakEntity, Window, div, img, px, uniform_list,
 };
 use language::{File as _, LocalFile as _};
 use markdown::{
     CodeBlockRenderer, CopyButtonVisibility, Markdown, MarkdownElement, MarkdownFont,
     MarkdownStyle, WrapButtonVisibility,
 };
+use project::ProjectItem as _;
 use settings::Settings as _;
 use ui::{TintColor, Tooltip, prelude::*};
 use util::paths::PathExt;
-use workspace::item::{Item, ProjectItem as WorkspaceProjectItem, TabContentParams};
-use workspace::{ItemSettings, Pane, WorkspaceId};
+use workspace::item::{
+    Item, ProjectItem as WorkspaceProjectItem, SerializableItem, TabContentParams,
+};
+use workspace::{ItemSettings, Pane, Workspace, WorkspaceId, delete_unloaded_items};
 use zed_i18n::t;
 
 use crate::document::{OfficeContent, OfficeDocument};
 use crate::pdf::PdfData;
+use crate::persistence::OfficePreviewDb;
 use crate::spreadsheet::SpreadsheetData;
 use crate::{ResetZoom, ZoomIn, ZoomOut};
 
@@ -421,5 +426,77 @@ impl WorkspaceProjectItem for OfficePreviewView {
         cx: &mut Context<Self>,
     ) -> Self {
         Self::new(item, cx)
+    }
+}
+
+impl SerializableItem for OfficePreviewView {
+    fn serialized_item_kind() -> &'static str {
+        "OfficePreview"
+    }
+
+    fn deserialize(
+        project: Entity<project::Project>,
+        _workspace: WeakEntity<Workspace>,
+        workspace_id: WorkspaceId,
+        item_id: workspace::ItemId,
+        window: &mut Window,
+        cx: &mut App,
+    ) -> Task<anyhow::Result<Entity<Self>>> {
+        let db = OfficePreviewDb::global(cx);
+        window.spawn(cx, async move |cx| -> anyhow::Result<Entity<Self>> {
+            let path = db
+                .get_document_path(item_id, workspace_id)?
+                .context("No document path found")?;
+
+            // 按保存的绝对路径定位 worktree，重走扩展名分发与后台解析
+            let (worktree, relative_path) = project
+                .update(cx, |project, cx| {
+                    project.find_or_create_worktree(path.clone(), false, cx)
+                })
+                .await
+                .context("Path not found")?;
+            let project_path = project::ProjectPath {
+                worktree_id: worktree.update(cx, |worktree, _| worktree.id()),
+                path: relative_path,
+            };
+
+            let document = cx
+                .update(|_, cx| OfficeDocument::try_open(&project, &project_path, cx))?
+                .context("Office preview disabled or format unsupported")?
+                .await?;
+
+            cx.update(|_, cx| cx.new(|cx| OfficePreviewView::new(document, cx)))
+        })
+    }
+
+    fn cleanup(
+        workspace_id: WorkspaceId,
+        alive_items: Vec<workspace::ItemId>,
+        _window: &mut Window,
+        cx: &mut App,
+    ) -> Task<anyhow::Result<()>> {
+        let db = OfficePreviewDb::global(cx);
+        delete_unloaded_items(alive_items, workspace_id, "office_previews", &db, cx)
+    }
+
+    fn serialize(
+        &mut self,
+        workspace: &mut Workspace,
+        item_id: workspace::ItemId,
+        _closing: bool,
+        _window: &mut Window,
+        cx: &mut Context<Self>,
+    ) -> Option<Task<anyhow::Result<()>>> {
+        let workspace_id = workspace.database_id()?;
+        let document_path = self.document.read(cx).file().abs_path(cx);
+        let db = OfficePreviewDb::global(cx);
+        Some(cx.background_spawn(async move {
+            db.save_document_path(item_id, workspace_id, document_path)
+                .await
+        }))
+    }
+
+    fn should_serialize(&self, _event: &Self::Event) -> bool {
+        false
     }
 }
