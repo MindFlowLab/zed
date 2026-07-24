@@ -337,6 +337,12 @@ impl AgentServerStore {
         // Drain the existing versioned agents, extracting reconnect state
         // from any active connection so we can preserve it or trigger a
         // reconnect when the version changes.
+        //
+        // Registry agents whose data hasn't loaded yet are preserved in
+        // place so that active connections are not dropped (which would
+        // kill the child process via the platform job-object / process
+        // group).  They will be rebuilt on the next call once the
+        // registry becomes available.
         let mut old_versioned_agents: HashMap<
             AgentId,
             (
@@ -345,7 +351,22 @@ impl AgentServerStore {
                 Option<watch::Sender<Option<String>>>,
             ),
         > = HashMap::default();
+        let mut preserved: Vec<(AgentId, ExternalAgentEntry)> = Vec::new();
         for (name, mut entry) in self.external_agents.drain() {
+            // Keep registry agents that are still configured in settings
+            // but whose registry data is not yet available (e.g. the
+            // registry cache hasn't finished loading after startup).
+            let is_unavailable_registry = entry.source == ExternalAgentSource::Registry
+                && matches!(
+                    new_settings.get(name.as_ref()),
+                    Some(CustomAgentServerSettings::Registry { .. })
+                )
+                && !registry_agents_by_id.contains_key(name.as_ref());
+            if is_unavailable_registry {
+                preserved.push((name, entry));
+                continue;
+            }
+
             if let Some(version) = entry.server.version().cloned() {
                 let new_version_available_tx = entry.server.take_new_version_available_tx();
                 let loading_status_tx = entry.server.take_loading_status_tx();
@@ -354,6 +375,9 @@ impl AgentServerStore {
                         .insert(name, (version, new_version_available_tx, loading_status_tx));
                 }
             }
+        }
+        for (name, entry) in preserved {
+            self.external_agents.insert(name, entry);
         }
 
         for (name, settings) in new_settings.iter() {
