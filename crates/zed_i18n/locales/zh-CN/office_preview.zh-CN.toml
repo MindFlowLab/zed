@@ -1,0 +1,5 @@
+_version = 1
+
+[office_preview]
+empty_sheet = "此工作表为空。"
+sheet_tab_tooltip = "工作表：%{name}"

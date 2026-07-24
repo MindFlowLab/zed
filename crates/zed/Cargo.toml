@@ -160,6 +160,7 @@ miniprofiler_ui.workspace = true
 mimalloc = { version = "0.1", optional = true }
 node_runtime.workspace = true
 notifications.workspace = true
+office_preview.workspace = true
 onboarding.workspace = true
 outline.workspace = true
 outline_panel.workspace = true

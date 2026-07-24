@@ -143,6 +143,7 @@ members = [
     "crates/node_runtime",
     "crates/notifications",
     "crates/oauth_callback_server",
+    "crates/office_preview",
     "crates/ollama",
     "crates/onboarding",
     "crates/opencode",
@@ -409,6 +410,7 @@ net = { path = "crates/net" }
 node_runtime = { path = "crates/node_runtime" }
 notifications = { path = "crates/notifications" }
 oauth_callback_server = { path = "crates/oauth_callback_server" }
+office_preview = { path = "crates/office_preview" }
 ollama = { path = "crates/ollama" }
 onboarding = { path = "crates/onboarding" }
 opencode = { path = "crates/opencode" }
@@ -563,6 +565,7 @@ block = "0.1"
 block2 = "0.6"
 brotli = "8.0.2"
 bytes = "1.0"
+calamine = "0.36"
 cargo_metadata = "0.19"
 cargo_toml = "0.21"
 brush-parser = "0.3"
