@@ -7,18 +7,32 @@
 mod document;
 mod docx;
 mod markup;
+mod pdf;
 mod pptx;
 mod spreadsheet;
 mod view;
 
 pub use document::{OfficeContent, OfficeDocument, OfficeDocumentKind};
 pub use docx::docx_to_markdown;
+pub use pdf::{PdfData, PdfPage};
 pub use pptx::pptx_to_markdown;
 pub use spreadsheet::{SheetData, SpreadsheetData};
 pub use view::OfficePreviewView;
 
 use feature_flags::{FeatureFlag, PresenceFlag, register_feature_flag};
-use gpui::App;
+use gpui::{App, actions};
+
+actions!(
+    office_preview,
+    [
+        /// PDF 预览放大。
+        ZoomIn,
+        /// PDF 预览缩小。
+        ZoomOut,
+        /// PDF 预览重置缩放。
+        ResetZoom
+    ]
+);
 
 /// 门控 Office/PDF 预览功能的 feature flag。
 ///

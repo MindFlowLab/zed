@@ -8,6 +8,7 @@ use worktree::LoadedBinaryFile;
 
 use crate::OfficePreviewFeatureFlag;
 use crate::docx::docx_to_markdown;
+use crate::pdf::{DEFAULT_SCALE, PdfData, render_pdf_pages};
 use crate::pptx::pptx_to_markdown;
 use crate::spreadsheet::{SpreadsheetData, parse_spreadsheet};
 
@@ -20,6 +21,8 @@ pub enum OfficeDocumentKind {
     Document,
     /// pptx 演示文稿
     Presentation,
+    /// pdf 文档
+    Pdf,
 }
 
 impl OfficeDocumentKind {
@@ -30,6 +33,7 @@ impl OfficeDocumentKind {
             "xlsx" | "xls" | "ods" => Some(Self::Spreadsheet),
             "docx" => Some(Self::Document),
             "pptx" => Some(Self::Presentation),
+            "pdf" => Some(Self::Pdf),
             _ => None,
         }
     }
@@ -41,6 +45,8 @@ pub enum OfficeContent {
     Spreadsheet(Arc<SpreadsheetData>),
     /// docx 等文档转换成的 Markdown 文本
     Markdown(Arc<String>),
+    /// PDF 逐页渲染的位图
+    Pdf(Arc<PdfData>),
 }
 
 /// 项目侧模型：一个已在后台解析完成的 Office 文档。
@@ -103,6 +109,9 @@ impl project::ProjectItem for OfficeDocument {
                         ))),
                         OfficeDocumentKind::Presentation => Ok(OfficeContent::Markdown(Arc::new(
                             pptx_to_markdown(content)?,
+                        ))),
+                        OfficeDocumentKind::Pdf => Ok(OfficeContent::Pdf(Arc::new(
+                            render_pdf_pages(content, DEFAULT_SCALE)?,
                         ))),
                     };
                     parsed

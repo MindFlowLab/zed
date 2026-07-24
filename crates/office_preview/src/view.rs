@@ -2,7 +2,7 @@ use file_icons::FileIcons;
 use gpui::{
     AnyElement, App, Context, Div, Entity, EntityId, EventEmitter, FocusHandle, Focusable,
     FontWeight, IntoElement, ParentElement, Pixels, Render, StatefulInteractiveElement, Styled,
-    Task, Window, div, px, uniform_list,
+    Task, Window, div, img, px, uniform_list,
 };
 use language::{File as _, LocalFile as _};
 use markdown::{
@@ -17,7 +17,9 @@ use workspace::{ItemSettings, Pane, WorkspaceId};
 use zed_i18n::t;
 
 use crate::document::{OfficeContent, OfficeDocument};
+use crate::pdf::PdfData;
 use crate::spreadsheet::SpreadsheetData;
+use crate::{ResetZoom, ZoomIn, ZoomOut};
 
 /// 单元格固定宽度
 const CELL_WIDTH: Pixels = px(140.0);
@@ -25,6 +27,12 @@ const CELL_WIDTH: Pixels = px(140.0);
 const ROW_NUMBER_WIDTH: Pixels = px(56.0);
 /// 表格行高
 const ROW_HEIGHT: Pixels = px(24.0);
+/// PDF 页面基准显示宽度（zoom = 1.0 时）
+const PAGE_DISPLAY_WIDTH: f32 = 800.0;
+/// PDF 缩放步长与上下限
+const ZOOM_STEP: f32 = 1.25;
+const MIN_ZOOM: f32 = 0.25;
+const MAX_ZOOM: f32 = 4.0;
 
 /// Office 文档只读预览视图
 pub struct OfficePreviewView {
@@ -34,6 +42,8 @@ pub struct OfficePreviewView {
     active_sheet: usize,
     /// docx 等文档的 Markdown 渲染实体（构造时按内容创建）
     markdown: Option<Entity<Markdown>>,
+    /// PDF 显示缩放倍率（1.0 = 基准宽度 800px）
+    pdf_zoom: f32,
 }
 
 impl OfficePreviewView {
@@ -51,6 +61,7 @@ impl OfficePreviewView {
             document,
             active_sheet: 0,
             markdown,
+            pdf_zoom: 1.0,
         }
     }
 
@@ -191,6 +202,57 @@ impl OfficePreviewView {
             .into_any_element()
     }
 
+    /// 渲染 PDF：纵向滚动页面列表，缩放动作调整显示尺寸
+    fn render_pdf(&self, data: &PdfData, cx: &mut Context<Self>) -> AnyElement {
+        let zoom = self.pdf_zoom;
+        div()
+            .id("office-preview")
+            .track_focus(&self.focus_handle)
+            .size_full()
+            .bg(cx.theme().colors().editor_background)
+            .on_action(cx.listener(|this, _: &ZoomIn, _, cx| {
+                this.pdf_zoom = (this.pdf_zoom * ZOOM_STEP).min(MAX_ZOOM);
+                cx.notify();
+            }))
+            .on_action(cx.listener(|this, _: &ZoomOut, _, cx| {
+                this.pdf_zoom = (this.pdf_zoom / ZOOM_STEP).max(MIN_ZOOM);
+                cx.notify();
+            }))
+            .on_action(cx.listener(|this, _: &ResetZoom, _, cx| {
+                this.pdf_zoom = 1.0;
+                cx.notify();
+            }))
+            .child(
+                div()
+                    .id("office-preview-pdf-scroll")
+                    .size_full()
+                    .overflow_y_scroll()
+                    .py_4()
+                    .flex()
+                    .flex_col()
+                    .items_center()
+                    .gap_4()
+                    .children(data.pages.iter().enumerate().map(|(index, page)| {
+                        // 按页面像素比例计算显示高度，缩放统一作用于宽高
+                        let width = px(PAGE_DISPLAY_WIDTH * zoom);
+                        let height =
+                            px(PAGE_DISPLAY_WIDTH * zoom * page.height as f32 / page.width as f32);
+                        div()
+                            .flex()
+                            .flex_col()
+                            .items_center()
+                            .gap_1()
+                            .child(img(page.image.clone()).w(width).h(height))
+                            .child(
+                                Label::new(t!("office_preview.pdf_page_label", number = index + 1))
+                                    .size(LabelSize::Small)
+                                    .color(Color::Muted),
+                            )
+                    })),
+            )
+            .into_any_element()
+    }
+
     /// 空状态等居中提示文本
     fn render_centered_message(message: SharedString) -> AnyElement {
         div()
@@ -276,6 +338,7 @@ impl Render for OfficePreviewView {
         match content {
             OfficeContent::Spreadsheet(data) => self.render_spreadsheet(&data, cx),
             OfficeContent::Markdown(_) => self.render_markdown(window, cx),
+            OfficeContent::Pdf(data) => self.render_pdf(&data, cx),
         }
     }
 }

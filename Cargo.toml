@@ -733,6 +733,7 @@ parse_int = "0.9"
 pathfinder_geometry = "0.5"
 pciid-parser = "0.8.0"
 pathdiff = "0.2"
+pdf-render = "1.0.0-beta.17"
 percent-encoding = "2.3.2"
 pet = { git = "https://github.com/microsoft/python-environment-tools.git", rev = "9e61a22af989fe54937bf07c9f9cff1bc53d9056" }
 pet-conda = { git = "https://github.com/microsoft/python-environment-tools.git", rev = "9e61a22af989fe54937bf07c9f9cff1bc53d9056" }
