@@ -6,11 +6,14 @@
 
 mod document;
 mod docx;
+mod markup;
+mod pptx;
 mod spreadsheet;
 mod view;
 
 pub use document::{OfficeContent, OfficeDocument, OfficeDocumentKind};
 pub use docx::docx_to_markdown;
+pub use pptx::pptx_to_markdown;
 pub use spreadsheet::{SheetData, SpreadsheetData};
 pub use view::OfficePreviewView;
 

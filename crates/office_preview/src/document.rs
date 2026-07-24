@@ -8,6 +8,7 @@ use worktree::LoadedBinaryFile;
 
 use crate::OfficePreviewFeatureFlag;
 use crate::docx::docx_to_markdown;
+use crate::pptx::pptx_to_markdown;
 use crate::spreadsheet::{SpreadsheetData, parse_spreadsheet};
 
 /// 支持预览的文档类型
@@ -17,6 +18,8 @@ pub enum OfficeDocumentKind {
     Spreadsheet,
     /// docx 文档
     Document,
+    /// pptx 演示文稿
+    Presentation,
 }
 
 impl OfficeDocumentKind {
@@ -26,6 +29,7 @@ impl OfficeDocumentKind {
         match ext {
             "xlsx" | "xls" | "ods" => Some(Self::Spreadsheet),
             "docx" => Some(Self::Document),
+            "pptx" => Some(Self::Presentation),
             _ => None,
         }
     }
@@ -96,6 +100,9 @@ impl project::ProjectItem for OfficeDocument {
                         )),
                         OfficeDocumentKind::Document => Ok(OfficeContent::Markdown(Arc::new(
                             docx_to_markdown(content)?,
+                        ))),
+                        OfficeDocumentKind::Presentation => Ok(OfficeContent::Markdown(Arc::new(
+                            pptx_to_markdown(content)?,
                         ))),
                     };
                     parsed

@@ -4,3 +4,4 @@ _version = 1
 empty_document = "This document is empty."
 empty_sheet = "This sheet is empty."
 sheet_tab_tooltip = "Sheet: %{name}"
+slide_heading = "Slide %{number}"

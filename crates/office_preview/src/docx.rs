@@ -10,6 +10,8 @@ use anyhow::{Result, anyhow};
 use quick_xml::Reader;
 use quick_xml::events::{BytesStart, Event};
 
+use crate::markup::{escape_markdown, wrap_run_style};
+
 /// 将 docx 文件字节流转换为 Markdown 文本
 pub fn docx_to_markdown(bytes: Vec<u8>) -> Result<String> {
     let mut archive = zip::ZipArchive::new(Cursor::new(bytes))?;
@@ -141,13 +143,8 @@ impl DocxConverter {
         if raw.is_empty() {
             return;
         }
-        let escaped = escape_markdown(raw);
-        match (self.bold, self.italic) {
-            (true, true) => self.para_text.push_str(&format!("***{escaped}***")),
-            (true, false) => self.para_text.push_str(&format!("**{escaped}**")),
-            (false, true) => self.para_text.push_str(&format!("*{escaped}*")),
-            (false, false) => self.para_text.push_str(&escaped),
-        }
+        let styled = wrap_run_style(&escape_markdown(raw), self.bold, self.italic);
+        self.para_text.push_str(&styled);
     }
 
     /// 段落结束：按标题/列表/普通段落输出；单元格内暂存
@@ -246,18 +243,6 @@ fn heading_level_from_style(val: &str) -> Option<u8> {
         .parse::<u8>()
         .ok()
         .filter(|&level| (1..=6).contains(&level))
-}
-
-/// 转义 Markdown 特殊字符，避免文档内容被误解析为语法
-fn escape_markdown(text: &str) -> String {
-    let mut out = String::with_capacity(text.len());
-    for c in text.chars() {
-        if matches!(c, '\\' | '*' | '_' | '[' | ']' | '`') {
-            out.push('\\');
-        }
-        out.push(c);
-    }
-    out
 }
 
 /// 表格单元格转义：竖线加反斜杠，换行压平为空格

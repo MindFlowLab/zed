@@ -4,3 +4,4 @@ _version = 1
 empty_document = "此文档为空。"
 empty_sheet = "此工作表为空。"
 sheet_tab_tooltip = "工作表：%{name}"
+slide_heading = "幻灯片 %{number}"
