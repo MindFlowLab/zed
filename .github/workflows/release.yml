@@ -136,11 +136,55 @@ jobs:
           path: target/zed-remote-server-windows-x86_64.zip
           if-no-files-found: error
 
+  bundle_macos_aarch64:
+    name: 构建 macOS aarch64
+    # macos-14 为 Apple Silicon（aarch64）runner，自带 Xcode 与命令行工具
+    runs-on: macos-14
+    timeout-minutes: 360
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Rust 工具链
+        run: rustup show
+
+      - name: 缓存 Rust 依赖
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+
+      - name: 安装 cmake
+        run: brew install cmake
+
+      # bundle-mac 内部用 npm 的 dmg-license 为 DMG 添加许可协议
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: 打包 macOS（未签名）
+        run: ./script/bundle-mac aarch64-apple-darwin
+
+      - name: 上传 Zed-aarch64.dmg
+        uses: actions/upload-artifact@v4
+        with:
+          name: Zed-aarch64.dmg
+          path: target/aarch64-apple-darwin/release/Zed-aarch64.dmg
+          if-no-files-found: error
+
+      - name: 上传 zed-remote-server-macos-aarch64.gz
+        uses: actions/upload-artifact@v4
+        with:
+          name: zed-remote-server-macos-aarch64.gz
+          path: target/zed-remote-server-macos-aarch64.gz
+          if-no-files-found: error
+
   release:
     name: 发布到 GitHub Release
     needs:
       - bundle_linux_x86_64
       - bundle_windows_x86_64
+      - bundle_macos_aarch64
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
@@ -194,6 +238,7 @@ jobs:
             echo ">"
             echo "> ⚠️ **未签名说明**：本构建未经代码签名。"
             echo "> - Windows：安装时可能出现 SmartScreen 提示，选择\"更多信息 → 仍要运行\"。"
+            echo "> - macOS：首次打开可能被 Gatekeeper 拦截，右键选择\"打开\"，或执行 \`xattr -dr com.apple.quarantine /Applications/Zed.app\`。"
             echo "> - Linux：解压 \`zed-linux-x86_64.tar.gz\` 后运行 \`bin/zed\`。"
             echo ""
             echo "---"
