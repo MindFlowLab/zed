@@ -5590,6 +5590,7 @@ mod tests {
                 "multi_workspace",
                 "new_process_modal",
                 "notebook",
+                "office_preview",
                 "onboarding",
                 "outline",
                 "outline_panel",
