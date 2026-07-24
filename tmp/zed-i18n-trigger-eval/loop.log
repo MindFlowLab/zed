@@ -1,0 +1,30 @@
+Split: 12 train, 8 test (holdout=0.4)
+
+============================================================
+Iteration 1/3
+Description: Use when localizing Zed UI text to Simplified Chinese, adding or editing i18n keys, working with the zed_i18n crate or its locale TOML files, filling missing translation keys, creating a locale file for a new crate, syncing the 汉化 with upstream changes, or anything involving the t! macro, the ui_language setting, or en/zh-CN locale parity. Trigger whenever the user mentions 汉化, 翻译, 国际化, i18n, locale, 缺失翻译 key, 译名, or wants to translate a Zed interface string — even if they do not name the zed_i18n crate explicitly.
+============================================================
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (374.4s)
+  [FAIL] rate=0/3 expected=True: 怎么验证我汉化的文本在中文和英文切换下都显示正常？那个 ui_language 设置该怎么用
+  [FAIL] rate=0/3 expected=True: go_to_line 跳转输入框的提示想改得更符合中文阅读习惯，里面 %{line} 这种占位符在中文里怎么调整语序
+  [FAIL] rate=0/3 expected=True: 我想给 zed 的命令面板 command_palette 增加中文翻译，整个流程大概是怎样的，en 和 zh-CN 文
+  [FAIL] rate=0/3 expected=True: crates/repl 里调用 t! 宏编译报错找不到 zed_i18n，是不是要在 Cargo.toml 里加依赖？具
+  [FAIL] rate=0/3 expected=True: zed 界面上有处地方直接显示 `agent_ui.thread.empty_state` 这种裸 key，应该是漏翻译
+  [FAIL] rate=0/3 expected=True: 帮我把 crates/file_finder 这个组件的界面文本汉化了，里面还有不少英文字符串没翻译，需要新建 loca
+  [PASS] rate=0/3 expected=False: 我在写一个 zed 扩展(extension)，扩展自己界面里的字符串怎么做多语言国际化
+  [PASS] rate=0/3 expected=False: 中文输入法在 zed 里打字经常吞字，候选框位置也飘，IM 兼容性怎么修
+  [PASS] rate=0/3 expected=False: zed 的拼写检查能不能加上中文词典支持，现在中文全被标红
+  [PASS] rate=0/3 expected=False: 帮我把这个仓库的 README.md 和 docs 翻译成英文，要地道自然一点，别机翻味
+  [PASS] rate=0/3 expected=False: 帮我把这段 rust 代码里的英文注释翻译成中文注释，保持原意
+  [PASS] rate=0/3 expected=False: 怎么把 zed 的界面字体调大一点，中文看起来太小了，顺便行距也调下
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: 我新汉化了 project_panel 的一批文本，准备提交，commit message 按仓库规范应该怎么写
+  [FAIL] rate=0/3 expected=True: Thread 这个词现在界面里有的地方译成'线程'有的译成'对话'，太不统一了，帮我统一成一个译名
+  [FAIL] rate=0/3 expected=True: 刚 merge 完 upstream/main，上游新加了一批设置界面的英文提示文案，帮我把这些新增字符串补译成中文
+  [FAIL] rate=0/3 expected=True: zed_i18n 的 locale toml 文件里我看到有的 key 带 _title 后缀，这是为什么？我新加 ke
+  [PASS] rate=0/3 expected=False: 我另一个 rust web 项目想集成 rust-i18n 做多语言，fallback 链和 locale 文件怎么组织
+  [PASS] rate=0/3 expected=False: 怎么把 zed 里日期时间和数字的显示格式改成本地化的中文格式（比如年月日）
+  [PASS] rate=0/3 expected=False: 我想让 zed 高亮支持一种新的中文脚本语言，tree-sitter grammar 该怎么添加和配置
+  [PASS] rate=0/3 expected=False: zed 里部分中文显示成方块豆腐块了，应该是缺 CJK 字体，怎么配置 fallback 字体
+
+Improving description...
