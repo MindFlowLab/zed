@@ -5,6 +5,10 @@ use gpui::{
     Task, Window, div, px, uniform_list,
 };
 use language::{File as _, LocalFile as _};
+use markdown::{
+    CodeBlockRenderer, CopyButtonVisibility, Markdown, MarkdownElement, MarkdownFont,
+    MarkdownStyle, WrapButtonVisibility,
+};
 use settings::Settings as _;
 use ui::{TintColor, Tooltip, prelude::*};
 use util::paths::PathExt;
@@ -28,14 +32,25 @@ pub struct OfficePreviewView {
     focus_handle: FocusHandle,
     /// 当前激活的工作表索引（仅电子表格使用）
     active_sheet: usize,
+    /// docx 等文档的 Markdown 渲染实体（构造时按内容创建）
+    markdown: Option<Entity<Markdown>>,
 }
 
 impl OfficePreviewView {
     pub fn new(document: Entity<OfficeDocument>, cx: &mut Context<Self>) -> Self {
+        // 文档类内容在构造时创建 Markdown 实体（其内部异步解析文本）
+        let markdown = match &document.read(cx).content {
+            OfficeContent::Markdown(text) => {
+                let text: SharedString = text.as_str().into();
+                Some(cx.new(|cx| Markdown::new(text, None, None, cx)))
+            }
+            _ => None,
+        };
         Self {
             focus_handle: cx.focus_handle(),
             document,
             active_sheet: 0,
+            markdown,
         }
     }
 
@@ -104,7 +119,9 @@ impl OfficePreviewView {
                 data_row_count,
                 move |range, _window, cx| {
                     let doc = document.read(cx);
-                    let OfficeContent::Spreadsheet(data) = &doc.content;
+                    let OfficeContent::Spreadsheet(data) = &doc.content else {
+                        return Vec::new();
+                    };
                     let Some(sheet) = data.sheets.get(active) else {
                         return Vec::new();
                     };
@@ -140,6 +157,36 @@ impl OfficePreviewView {
                     .flex_1()
                     .overflow_x_scroll()
                     .child(v_flex().w(table_width).h_full().child(header).child(rows)),
+            )
+            .into_any_element()
+    }
+
+    /// 渲染 docx 等文档：复用 markdown crate 的渲染元素
+    fn render_markdown(&self, window: &mut Window, cx: &mut Context<Self>) -> AnyElement {
+        let Some(markdown) = self.markdown.clone() else {
+            return Self::render_centered_message(t!("office_preview.empty_document").into());
+        };
+        let markdown_style = MarkdownStyle::themed(MarkdownFont::Preview, window, cx);
+        div()
+            .id("office-preview")
+            .track_focus(&self.focus_handle)
+            .size_full()
+            .bg(cx.theme().colors().editor_background)
+            .child(
+                div()
+                    .id("office-preview-markdown-scroll")
+                    .size_full()
+                    .overflow_y_scroll()
+                    .p_4()
+                    .child(
+                        MarkdownElement::new(markdown, markdown_style).code_block_renderer(
+                            CodeBlockRenderer::Default {
+                                copy_button_visibility: CopyButtonVisibility::VisibleOnHover,
+                                wrap_button_visibility: WrapButtonVisibility::Hidden,
+                                border: false,
+                            },
+                        ),
+                    ),
             )
             .into_any_element()
     }
@@ -223,11 +270,12 @@ fn render_table_row(
 impl EventEmitter<()> for OfficePreviewView {}
 
 impl Render for OfficePreviewView {
-    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         // 先克隆内容（Arc 廉价克隆），避免持有实体借用与 cx 可变借用冲突
         let content = self.document.read(cx).content.clone();
         match content {
             OfficeContent::Spreadsheet(data) => self.render_spreadsheet(&data, cx),
+            OfficeContent::Markdown(_) => self.render_markdown(window, cx),
         }
     }
 }

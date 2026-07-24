@@ -12395,13 +12395,16 @@ dependencies = [
  "gpui",
  "language",
  "log",
+ "markdown",
  "project",
+ "quick-xml 0.38.3",
  "settings",
  "ui",
  "util",
  "workspace",
  "worktree",
  "zed_i18n",
+ "zip 8.6.0",
 ]
 
 [[package]]

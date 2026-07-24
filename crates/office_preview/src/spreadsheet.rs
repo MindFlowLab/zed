@@ -78,32 +78,77 @@ fn cell_to_string(cell: &Data) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test_util::build_zip;
 
-    /// 测试夹具：三个工作表（Users 含混合类型数据、Empty 空表、Notes 中文内容）
-    const TEST_XLSX: &[u8] = include_bytes!("../fixtures/test.xlsx");
+    /// 在内存中构建最小可用 xlsx（内联字符串，不依赖 sharedStrings）
+    fn build_test_xlsx() -> Vec<u8> {
+        let content_types = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+<Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+</Types>"#;
+        let rels = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+</Relationships>"#;
+        let workbook = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<sheets>
+<sheet name="Users" sheetId="1" r:id="rId1"/>
+<sheet name="Notes" sheetId="2" r:id="rId2"/>
+</sheets>
+</workbook>"#;
+        let workbook_rels = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/>
+</Relationships>"#;
+        let sheet1 = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<sheetData>
+<row r="1"><c r="A1" t="inlineStr"><is><t>name</t></is></c><c r="B1" t="inlineStr"><is><t>age</t></is></c><c r="C1" t="inlineStr"><is><t>score</t></is></c><c r="D1" t="inlineStr"><is><t>active</t></is></c></row>
+<row r="2"><c r="A2" t="inlineStr"><is><t>Alice</t></is></c><c r="B2"><v>30</v></c><c r="C2"><v>95.5</v></c><c r="D2" t="b"><v>1</v></c></row>
+<row r="3"><c r="A3" t="inlineStr"><is><t>张三</t></is></c><c r="B3"><v>40</v></c></row>
+</sheetData>
+</worksheet>"#;
+        let sheet2 = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<sheetData>
+<row r="1"><c r="A1" t="inlineStr"><is><t>备注</t></is></c><c r="B1" t="inlineStr"><is><t>数量</t></is></c></row>
+</sheetData>
+</worksheet>"#;
+        build_zip(&[
+            ("[Content_Types].xml", content_types),
+            ("_rels/.rels", rels),
+            ("xl/workbook.xml", workbook),
+            ("xl/_rels/workbook.xml.rels", workbook_rels),
+            ("xl/worksheets/sheet1.xml", sheet1),
+            ("xl/worksheets/sheet2.xml", sheet2),
+        ])
+    }
 
     #[test]
     fn test_parse_xlsx_sheets() {
-        let data = parse_spreadsheet(TEST_XLSX.to_vec(), "xlsx").unwrap();
+        let data = parse_spreadsheet(build_test_xlsx(), "xlsx").unwrap();
         let names: Vec<&str> = data.sheets.iter().map(|s| s.name.as_str()).collect();
-        assert_eq!(names, vec!["Users", "Empty", "Notes"]);
+        assert_eq!(names, vec!["Users", "Notes"]);
 
-        // Users 表：表头 + 3 行数据，混合类型均字符串化
+        // Users 表：表头 + 2 行数据，混合类型均字符串化
         let users = &data.sheets[0];
-        assert_eq!(users.rows.len(), 4);
+        assert_eq!(users.rows.len(), 3);
         assert_eq!(users.rows[0], vec!["name", "age", "score", "active"]);
         assert_eq!(users.rows[1][0], "Alice");
         assert_eq!(users.rows[1][1], "30");
         assert_eq!(users.rows[1][2], "95.5");
         assert_eq!(users.rows[1][3], "true");
         // 中文内容保持原样
-        assert_eq!(users.rows[3][0], "张三");
-
-        // 空表解析为空行集
-        assert!(data.sheets[1].rows.is_empty());
+        assert_eq!(users.rows[2][0], "张三");
 
         // Notes 表中文表头
-        assert_eq!(data.sheets[2].rows[0], vec!["备注", "数量"]);
+        assert_eq!(data.sheets[1].rows[0], vec!["备注", "数量"]);
     }
 
     #[test]

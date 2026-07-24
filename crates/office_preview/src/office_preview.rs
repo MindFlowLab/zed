@@ -5,10 +5,12 @@
 //! feature flag 门控。
 
 mod document;
+mod docx;
 mod spreadsheet;
 mod view;
 
 pub use document::{OfficeContent, OfficeDocument, OfficeDocumentKind};
+pub use docx::docx_to_markdown;
 pub use spreadsheet::{SheetData, SpreadsheetData};
 pub use view::OfficePreviewView;
 
@@ -33,4 +35,26 @@ register_feature_flag!(OfficePreviewFeatureFlag);
 
 pub fn init(cx: &mut App) {
     workspace::register_project_item::<OfficePreviewView>(cx);
+}
+
+/// 测试专用：在内存中构建 zip 压缩包（docx/xlsx 等 OOXML 夹具）
+#[cfg(test)]
+pub(crate) mod test_util {
+    use std::io::{Cursor, Write};
+
+    /// 按 (条目名, 内容) 列表构建 deflate 压缩的 zip 字节流
+    pub fn build_zip(entries: &[(&str, &str)]) -> Vec<u8> {
+        let mut buf = Cursor::new(Vec::new());
+        {
+            let mut zip = zip::ZipWriter::new(&mut buf);
+            let options = zip::write::SimpleFileOptions::default()
+                .compression_method(zip::CompressionMethod::Deflated);
+            for (name, content) in entries {
+                zip.start_file(*name, options).unwrap();
+                zip.write_all(content.as_bytes()).unwrap();
+            }
+            zip.finish().unwrap();
+        }
+        buf.into_inner()
+    }
 }

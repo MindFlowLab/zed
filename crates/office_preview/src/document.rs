@@ -7,6 +7,7 @@ use project::{Project, ProjectEntryId, ProjectPath};
 use worktree::LoadedBinaryFile;
 
 use crate::OfficePreviewFeatureFlag;
+use crate::docx::docx_to_markdown;
 use crate::spreadsheet::{SpreadsheetData, parse_spreadsheet};
 
 /// 支持预览的文档类型
@@ -14,6 +15,8 @@ use crate::spreadsheet::{SpreadsheetData, parse_spreadsheet};
 pub enum OfficeDocumentKind {
     /// xlsx / xls / ods 电子表格
     Spreadsheet,
+    /// docx 文档
+    Document,
 }
 
 impl OfficeDocumentKind {
@@ -22,6 +25,7 @@ impl OfficeDocumentKind {
     pub fn from_extension(ext: &str) -> Option<Self> {
         match ext {
             "xlsx" | "xls" | "ods" => Some(Self::Spreadsheet),
+            "docx" => Some(Self::Document),
             _ => None,
         }
     }
@@ -31,6 +35,8 @@ impl OfficeDocumentKind {
 #[derive(Clone)]
 pub enum OfficeContent {
     Spreadsheet(Arc<SpreadsheetData>),
+    /// docx 等文档转换成的 Markdown 文本
+    Markdown(Arc<String>),
 }
 
 /// 项目侧模型：一个已在后台解析完成的 Office 文档。
@@ -82,8 +88,18 @@ impl project::ProjectItem for OfficeDocument {
 
             // 解析放到后台线程，避免大文件阻塞 UI
             let ext_for_parse = ext.clone();
-            let parsed = background
-                .spawn(async move { parse_spreadsheet(content, &ext_for_parse) })
+            let content = background
+                .spawn(async move {
+                    let parsed: Result<OfficeContent> = match kind {
+                        OfficeDocumentKind::Spreadsheet => Ok(OfficeContent::Spreadsheet(
+                            Arc::new(parse_spreadsheet(content, &ext_for_parse)?),
+                        )),
+                        OfficeDocumentKind::Document => Ok(OfficeContent::Markdown(Arc::new(
+                            docx_to_markdown(content)?,
+                        ))),
+                    };
+                    parsed
+                })
                 .await?;
 
             Ok(cx.new(|_| OfficeDocument {
@@ -91,7 +107,7 @@ impl project::ProjectItem for OfficeDocument {
                 project_path: path,
                 file,
                 kind,
-                content: OfficeContent::Spreadsheet(Arc::new(parsed)),
+                content,
             }))
         }))
     }
