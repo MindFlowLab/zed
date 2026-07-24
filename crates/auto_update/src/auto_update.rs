@@ -1010,7 +1010,7 @@ async fn cleanup_remote_server_cache(
 /// 各平台资产命名约定（MindFlowLab/zed-ZH_CN）：
 /// - 主程序 linux:   `zed-linux-{arch}.tar.gz`
 /// - 主程序 windows: `Zed-{arch}.exe`
-/// - 主程序 macos:   `zed-macos-{arch}.zip` / `zed-macos-{arch}.dmg`
+/// - 主程序 macos:   `Zed-{arch}.dmg`
 /// - 远程服务器:     `zed-remote-server-{os}-{arch}.gz` / `.zip`
 fn select_github_asset(
     assets: &[github::GithubReleaseAsset],
@@ -1022,8 +1022,9 @@ fn select_github_asset(
         "zed" => match os {
             "windows" => vec![format!("Zed-{arch}.exe"), format!("zed-{os}-{arch}.exe")],
             "macos" => vec![
-                format!("zed-{os}-{arch}.zip"),
+                format!("Zed-{arch}.dmg"),
                 format!("zed-{os}-{arch}.dmg"),
+                format!("zed-{os}-{arch}.zip"),
             ],
             _ => vec![format!("zed-{os}-{arch}.tar.gz")],
         },
@@ -1496,8 +1497,10 @@ mod tests {
         let assets = vec![
             asset("zed-linux-x86_64.tar.gz"),
             asset("Zed-x86_64.exe"),
+            asset("Zed-aarch64.dmg"),
             asset("zed-remote-server-linux-x86_64.gz"),
             asset("zed-remote-server-windows-x86_64.zip"),
+            asset("zed-remote-server-macos-aarch64.gz"),
         ];
 
         // 主程序
@@ -1509,6 +1512,10 @@ mod tests {
             select_github_asset(&assets, "zed", "windows", "x86_64").unwrap(),
             "https://example.com/Zed-x86_64.exe"
         );
+        assert_eq!(
+            select_github_asset(&assets, "zed", "macos", "aarch64").unwrap(),
+            "https://example.com/Zed-aarch64.dmg"
+        );
 
         // 远程服务器（remote server）
         assert_eq!(
@@ -1519,9 +1526,13 @@ mod tests {
             select_github_asset(&assets, "zed-remote-server", "windows", "x86_64").unwrap(),
             "https://example.com/zed-remote-server-windows-x86_64.zip"
         );
+        assert_eq!(
+            select_github_asset(&assets, "zed-remote-server", "macos", "aarch64").unwrap(),
+            "https://example.com/zed-remote-server-macos-aarch64.gz"
+        );
 
-        // 缺少对应平台资产时应报错
-        assert!(select_github_asset(&assets, "zed", "macos", "aarch64").is_err());
+        // 缺少对应平台资产时应报错（未提供 macos x86_64 主程序）
+        assert!(select_github_asset(&assets, "zed", "macos", "x86_64").is_err());
     }
 
     #[gpui::test]
